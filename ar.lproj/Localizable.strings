@@ -92,7 +92,7 @@
 "custom_msg_noworry" = "لا تقلق. أنا بخير";
 "custom_msg_wayhome" ="في طريقي إلى المنزل الآن";
 "custom_msg_arrivesoon" = "سوف يصل قريبا";
-"add_to_group" = "إنشاء مجموعة";
+"create_group" = "إنشاء مجموعة";
 "create_contact" = "إنشاء اتصال";
 "clear" = "نظف";
 "delete" = "حذف";
@@ -109,3 +109,13 @@
 "invalid_email" = "بريد إلكتروني خاطئ!";
 "attach_image" = "إرفاق صورة?";
 "app_name" = "EasyMessage";
+"aniversary_of" = "انها الذكرى السنوية %@!";
+"add" = "خلق";
+"save_archive_explain" = "ستتم أرشفة الرسالة لإعادة استخدامها لاحقًا";
+"add_to_group" = "إضافة إلى المجموعة";
+"confirm_delete" = "هل أنت واثق؟";
+"order_by_lastname" = "ترتيب حسب اسم العائلة";
+"order_by_firstname" = "ترتيب حسب الاسم الأول";
+"order_contacts" = "ترتيب جهات الاتصال";
+"order_contacts_explanation" = "ترتيب جهات الاتصال حسب اسم العائلة أو الاسم الأول";
+

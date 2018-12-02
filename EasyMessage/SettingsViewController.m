@@ -17,10 +17,10 @@
 @implementation SettingsViewController
 
 @synthesize sendOptions,preferedServiceOptions,socialServicesOptions;
-@synthesize selectPreferredService,selectSendOption;
+@synthesize selectPreferredService,selectSendOption,selectOrderByOption;
 @synthesize socialOptionsController;
 @synthesize showToast;
-@synthesize initiallySelectedPreferredService,initiallySelectedSendOption;
+@synthesize initiallySelectedPreferredService,initiallySelectedSendOption, initiallySelectedOrderByOption;
 @synthesize isFacebookAvailable,isTwitterAvailable,isLinkedinAvailable;
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -57,6 +57,8 @@
     [self checkSocialServicesAvailability];
     
     //deafult values on startup
+    //by default (check the seetings for change)
+    selectOrderByOption = OPTION_ORDER_BY_LASTNAME_ID;
     selectSendOption = OPTION_ALWAYS_SEND_BOTH_ID;
     selectPreferredService = OPTION_PREF_SERVICE_ALL_ID;
     
@@ -64,6 +66,19 @@
     
     NSString *selectedSendSaved = [[NSUserDefaults standardUserDefaults] objectForKey:SETTINGS_PREF_SEND_OPTION_KEY];
     NSString *selectedPrefServiceSaved = [[NSUserDefaults standardUserDefaults] objectForKey:SETTINGS_PREF_SERVICE_KEY];
+    
+    //TODO PC check
+    NSString *selectedOrderBySaved = [[NSUserDefaults standardUserDefaults] objectForKey:SETTINGS_PREF_ORDER_BY_KEY];
+    
+    if(selectedOrderBySaved!=nil) {
+        if([selectedOrderBySaved isEqualToString:OPTION_ORDER_BY_LASTNAME_KEY]) {
+            selectOrderByOption = OPTION_ORDER_BY_LASTNAME_ID;
+        }
+        else {
+            selectOrderByOption = OPTION_ORDER_BY_FIRSTNAME_ID;
+        }
+    }
+    
     
     if(selectedSendSaved!=nil) {
         if([selectedSendSaved isEqualToString:OPTION_SEND_EMAIL_ONLY]) {
@@ -165,6 +180,7 @@
     
     initiallySelectedSendOption = selectSendOption;
     initiallySelectedPreferredService = selectPreferredService;
+    initiallySelectedOrderByOption = selectOrderByOption;
     
 
     [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:NO];
@@ -191,7 +207,7 @@
 #warning Potentially incomplete method implementation.
     // Return the number of sections.
     
-    return 2;
+    return 3;
 }
 
 -(IBAction)goBackAfterSelection:(id)sender {
@@ -242,20 +258,21 @@
         [[NSUserDefaults standardUserDefaults] setObject:OPTION_PREF_SERVICE_SMS forKey:SETTINGS_PREF_SERVICE_KEY]; 
     }
     
+    //order the list
+    if(selectOrderByOption == OPTION_ORDER_BY_LASTNAME_ID) {
+        [[NSUserDefaults standardUserDefaults] setObject:OPTION_ORDER_BY_LASTNAME_KEY forKey:SETTINGS_PREF_ORDER_BY_KEY];
+    }
+    else {
+         [[NSUserDefaults standardUserDefaults] setObject:OPTION_ORDER_BY_FIRSTNAME_KEY forKey:SETTINGS_PREF_ORDER_BY_KEY];
+    }
     
     [[NSUserDefaults standardUserDefaults] synchronize];
     
     //if there were any changes
-    if(initiallySelectedPreferredService != selectPreferredService || initiallySelectedSendOption!=selectSendOption) {
+    if(initiallySelectedPreferredService != selectPreferredService || initiallySelectedSendOption!=selectSendOption || selectOrderByOption != initiallySelectedOrderByOption) {
         [[[[iToast makeText:msg]
            setGravity:iToastGravityBottom] setDuration:2000] show];
     }
-    
-    
-    NSString *msg2;
-
-    
-    
     
 }
 
@@ -269,6 +286,10 @@
     else if(section==1) {
        return preferedServiceOptions.count; 
     }
+    else if(section == 2) {
+        //order by last/first name
+        return 2;
+    }
    
     return 1; //just one for the prefered item options
     
@@ -281,7 +302,10 @@
     else if(section==1) {
       return NSLocalizedString(@"header_preferred_service",nil);
     }
-    
+    else if(section == 2) {
+        
+        return NSLocalizedString(@"order_contacts",nil);
+    }
     else {
        return @"Advanced Options";
     }
@@ -296,6 +320,9 @@
     }
     else if(section==1) {
         return NSLocalizedString(@"footer_preferred_service", nil);   
+    }
+    else if(section==2) {
+        return NSLocalizedString(@"order_contacts_explanation", nil);
     }
     else {
         return @"Use social services";
@@ -380,6 +407,16 @@
         }
         
     }
+    else if(section == 2) {
+        cell.textLabel.text =  [self labelForOptionIndex:row atSection:section];;
+        if(row == selectOrderByOption) {
+            cell.accessoryType = UITableViewCellAccessoryCheckmark;
+        }
+        else {
+            cell.accessoryType = UITableViewCellAccessoryNone;
+        }
+        
+    }
  
     
     return cell;
@@ -424,6 +461,16 @@
                 return NSLocalizedString(@"preferred_sms_service", @"prefer sms");
             default:
                 return NSLocalizedString(@"preferred_use_both_services",@"use both");
+        }
+    }
+    else if(section==2) {
+        switch (rowIndex) {//preferred services
+            case 0:
+                return NSLocalizedString(@"order_by_lastname", @"order_by_lastname");
+            case 1:
+                return NSLocalizedString(@"order_by_firstname", @"order_by_firstname");
+            default:
+                return NSLocalizedString(@"order_by_lastname",@"order_by_lastname");
         }
     }
   
@@ -504,6 +551,11 @@
     }
     else if(section==1) {
         selectPreferredService = row;
+        [self.tableView reloadData];
+        
+    }
+    else if(section==2) {
+        selectOrderByOption = row;
         [self.tableView reloadData];
         
     }

@@ -188,6 +188,28 @@
     return nil;
 }
 
++(NSMutableArray *) fetchAllContactsDataModelByName: (NSString *) contactName {
+    NSManagedObjectContext *managedObjectContext = [(PCAppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
+    
+    
+    // Define our table/entity to use
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"ContactDataModel" inManagedObjectContext:managedObjectContext];
+    // Setup the fetch request
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    [request setEntity:entity];
+    
+    NSPredicate *predicateID = [NSPredicate predicateWithFormat:@"name == %@",contactName];
+    [request setPredicate:predicateID];
+    
+    NSError *error;
+    NSMutableArray *mutableFetchResults = [[managedObjectContext executeFetchRequest:request error:&error] mutableCopy];
+    
+    if(mutableFetchResults!=nil && mutableFetchResults.count > 0) {
+        return mutableFetchResults;
+    }
+    return nil;
+}
+
 +(GroupDataModel *) fetchGroupDataModelByName: (NSString *) groupName {
     NSManagedObjectContext *managedObjectContext = [(PCAppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
     

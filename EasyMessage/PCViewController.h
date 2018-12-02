@@ -37,7 +37,7 @@
 #define PROMO_SHOW_COUNTER @"promo_show_counter"
 
 
-@interface PCViewController : UIViewController <MFMailComposeViewControllerDelegate,MFMessageComposeViewControllerDelegate,UIImagePickerControllerDelegate,UITextViewDelegate,FBSDKSharingDelegate,
+@interface PCViewController : UIViewController <MFMailComposeViewControllerDelegate,MFMessageComposeViewControllerDelegate,UIImagePickerControllerDelegate,UITextViewDelegate,UITextFieldDelegate, FBSDKSharingDelegate,
 UITextFieldDelegate, NSURLConnectionDelegate,SKStoreProductViewControllerDelegate>
 - (IBAction)sendMessage:(id)sender;
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
@@ -48,6 +48,7 @@ UITextFieldDelegate, NSURLConnectionDelegate,SKStoreProductViewControllerDelegat
 @property (strong, nonatomic) IBOutlet UILabel *labelOnlySocial;
 
 @property (strong, nonatomic) IBOutlet UISwitch *saveMessageSwitch;
+@property (weak, nonatomic) IBOutlet UILabel *recipientsLabel;
 
 @property (weak, nonatomic) IBOutlet UILabel *labelAttach;
 //@property ABAddressBookRef addressBook;
@@ -86,6 +87,7 @@ void addressBookChanged(ABAddressBookRef reference,
 @property (strong, nonatomic) UIImage *image;
 @property (strong, nonatomic) NSString *imageName;
 
+@property (weak, nonatomic) IBOutlet UIView *subjectView;
 
 @property (strong, nonatomic) IBOutlet UIPlaceHolderTextView *body;
 @property (strong, nonatomic) IBOutlet UIImageView *lockImage;

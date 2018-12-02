@@ -57,7 +57,7 @@
 #pragma auxiliar comparing methods
 
 -(BOOL) isLastNameEqual: (Contact *) otherContact {
-    if(lastName && otherContact.lastName) {
+    if(lastName!=nil && otherContact.lastName!=nil) {
         if([lastName isEqualToString:otherContact.lastName]) {
             return YES;
         }
@@ -66,7 +66,7 @@
 }
 
 -(BOOL) isNameEqual: (Contact *) otherContact {
-    if(name && otherContact.name) {
+    if(name!=nil && otherContact.name!=nil) {
         
         if([name isEqualToString:otherContact.name]) {
             //ok name is equal, check lastname
@@ -77,7 +77,7 @@
 }
 
 -(BOOL) isPhoneEqual: (Contact *) otherContact {
-    if(phone && otherContact.phone) {
+    if(phone!=nil && otherContact.phone!=nil) {
         if([phone isEqualToString:otherContact.phone]) {
             return YES;
         }
@@ -89,7 +89,7 @@
 
 -(BOOL) isEmailEqual: (Contact *) otherContact {
     
-    if(email && otherContact.email) { 
+    if(email!=nil && otherContact.email!=nil) {
         if([email isEqualToString:otherContact.email]) {
             return YES;
         }

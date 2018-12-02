@@ -22,7 +22,7 @@
 @end
 
 @interface ContactDataModel (CoreDataGeneratedAccessors)
-
+//TODO PC check if i can have a contact in several groups
 - (void)addGroupObject:(GroupDataModel *)value;
 - (void)removeGroupObject:(GroupDataModel *)value;
 - (void)addGroup:(NSSet *)values;

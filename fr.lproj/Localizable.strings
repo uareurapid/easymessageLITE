@@ -6,7 +6,7 @@
 "subject_label" = "Sujet:";
 "message_label" = "Message:";
 "placeholder_your_message" = "Votre message (*)";
-"placeholder_subject" = "Sujet";
+"placeholder_subject" = " Sujet";
 "send_message" = "Envoyer un message";
 "compose" = "Composer";
 "recipients" = "Destinataires";
@@ -89,7 +89,7 @@
 "custom_msg_noworry" = "Ne vous inquiétez pas. Je suis bien";
 "custom_msg_wayhome" ="Sur mon chemin pour la maison maintenant";
 "custom_msg_arrivesoon" = "Je vais bientôt arriver";
-"add_to_group" = "Créer groupe";
+"create_group" = "Créer groupe";
 "create_contact" = "Créer contact";
 "clear" = "Effacer";
 "delete" = "Effacer";
@@ -106,3 +106,13 @@
 "invalid_email" = "Email invalide!";
 "attach_image" = "Ajouter une image?";
 "app_name" = "EasyMessage";
+"aniversary_of" = "C'est l'anniversaire de %@!";
+"add" = "Ajoute";
+"save_archive_explain" = "Le message sera archivé pour une réutilisation ultérieure";
+"add_to_group" = "Ajouter au groupe";
+"confirm_delete" = "Êtes-vous sûr?";
+"order_by_lastname" = "Commande par nom de famille";
+"order_by_firstname" = "Commande par prénom";
+"order_contacts" = "Commander des contacts";
+"order_contacts_explanation" = "Ordre des contacts par nom ou prénom";
+

@@ -155,11 +155,15 @@
         
         NSString *day = [notification.userInfo valueForKey:@"day"];
         NSString *month = [notification.userInfo valueForKey:@"month"];
+        //name of the contact
+        NSString *name = [notification.userInfo valueForKey:@"name"];
         
         [defaults setObject:NSLocalizedString(@"custom_msg_birthday",@"Happy Birthday") forKey:@"prefillMessage"];
         [defaults setObject:@"birthday" forKey:@"prefillMessageType"];
         [defaults setObject:month forKey:@"month"];
         [defaults setObject:day forKey:@"day"];
+        
+        [defaults synchronize];
         
         [self.viewController checkForPrefilledMessage];
     }

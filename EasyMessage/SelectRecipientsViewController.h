@@ -10,20 +10,21 @@
 #import "Contact.h"
 #import "Group.h"
 #import "AddContactViewController.h"
+#import "PickerView.h"
 
 
 @class PCViewController;
 
 
 
-@interface SelectRecipientsViewController : UITableViewController <UISearchBarDelegate,UISearchDisplayDelegate>
+@interface SelectRecipientsViewController : UITableViewController <UISearchBarDelegate,UISearchDisplayDelegate, UIPickerViewDataSource,UIPickerViewDelegate>
 
 -(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil contacts: (NSMutableArray *) contacts;
 -(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil contacts: (NSMutableArray *) contacts rootViewController: (PCViewController*) viewController;
 -(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil contacts: (NSMutableArray *) contacts
    selectedOnes: (NSMutableArray *) selectedRecipients rootViewController: (PCViewController*) viewController;
 -(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil rootViewController: (PCViewController*) viewController;
-
+-(void) addContactToGroup: (NSString *) groupName contact: (Contact *) contact;
 @property (strong,nonatomic) AddContactViewController *addNewContactController;
 
 -(IBAction)refreshPhonebook:(id)sender;
@@ -47,8 +48,11 @@
 @property (strong,nonatomic) NSMutableArray *searchData;
 @property (strong,nonatomic) NSMutableArray *searchDataSelection;
 
+@property (strong,nonatomic)NSMutableArray *groupsNamesArray;
+
 @property ABRecordID groupId;
 
+@property (strong,nonatomic) UIActivityIndicatorView *activityIndicator;
 @property (strong,nonatomic) UISearchBar *searchBar;
 @property (strong,nonatomic) UISearchDisplayController *searchDisplayController;
 

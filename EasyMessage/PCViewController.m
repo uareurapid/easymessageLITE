@@ -52,7 +52,8 @@
 @synthesize  timeToShowPromoPopup;
 @synthesize attachImageView;
 @synthesize labelAttach;
-
+@synthesize subjectView;
+@synthesize recipientsLabel;
 
 @synthesize attachImage;
 //google plus sdk
@@ -76,11 +77,19 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     sendToFacebook = NO;
     sendToLinkedin = NO;
     saveMessage = NO;
+    recipientsLabel.text = @"";
 
     labelOnlySocial.text = NSLocalizedString(@"no_recipients_only_social","@only social post, no recipients selected");
     
     subject.delegate = self;
     body.delegate = self;
+    
+    subject.layer.borderWidth = 1.0f;
+    subject.layer.borderColor = [[UIColor grayColor] CGColor];
+    
+    body.layer.borderWidth = 1.0f;
+    body.layer.borderColor = [[UIColor grayColor] CGColor];
+    
     [sendButton setTitle:NSLocalizedString(@"send_message",nil) forState:UIControlStateNormal];
     
     subject.placeholder = NSLocalizedString(@"placeholder_subject",nil);
@@ -102,12 +111,17 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
     [self.scrollView setContentOffset: CGPointMake(0, self.scrollView.contentOffset.y)];
     self.scrollView.directionalLockEnabled = YES;
+    //TODO possible solution check
+    //CGSize scrollSize = CGSizeMake([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
+    //[scrollView setContentSize: scrollSize];
     
     //load the contacts list when the view loads
     [self setupAddressBook];
     //self.scrollView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"tableViewBackground.png"]];
     
-    attachImage = [UIImage imageNamed:@"attach"];
+    [self writeImportTime];
+    
+    attachImage = [UIImage imageNamed:@"attachment"];
     
     showAds = false;
     //shows / hides the banner, every 30 seconds interval
@@ -162,7 +176,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     //loginButton.center = self.view.center;
     //[self.view addSubview:loginButton];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkForPrefilledMessage:) name:UIApplicationDidBecomeActiveNotification object:self];
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkForPrefilledMessage:) name:UIApplicationDidBecomeActiveNotification object:self];
     
     [super viewDidLoad];
     
@@ -170,14 +184,28 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
   
 }
 
--(void) viewDidAppear:(BOOL)animated {
-    
-    
-    //check time of last import, and do it again if older than 5 hours
+-(void) writeImportTime {
     double nowMilis = [[NSDate date] timeIntervalSince1970] * 1000;
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *lastImport = [defaults valueForKey:@"last_import"];
+    [defaults setValue: [NSString stringWithFormat:@"%f",  nowMilis] forKey:@"last_import"];
+}
+
+-(NSString *) readImportTime {
+    //check time of last import, and do it again if older than 5 hours
     
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *lastImport = [defaults valueForKey:@"last_import"];
+    return lastImport; //could be nil??
+}
+-(void) viewDidAppear:(BOOL)animated {
+    
+    //get current date/time
+    double nowMilis = [[NSDate date] timeIntervalSince1970] * 1000;
+    //read date/time of last import
+    NSString *lastImport = [self readImportTime];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    //this key is added every time i add a new contact
     bool forceImport = [defaults boolForKey:@"force_import"];
     
     if(lastImport != nil || forceImport) {
@@ -185,6 +213,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         //last import done more than 1 hours ago? load them again!
         if( (nowMilis - lastImportMilis > 1*60*60*1000) || forceImport ) {
             [self setupAddressBook];
+            //update the import date/time
             [defaults setValue: [NSString stringWithFormat:@"%f",  nowMilis] forKey:@"last_import"];
             
             if(forceImport) {
@@ -214,6 +243,8 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             [defaults removeObjectForKey:@"day"];
             [defaults removeObjectForKey:@"month"];
             
+             [defaults removeObjectForKey:@"prefillMessageType"];
+            
             //TODO improve this, i should not need to fetch the contacts again, but for 1st implementation is OK!
             [self.recipientsController searchForBirthdayIn:day month:month];
             
@@ -224,16 +255,30 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 }
 //before IOS 10
 //TODO make generic for other type of notifications
--(void) scheduleNotification: (NSString *) type nameOfContacts: (NSMutableArray *) names month: (NSInteger) month day: (NSInteger) day{
-    //Get all previous noti..
-    NSLog(@"scheduled notifications: --%@----", [[UIApplication sharedApplication] scheduledLocalNotifications]);
+-(void) scheduleNotification: (NSString *) type nameOfContact: name month: (NSInteger) month day: (NSInteger) day fireDelayInSeconds: (NSTimeInterval) delay{
+    //Get all previous notifications..
+    NSLog(@"scheduled notifications: %@", [[UIApplication sharedApplication] scheduledLocalNotifications]);
     
-    NSDate *now = [NSDate date];
-    now = [now dateByAddingTimeInterval:60]; //60 seconds
+    NSArray *notifications = [[UIApplication sharedApplication] scheduledLocalNotifications];
+    
+    NSString *possibleAlarmId = [NSString stringWithFormat: @"%@", [NSString stringWithFormat:@"%@%ld%ld",name,(long)day,(long)month]];
+    for(UILocalNotification *notification in notifications ) {
+        
+        
+        NSString *alarmID = [notification.userInfo valueForKey:@"alarmID"];
+        if(alarmID !=nil && [alarmID isEqualToString: possibleAlarmId]) {
+            NSLog(@"already scheduled this notification: %@ ,skip it...", alarmID);
+            return;
+        }
+    }
+    //otherwise continue
+    
+    NSDate *fireDate = [NSDate date];
+    fireDate = [fireDate dateByAddingTimeInterval: delay]; //60 seconds or 24 hours
     NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     
     [calendar setTimeZone:[NSTimeZone localTimeZone]];
-    NSDateComponents *components = [calendar components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit|NSHourCalendarUnit|NSMinuteCalendarUnit|NSSecondCalendarUnit|NSTimeZoneCalendarUnit fromDate:now];
+    NSDateComponents *components = [calendar components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit|NSHourCalendarUnit|NSMinuteCalendarUnit|NSSecondCalendarUnit|NSTimeZoneCalendarUnit fromDate: fireDate];
     
     
     NSDate *SetAlarmAt = [calendar dateFromComponents:components];
@@ -247,33 +292,29 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     //TODO translate this str
     
     if([type isEqualToString:@"birthday"]) {
-        NSString *messageToAppend = @"";
-        if(names.count == 1)  {
-            messageToAppend = (NSString *)[names objectAtIndex:0];
-        }
-        else {
-            messageToAppend = [NSString stringWithFormat:@"%@ and others",(NSString *)[names objectAtIndex:0] ];
-        }
         
-        NSLog(@"FIRE DATE --%@----",[SetAlarmAt description]);
+        NSLog(@"birthday notification fire date: %@ ",[SetAlarmAt description]);
         
-        localNotification.alertBody = [NSString stringWithFormat:@"Its the Aniversary of %@", messageToAppend];
+        //aniversary_of
+        NSString *message = [NSString stringWithFormat: NSLocalizedString(@"aniversary_of", @"aniversary_of"), name];
+        localNotification.alertBody = message;// [NSString stringWithFormat:@"Its the Aniversary of %@", name];
         
         localNotification.alertAction = [NSString stringWithFormat:@"My test for Weekly alarm"];
         
+        //add to user defaults to avoid schedule it again
+        NSString *alarmID = [NSString stringWithFormat: @"%@", [NSString stringWithFormat:@"%@%ld%ld",name,(long)day,(long)month]];
+        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+        [userDefaults setValue:alarmID forKey:@"alarmID"];
+        
         localNotification.userInfo = @{
-                                       @"alarmID":[NSString stringWithFormat:@"123"],//,
+                                       @"alarmID":alarmID,//,
                                        @"Type":type,
                                        @"day" : [NSString stringWithFormat:@"%ld", (long)day ],
                                        @"month" : [NSString stringWithFormat:@"%ld", (long)month ],
+                                       @"name" : name
                                        };
         localNotification.repeatInterval=0; //[NSCalendar currentCalendar];
     }//else do other cases on other releases
-    
-    
-    
-    
-    
     
     [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
 }
@@ -333,15 +374,13 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         self.tabBarItem.image = [UIImage imageNamed:@"email"];
         self.tabBarItem.title = NSLocalizedString(@"compose",nil);
         
-        UIBarButtonItem *clearButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"clear.png"]
-                                                                       style:UIBarButtonItemStyleDone target:self action:@selector(clearClicked:)];
+        UIBarButtonItem *clearButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"clear", @"clear") style:UIBarButtonItemStyleDone target:self action:@selector(clearClicked:)];
         self.navigationItem.rightBarButtonItem = clearButton;
         
    
         
         //attach buttom
-        UIBarButtonItem *shareButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"share.png"]
-                                                                         style:UIBarButtonItemStyleDone target:self action:@selector(shareClicked:)];
+        UIBarButtonItem *shareButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"share", @"share") style:UIBarButtonItemStyleDone target:self action:@selector(shareClicked:)];
         self.navigationItem.leftBarButtonItem = shareButton;
         
     }
@@ -444,15 +483,18 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         //[self.navigationItem.leftBarButtonItem setEnabled:true];
         if(selectedRecipientsList.count==0) {
            [subject setEnabled:false];
+           [subjectView setHidden:true];
         }
         
     }
     else if(settingsController.selectSendOption == OPTION_SEND_SMS_ONLY_ID) {
         
           [subject setEnabled:false];
+          [subjectView setHidden:true];
     }
     else {
           [subject setEnabled:true];
+          [subjectView setHidden:false];
     }
     
     //always ON
@@ -515,11 +557,34 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 
     return YES;
 }
+//show teh clear button
+-(void) checkIfShowClearButton:(UITextField *)textField  {
+    
+    BOOL isEnabled = [self.navigationItem.rightBarButtonItem isEnabled];
+    NSInteger lengthBody = textField.text.length;
+    
+    if(lengthBody>=1 && !isEnabled) {
+        [self.navigationItem.rightBarButtonItem setEnabled:YES];
+    }
+    else if(lengthBody==0 && isEnabled) {
+        [self.navigationItem.rightBarButtonItem setEnabled:NO];
+    }
+}
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    [self checkIfShowClearButton:textField];
+}
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
+    
+    [self checkIfShowClearButton:textField];
+    
+    return YES;
+}
 
 //text view delegate to enable/disable the clear button
 -(void)textViewDidChange:(UITextView *)textView {
    
-
+    NSLog(@"textViewDidChange YES");
     BOOL isEnabled = [self.navigationItem.rightBarButtonItem isEnabled];
     NSInteger lengthBody = textView.text.length;
     
@@ -861,20 +926,27 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
     NSMutableArray *nameOfContacts;
     
-    NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate: [NSDate date]];
+    NSDate *today = [NSDate date];
+    //today date components
+    NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate: today];
+    
+    NSDate *tomorrow = [NSDate dateWithTimeInterval:(24*60*60) sinceDate: today];
+    //tomorrow date components
+    NSDateComponents *componentsTomorrow = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate: tomorrow];
     
     NSLog(@"num of database contacts %ld",(unsigned long) databaseRecords.count);
         for(ContactDataModel *contact in databaseRecords) {
        
             NSLog(@"readed model name: %@",contact.name);
             NSLog(@"readed model lastname: %@",contact.lastname);
-            NSLog(@"readed model email: %@",contact.email);
-            NSLog(@"readed model phone: %@",contact.phone);
+            //NSLog(@"readed model email: %@",contact.email);
+            //NSLog(@"readed model phone: %@",contact.phone);
             
             NSString *name = contact.name;
             NSString *email = contact.email;
             NSString *phone =  contact.phone;
             NSString *lastname = contact.lastname;
+            //NSDate *birthday = contact.birthday;
             
             BOOL exists = false;
             
@@ -918,27 +990,31 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                 c.phone = contact.phone;
                 c.email = contact.email;
                 c.lastName = contact.lastname;
-                
-               
-                NSDate *data = contact.birthday;
-                if(data!=nil) {
+                c.birthday = contact.birthday;
+                if(c.birthday!=nil) {
                     
-                    
-                    NSDateComponents *componentsContact = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:data];
+                    NSDateComponents *componentsContact = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:c.birthday];
                     //we have a birthday
                     if(components.day == componentsContact.day && components.month == componentsContact.month) {
                         //TODO also send the email or other field... ate the end we need to prefill the message and pre-select the recipient
                         //so we need to clearly identify it
                         
-                        if(nameOfContacts == nil) {
-                            nameOfContacts = [[NSMutableArray alloc] init];
-                        }
-                        [nameOfContacts addObject:name];
+                        [self scheduleNotification:@"birthday" nameOfContact:name month:components.month day:components.day fireDelayInSeconds:60];
+                    }
+                    //we have a birthday tomorrow
+                    else if(componentsTomorrow.day == componentsContact.day && componentsTomorrow.month == componentsContact.month) {
+                        
+                        //TODO also send the email or other field... ate the end we need to prefill the message and pre-select the recipient
+                        //so we need to clearly identify it
+                        
+                        
+                        [self scheduleNotification: @"birthday" nameOfContact: name month: componentsTomorrow.month day: componentsTomorrow.day fireDelayInSeconds:(24*60*60)];
+                        
                     }
                     
                 }
                 
-                NSLog(@"adding this contact: %@",c.name);
+                NSLog(@"adding this contact: %@ %@",c.name, c.lastName);
                 [records addObject:c];
             }
             
@@ -947,10 +1023,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             
         }
     
-    if(nameOfContacts != nil) {
-        [self scheduleNotification:@"birthday" nameOfContacts:nameOfContacts month:components.month day:components.day];
-    }
-    
+
     return records;
     
 }
@@ -1011,7 +1084,15 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     NSLog(@"START IMPORT");
     
     //get current date
-    NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[NSDate date]];
+    
+    NSDate * today = [NSDate date];
+    
+    NSDate *tomorrow = [NSDate dateWithTimeInterval:(24*60*60) sinceDate: today];
+    
+    //today date components
+    NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:today];
+    //tomorrow date components
+    NSDateComponents *componentsTomorrow = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate: tomorrow];
     
     NSMutableArray *contacts = [[NSMutableArray alloc] init];
     
@@ -1040,15 +1121,24 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                 contact.birthday = data;
                 
                 NSDateComponents *componentsContact = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:data];
-                //we have a birthday
+                //we have a birthday today
                 if(components.day == componentsContact.day && components.month == componentsContact.month) {
                     //TODO also send the email or other field... ate the end we need to prefill the message and pre-select the recipient
                     //so we need to clearly identify it
                     
-                    if(nameOfContacts == nil) {
-                       nameOfContacts = [[NSMutableArray alloc] init];
-                    }
-                    [nameOfContacts addObject:name];
+                    
+                    [self scheduleNotification: @"birthday" nameOfContact: name month: components.month day: components.day fireDelayInSeconds:60];
+                    
+                }
+                //we have a birthday tomorrow
+                else if(componentsTomorrow.day == componentsContact.day && componentsTomorrow.month == componentsContact.month) {
+                    
+                    //TODO also send the email or other field... ate the end we need to prefill the message and pre-select the recipient
+                    //so we need to clearly identify it
+                    
+                    
+                    [self scheduleNotification: @"birthday" nameOfContact: name month: componentsTomorrow.month day: componentsTomorrow.day fireDelayInSeconds:(24*60*60)];
+                    
                 }
                 
             }
@@ -1144,9 +1234,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     }
     
     NSLog(@"DONE IMPORT");
-    if(nameOfContacts != nil) {
-        [self scheduleNotification: @"birthday" nameOfContacts: nameOfContacts month: components.month day: components.day];
-    }
+    
     
    return contacts;
     
@@ -1360,10 +1448,17 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 
 //will send the message to facebook
 - (void)sendToFacebook:(NSString *)message {
-    
+    //TODO show a toast saying that we copied the content to clipboard
     FBSDKShareLinkContent *content = [[FBSDKShareLinkContent alloc] init];
     content.contentURL = [NSURL URLWithString:@"https://itunes.apple.com/ca/app/easymessage/id668776671?mt=8"];
     content.quote = message;
+    
+    UIPasteboard *pb = [UIPasteboard generalPasteboard];
+    [pb setString:message];
+    
+    [[[[iToast makeText:@"message copied to clipboard"]
+       setGravity:iToastGravityBottom] setDuration:1000] show];
+    
     //if(image!=nil && imageName!=nil) {
     //}
     [FBSDKShareDialog showFromViewController:self
@@ -2110,6 +2205,10 @@ void addressBookChanged(ABAddressBookRef reference,
 
 - (IBAction)switchSaveMessageValueChanged:(id)sender {
     saveMessage = saveMessageSwitch.on ? YES : NO;
+    if(saveMessage == YES) {
+        [[[[iToast makeText:NSLocalizedString(@"save_archive_explain", @"save_archive_explain")]
+           setGravity:iToastGravityBottom] setDuration:2000] show];
+    }
 }
 
 //Get data

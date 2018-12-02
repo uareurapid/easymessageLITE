@@ -10,7 +10,7 @@
 "subject_label" = "제목 :";
 "message_label" = "메시지 :";
 "placeholder_your_message" = "귀하의 메시지";
-"placeholder_subject" = "제목";
+"placeholder_subject" = " 제목";
 "send_message" = "메시지 보내기";
 "compose" = "작문하다";
 "recipients" = "받는 사람";
@@ -93,7 +93,7 @@
 "custom_msg_noworry" = "걱정하지 마십시오. 난 괜찮아";
 "custom_msg_wayhome" ="집에가는 길 이제";
 "custom_msg_arrivesoon" = "곧 도착할거야";
-"add_to_group" = "그룹을 만들";
+"create_group" = "그룹을 만들";
 "create_contact" = "연락처 만들기";
 "clear" = "비우다";
 "delete" = "지우다";
@@ -110,4 +110,13 @@
 "invalid_email" = "잘못된 이메일!";
 "attach_image" = "이미지 부착?";
 "app_name" = "EasyMessage";
+"aniversary_of" = "그것의 기념일 %@!";
+"add" = "몹시 떠들어 대다";
+"save_archive_explain" = "메시지는 나중에 재사용 할 수 있도록 보관됩니다";
+"add_to_group" = "그룹에 추가";
+"confirm_delete" = "확실해?";
+"order_by_lastname" = "성별로 주문";
+"order_by_firstname" = "이름으로 주문";
+"order_contacts" = "연락처 주문";
+"order_contacts_explanation" = "성 또는 이름으로 연락처 주문";
 

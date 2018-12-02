@@ -23,10 +23,15 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    NSLog(@"CREATE CONTACT CALLED");
     // Do any additional setup after loading the view.
     [self.btnAddContact setTitle:NSLocalizedString(@"create_contact",@"create_contact") forState:UIControlStateNormal];
     [self.btnCancel setTitle:NSLocalizedString(@"cancel",@"cancel") forState:UIControlStateNormal];
+    
+    self.btnAddContact.layer.borderWidth = 1.5f;
+    self.btnAddContact.layer.borderColor = [[UIColor grayColor] CGColor];
+    
+    self.btnCancel.layer.borderWidth = 1.5f;
+    self.btnCancel.layer.borderColor = [[UIColor grayColor] CGColor];
     
     self.txtPhone.delegate = self;
     self.txtName.delegate=self;

@@ -92,7 +92,12 @@
         BOOL hasEmail = contact.email!=nil;
         
         if(contact.name!=nil) {
-            cell.textLabel.text = contact.name;
+            if(contact.lastName!=nil) {
+                cell.textLabel.text = [NSString stringWithFormat:@"%@ %@",contact.name, contact.lastName ];//use both
+            }
+            else {
+                cell.textLabel.text = contact.name;
+            }
         }
         else if(contact.lastName!=nil) {
             cell.textLabel.text = contact.lastName;
@@ -145,15 +150,33 @@
     }
     if(root!=nil) {
         
-        [root deleteGroup:group];
         
-        [self.navigationController popToRootViewControllerAnimated:YES];
+        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"delete",@"delete")
+                                                         message:NSLocalizedString(@"confirm_delete",@"confirm_delete")
+                                                        delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
+        [alert show];
+        
+        self.root = root;
     }
     else {
        [self.navigationController popToRootViewControllerAnimated:YES]; //normal dismiss
     }
     //-[NSManagedObjectContext deleteObject:]
 }
+#pragma uialertview delegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    
+    if(buttonIndex==1 && self.root!=nil) {
+       // OK
+        [ (SelectRecipientsViewController *)self.root deleteGroup:group];
+        
+        [self.navigationController popToRootViewControllerAnimated:YES];
+    }
+    else {
+        [self.navigationController popToRootViewControllerAnimated:YES];
+    }
+}
+    
 /*
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath

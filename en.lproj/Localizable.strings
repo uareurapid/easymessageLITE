@@ -9,7 +9,7 @@
 "subject_label" = "Subject:";
 "message_label" = "Message:";
 "placeholder_your_message" = "Your Message (*)";
-"placeholder_subject" = "Subject";
+"placeholder_subject" = " Subject";
 "send_message" = "Send Message";
 "compose" = "Compose";
 "recipients" = "Recipients";
@@ -99,7 +99,7 @@
 "custom_msg_noworry" = "Don´t worry. I´m fine";
 "custom_msg_wayhome" ="On my way home now";
 "custom_msg_arrivesoon" = "I´ll arrive soon";
-"add_to_group" = "Create group";
+"create_group" = "Create group";
 "create_contact" = "Create contact";
 "clear" = "Clear";
 "delete" = "Delete";
@@ -112,5 +112,14 @@
 "invalid_email" = "Invalid email!";
 "attach_image" = "Attach an image?";
 "app_name" = "EasyMessage";
+"aniversary_of" = "It´s %@ anniversary!";
+"add" = "New";
+"save_archive_explain" = "Message will be archived for later reuse";
+"add_to_group" = "Add to group";
+"confirm_delete" = "Are you sure?";
+"order_by_lastname" = "Order by last name";
+"order_by_firstname" = "Order by first name";
+"order_contacts" = "Order contacts";
+"order_contacts_explanation" = "Order contacts by last name or first name";
 
 

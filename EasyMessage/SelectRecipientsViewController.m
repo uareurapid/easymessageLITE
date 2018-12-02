@@ -25,9 +25,9 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 @implementation SelectRecipientsViewController
 
 @synthesize contactsList,selectedContactsList,rootViewController;
-@synthesize initialSelectedContacts,contactsByLastNameInitial;
+@synthesize initialSelectedContacts,contactsByLastNameInitial; //TODO PC ORDER BY last name, first name
 @synthesize sortedKeys,groupLocked,databaseRecords;
-//@synthesize groupsList,imageLock,imageUnlock;
+@synthesize groupsNamesArray, groupsList, activityIndicator;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -54,6 +54,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 -(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil rootViewController: (PCViewController*) viewController{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if(self) {
+    
         self.contactsList = [[NSMutableArray alloc] init];
         self.groupsList = [[NSMutableArray alloc] init];
         
@@ -61,7 +62,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         self.databaseRecords = [[NSMutableArray alloc] init];
         self.rootViewController = viewController;
         
-        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"select_all.png"]
+        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"select_all",@"select_all")
                                                                        style:UIBarButtonItemStyleDone target:self action:@selector(selectAllContacts:)];
         //initWithTitle:NSLocalizedString(@"select_all",nil)
         self.navigationItem.leftBarButtonItem = doneButton;
@@ -70,7 +71,8 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         //UIBarButtonItem *addToGroupButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"add_to_group",@"add_to_group")
                                                                       //       style:UIBarButtonItemStyleDone target:self action:@selector(addGroupClicked:)];
         //also used to create a new contact if nothing is selected
-        UIBarButtonItem *addToGroupButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"add_contact.png"] style:UIBarButtonItemStyleDone target:self action:@selector(addGroupClicked:)];
+        UIBarButtonItem *addToGroupButton = [[UIBarButtonItem alloc] initWithTitle: NSLocalizedString(@"new_contact",@"new_contact") style:UIBarButtonItemStyleDone target:self action:@selector(addGroupClicked:)];
+        //[addToGroupButton setTintColor:[UIColor redColor]];
     
     //initWithTitle:NSLocalizedString(@"new_contact",@"new_contact")
       //                                                                       style:UIBarButtonItemStyleDone target:self action:@selector(addGroupClicked:)];
@@ -134,6 +136,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if(self) {
         self.contactsList = [[NSMutableArray alloc] initWithArray:contacts];
+        self.groupsList = [[NSMutableArray alloc] init];
         self.selectedContactsList = [[NSMutableArray alloc] init];
         self.rootViewController = viewController;
         
@@ -171,6 +174,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if(self) {
         self.contactsList = [[NSMutableArray alloc] initWithArray:contacts];
+        self.groupsList = [[NSMutableArray alloc] init];
         self.selectedContactsList = [[NSMutableArray alloc] initWithArray:selectedRecipients];
         self.rootViewController = viewController;
         
@@ -205,6 +209,35 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     return self;
 }
 
+//add the existing groups to the list
+-(void) checkForExistingGroups {
+    
+    if(self.groupsNamesArray == nil) {
+        self.groupsNamesArray = [[NSMutableArray alloc] init];
+    }
+    
+    for(id contact in contactsList) {
+        if([contact isKindOfClass:Group.class]) {
+            Group *gr = (Group *)contact;
+            
+            if(![self.groupsNamesArray containsObject:gr.name]) {
+                [self.groupsList addObject:gr];
+                [self.groupsNamesArray addObject:gr.name];
+            }
+        }
+    }
+    NSLog(@"NUM GROUPS %lu", (unsigned long)self.groupsList.count);
+}
+
+//get group by name
+-(Group*) getGroupByName: (NSString *) name {
+    for(Group *g in groupsList) {
+        if([g.name isEqualToString:name]) {
+            return g;
+        }
+    }
+    return nil;
+}
 #pragma mark Content Filtering
 -(void)filterContentForSearchText:(NSString*)searchText scope:(NSString*)scope {
     
@@ -272,7 +305,10 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 
 -(IBAction)refreshPhonebook:(id)sender {
     contactsByLastNameInitial = [self loadInitialNamesDictionary];
-    NSLog(@"numer of contacts in list: %lu", (unsigned long)self.contactsList.count);
+    NSLog(@"number of contacts in list: %lu", (unsigned long)self.contactsList.count);
+    
+    [self checkForExistingGroups];
+    
     dispatch_async(dispatch_get_main_queue(), ^(){
         [self.tableView reloadData];
     });
@@ -286,7 +322,12 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
     self.sortedKeys = [[NSMutableArray alloc] init];
     
-    
+    //either by first bname or last name
+    NSString *selectedOrderBySaved = [[NSUserDefaults standardUserDefaults] objectForKey:SETTINGS_PREF_ORDER_BY_KEY];
+    NSLog(@"SORT BY: %@",selectedOrderBySaved);
+    if(selectedOrderBySaved == nil) {
+        selectedOrderBySaved = OPTION_ORDER_BY_LASTNAME_KEY;
+    }
     for(Contact *contact in contactsList) {
         
         NSString *initial;
@@ -295,18 +336,38 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
             initial = [[contact.name substringToIndex:1] uppercaseString];
         }
         else {
-            if(contact.lastName!=nil && contact.lastName.length>0) {
-                initial = [[contact.lastName substringToIndex:1] uppercaseString];
+            
+            if([selectedOrderBySaved isEqualToString:OPTION_ORDER_BY_LASTNAME_KEY]) {
+                //default, sort by last name
+                if(contact.lastName!=nil && contact.lastName.length>0) {
+                    initial = [[contact.lastName substringToIndex:1] uppercaseString];
+                }
+                else if(contact.name!=nil && contact.name.length>0) {
+                    initial = [[contact.name substringToIndex:1] uppercaseString];
+                }
+                else if(contact.email!=nil && contact.email.length>0) {
+                    initial = [[contact.email substringToIndex:1] uppercaseString];
+                }
+                else if(contact.phone!=nil && contact.phone.length>0) {
+                    initial = [[contact.phone substringToIndex:1] uppercaseString];
+                }
             }
-            else if(contact.name!=nil && contact.name.length>0) {
-                initial = [[contact.name substringToIndex:1] uppercaseString];
+            else {
+             //sort by first name
+                if(contact.name!=nil && contact.name.length>0) {
+                    initial = [[contact.name substringToIndex:1] uppercaseString];
+                }
+                else if(contact.lastName!=nil && contact.lastName.length>0) {
+                    initial = [[contact.lastName substringToIndex:1] uppercaseString];
+                }
+                else if(contact.email!=nil && contact.email.length>0) {
+                    initial = [[contact.email substringToIndex:1] uppercaseString];
+                }
+                else if(contact.phone!=nil && contact.phone.length>0) {
+                    initial = [[contact.phone substringToIndex:1] uppercaseString];
+                }
             }
-            else if(contact.email!=nil && contact.email.length>0) {
-                initial = [[contact.email substringToIndex:1] uppercaseString];
-            }
-            else if(contact.phone!=nil && contact.phone.length>0) {
-                initial = [[contact.phone substringToIndex:1] uppercaseString];
-            }
+            
         }
         
         
@@ -339,9 +400,15 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     return dic;
 }
 
+#pragma PICKER VIEW DELEGATE
+
+//TODO PC https://naveenios.wordpress.com/2015/11/26/pickerview-using-uialertcontroller/
+
+#pragma END PICKER VIEW DELEGATE
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     
     self.tableView.sectionHeaderHeight = 2.0;
     self.tableView.sectionFooterHeight = 2.0;
@@ -512,15 +579,21 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     //if we have all selected, remove selection
     if(selectedContactsList.count > 0) {
         
+        [activityIndicator startAnimating];
+        
+        rootViewController.recipientsLabel.text = @"";
         [selectedContactsList removeAllObjects];
+        
+        [activityIndicator stopAnimating];
+        
         dispatch_async(dispatch_get_main_queue(), ^{
             
-            self.navigationItem.leftBarButtonItem.image = [UIImage imageNamed:@"select_all.png"];
+            self.navigationItem.leftBarButtonItem.title = NSLocalizedString(@"select_all",@"select_all");
            //self.navigationItem.leftBarButtonItem.title = NSLocalizedString(@"select_all", @"seleccionar tudo");
             //[self.navigationItem.rightBarButtonItem setEnabled:NO];
             //can add a contact
             //self.navigationItem.rightBarButtonItem.title = NSLocalizedString(@"new_contact", @"new_contact");
-            self.navigationItem.rightBarButtonItem.image = [UIImage imageNamed:@"add_contact.png"];
+            self.navigationItem.rightBarButtonItem.title = NSLocalizedString(@"new_contact",@"new_contact");
             
             self.groupLocked = true;
 
@@ -529,6 +602,8 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         
     }
     else {
+        
+        [activityIndicator startAnimating];
         
         for (NSInteger s = 0; s < self.tableView.numberOfSections; s++) {
             for (NSInteger r = 0; r < [self.tableView numberOfRowsInSection:s]; r++) {
@@ -551,13 +626,19 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
                 
             }
         }
+        
+        [activityIndicator stopAnimating];
+        
+        NSString *msg = [NSString stringWithFormat: NSLocalizedString(@"selected_%@_recipients", @"num of recipients"),@(selectedContactsList.count)];
+        [[[[iToast makeText:msg]
+           setGravity:iToastGravityBottom] setDuration:1000] show];
+        rootViewController.recipientsLabel.text = msg;
        
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.navigationItem.leftBarButtonItem.image = [UIImage imageNamed:@"remove_selection.png"];
+            self.navigationItem.leftBarButtonItem.title = NSLocalizedString(@"unselect_all",@"unselect_all");
             //title = NSLocalizedString(@"unselect_all", @"remover selecção");
             //can add them to the group
-            self.navigationItem.rightBarButtonItem.image = [UIImage imageNamed:@"add_group.png"];
-            //.title = NSLocalizedString(@"add_to_group", @"add_to_group");
+            self.navigationItem.rightBarButtonItem.title = NSLocalizedString(@"create_group", @"create_group");
             self.groupLocked = false;
         });
         
@@ -581,7 +662,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     if(selectedContactsList.count>1) {
         //can add a new group
         groupLocked = false;
-        [self.navigationItem.rightBarButtonItem setTitle:NSLocalizedString(@"add_to_group",@"add_to_group")];
+        [self.navigationItem.rightBarButtonItem setTitle:NSLocalizedString(@"create_group",@"create_group")];
     }
     else {
         //cannot add a group only a contact
@@ -647,27 +728,33 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     else {
         [self.selectedContactsList removeAllObjects];
     }
-    
     for(Contact *contact in self.contactsList) {
         if(contact.birthday !=nil) {
             NSDate *data = contact.birthday;
             NSDateComponents *componentsContact = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate: data];
+            
+            NSLog(@"USER: %@ --> comparing day %ld with calendar day %ld and month %ld with contact month %ld",contact.name,day, componentsContact.day,month,componentsContact.month);
             if(day == componentsContact.day && month == componentsContact.month) {
                 //this is one of the targets
+                NSLog(@"adding %@ to the list",contact.name);
                 [self.selectedContactsList addObject:contact];
             }
         }
     }
     
+    NSString *msg = [NSString stringWithFormat: NSLocalizedString(@"selected_%@_recipients", @"num of recipients"),@(selectedContactsList.count)];
+    
     if(selectedContactsList.count > 0 ) {
         
-        NSString *msg = [NSString stringWithFormat: NSLocalizedString(@"selected_%@_recipients", @"num of recipients"),@(selectedContactsList.count)];
+        
         [[[[iToast makeText:msg]
            setGravity:iToastGravityBottom] setDuration:2000] show];
         
         [rootViewController.selectedRecipientsList removeAllObjects];
         [rootViewController.selectedRecipientsList addObjectsFromArray:selectedContactsList];
     }
+    
+    rootViewController.recipientsLabel.text = msg;
 }
 
 #pragma groups stuff
@@ -764,19 +851,35 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         Group *thisOne = (Group *) contact;
         cell.detailTextLabel.text = [NSString stringWithFormat: @"Group (%lu members)",(unsigned long)thisOne.contactsList.count ];
         isGroup = YES;
-        cell.textLabel.text = contact.name;  
+        cell.textLabel.text = contact.name;
+        cell.textLabel.font = [UIFont boldSystemFontOfSize:(16.0)];
     }
     else {
         
         if(contact.name!=nil) {
             cell.textLabel.text = contact.name;
             if(contact.lastName!=nil) {//append also last name
+                
+                //get the selected options for order by
+                /*NSString *selectedOrderBySaved = [[NSUserDefaults standardUserDefaults] objectForKey:SETTINGS_PREF_ORDER_BY_KEY];
+                NSLog(@"CELL SORT BY: %@",selectedOrderBySaved);
+                if(selectedOrderBySaved == nil) {
+                    selectedOrderBySaved = OPTION_ORDER_BY_LASTNAME_KEY;
+                }*/
+                
+                
                 //check if last name is already include in name
                 NSRange range = [contact.name rangeOfString:contact.lastName
                                             options:NSCaseInsensitiveSearch];
                 if (range.length == 0) { //if the substring did not match
                     //append also lastname
-                    cell.textLabel.text = [NSString stringWithFormat:@"%@ %@",cell.textLabel.text,contact.lastName];
+                    //if([selectedOrderBySaved isEqualToString: OPTION_ORDER_BY_LASTNAME_KEY]) {
+                    //   cell.textLabel.text = [NSString stringWithFormat:@"%@ %@",contact.lastName, contact.name];
+                    //}
+                    //else {
+                       cell.textLabel.text = [NSString stringWithFormat:@"%@ %@",contact.name,contact.lastName];
+                    //}
+                    
                 }
                 
                 
@@ -950,32 +1053,42 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     
     if(selectedContactsList.count>0) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.navigationItem.leftBarButtonItem.image = [UIImage imageNamed:@"remove_selection.png"];
+            self.navigationItem.leftBarButtonItem.title = NSLocalizedString(@"unselect_all",@"unselect_all");
             //NSLocalizedString(@"unselect_all", @"remover selecção");
             
             if(selectedContactsList.count>1) {
                 self.groupLocked = false;
-                self.navigationItem.rightBarButtonItem.image = [UIImage imageNamed:@"add_group.png"];
+                self.navigationItem.rightBarButtonItem.title  = NSLocalizedString(@"new_group",@"new_group");
             }
             else {
                 //only 1 selected, cannot create a group
+                //TODO PC if i have groups show the option to add to an existing group
                 self.groupLocked = true;
-                self.navigationItem.rightBarButtonItem.image = [UIImage imageNamed:@"add_contact.png"];
+                
+                if(self.groupsList.count > 0) {
+                    self.navigationItem.rightBarButtonItem.title  = NSLocalizedString(@"add_to_group",@"add_to_group");
+                }
+        
+                //self.navigationItem.rightBarButtonItem.title = NSLocalizedString(@"new_contact",@"new_contact");
             }
             
         });
         
-        [[[[iToast makeText:[NSString stringWithFormat: NSLocalizedString(@"selected_%@_recipients", @"num of recipients"),@(selectedContactsList.count)]]
+        NSString *msg = [NSString stringWithFormat: NSLocalizedString(@"selected_%@_recipients", @"num of recipients"),@(selectedContactsList.count)];
+        [[[[iToast makeText:msg]
            setGravity:iToastGravityBottom] setDuration:1000] show];
+        
+         rootViewController.recipientsLabel.text = msg;
         
     }
     else {
+         rootViewController.recipientsLabel.text = @"";
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.navigationItem.leftBarButtonItem.image = [UIImage imageNamed:@"select_all.png"];
+            self.navigationItem.leftBarButtonItem.title = NSLocalizedString(@"select_all",@"select_all");
             //NSLocalizedString(@"select_all", @"seleccionar tudo");
             
             self.groupLocked = true;
-            self.navigationItem.rightBarButtonItem.image = [UIImage imageNamed:@"add_contact.png"];
+            self.navigationItem.rightBarButtonItem.title = NSLocalizedString(@"new_contact",@"new_contact");;
             //NSLocalizedString(@"new_contact", @"new_contact");
             
         });
@@ -1047,14 +1160,148 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     }
     return @"";//
 }
+//TODO PC fetch the group model, the contact model and chage on CORE DATA + reflect changes on local lists
+-(void) addContactToGroup: (NSString *) groupName contact: (Contact *) contact {
+    
+    //NSLog(@"addContactToGroup..... %@ : %@", groupName, contact.name);
+    
+    NSManagedObjectContext *managedObjectContext = [(PCAppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    [request setEntity:[NSEntityDescription entityForName:@"GroupDataModel" inManagedObjectContext:managedObjectContext]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name == %@", groupName];
+    [request setPredicate:predicate];
+    NSError *error = nil;
+    NSArray *results = [managedObjectContext executeFetchRequest:request error:&error];
+    
+    //The array results contains all the managed objects contained within the sqlite file. If you want to grab a specific object (or more objects) you need to use a predicate with that request. For example:
+    
+    //NSPredicate *predicate = [NSPredicate predicateWithFormat:@"title == %@", @"Some Title"];
+    //[request setPredicate:predicate];
+    
+    if(results.count > 0) {
+        //
+        for(GroupDataModel *groupModel in results) {
+            if([groupModel.name isEqualToString:groupName]) {
+                //OK found the group
+                NSLog(@"OK FOUND THE GROUP");
+                //find the equivalent group, on local group list
+                Group *group = [self getGroupByName:groupName];
+                if(group !=nil) {
+                    for( Contact *c in [group contactsList]) {
+                        //contact already exists on group
+                        if([c isEqual:contact]) {
+                            NSLog(@"ignore contact exists");
+                            [[[[iToast makeText:NSLocalizedString(@"contact_already_exists",@"contact_already_exists")]
+                               setGravity:iToastGravityBottom] setDuration:2000] show];
+                            return;
+                        }
+                    }
+                }
 
+                //------------------
+                // get all the contacts by this name and find the best match
+                NSMutableArray *array = [CoreDataUtils fetchAllContactsDataModelByName: contact.name];
+                NSLog(@"FETCH RESULTS FOR NAME %@",contact.name);
+                if(array !=nil) {
+                    NSLog(@"GOT CONTACTS RESULTS COUNT %lu ",(unsigned long)array.count);
+                    ContactDataModel *contactModel = nil;
+                    if(array.count == 1) {
+                        contactModel = [array objectAtIndex:0];
+                    }
+                    else {
+                        for(ContactDataModel *res in array) {
+                            if(res.lastname !=nil && contact.lastName!=nil && [res.lastname isEqualToString:contact.lastName]) {
+                                contactModel = res;
+                                break;
+                            }
+                            else if(res.email !=nil && contact.email!=nil && [res.email isEqualToString:contact.email]) {
+                                contactModel = res;
+                                break;
+                            }
+                            else if(res.phone !=nil && contact.phone!=nil && [res.phone isEqualToString:contact.phone]) {
+                                contactModel = res;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    //TODO PC ContactDataModel *contactModel = [self prepareModelFromContact: managedObjectContext :contact];
+                    //check again, if the contact is not on CORE DDATA it return nothing (need to create the core data model but then it
+                    //gets duplicated, how to fix??
+                    //DUPLICATE ON CORE DATA and hide it from the list if already exists
+                    if(contactModel !=nil) {
+                        NSLog(@"GOT CONTACT MATCH %@ ",contactModel.name);
+                        //add the contact to the group
+                        [groupModel addContactsObject:contactModel];
+                        //assign the group to teh contact to the
+                        [contactModel addGroupObject:groupModel];
+                        
+                        // not needed [group.contactsList addObject:contact];
+                        
+                        BOOL OK = NO;
+                        NSError *error;
+                        
+                        if(![managedObjectContext save:&error]){
+                            NSLog(@"Unable to save object, error is: %@",error.description);
+                            //This is a serious error saying the record
+                            //could not be saved. Advise the user to
+                            //try again or restart the application.
+                        }
+                        else {
+                            OK = YES;
+                            [[[[iToast makeText:NSLocalizedString(@"added",@"added")]
+                               setGravity:iToastGravityBottom] setDuration:2000] show];
+                        }
+                        
+                        if(OK) {
+                            
+                            //if just added a group i clear the selection
+                            [selectedContactsList removeAllObjects];
+                            
+                            for(Contact *cont in contactsList) {
+                                if([contact isKindOfClass:Group.class] && [cont.name isEqualToString: groupName]) {
+                                    Group *gr = (Group *) contact;
+                                    [gr.contactsList addObject:contact];
+                                }
+                            }
+                            for(Group *group in groupsList) {
+                                if([group.name isEqualToString:groupName]) {
+                                    [group.contactsList addObject:contact];
+                                }
+                            }
+                            //refresh the view
+                            [self refreshPhonebook:nil];
+                            //will also add to the list of groups
+                            return;
+                        }
+                        //------------------
+                    }else NSLog(@"IS NULLLLLL");
+                }else NSLog(@"ARRY IS NILLLLLL");
+                
+            }
+        }
+            
+    }
+    
+}
 //show the input new group dialog
 - (IBAction)addGroupClicked:(id)sender{
-    
+
     UIAlertView * alert;
     //adding a contact
     if(self.groupLocked) {
-        [self showAddContactController];
+        if(self.selectedContactsList.count == 1) {
+            [PickerView showPickerWithOptions:self.groupsNamesArray title:@"Select a group" selectionBlock:^(NSString *selectedOption) {
+                    //TODO
+                    Contact *c = [self.selectedContactsList objectAtIndex:0];
+                    [self addContactToGroup: selectedOption contact:c];
+                }];
+            
+            
+        }
+        else {
+            [self showAddContactController];
+        }
     }
     else {
         //adding a group allowed
@@ -1115,6 +1362,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         
         for(Contact *selected in selectedContactsList) {
             
+            //add group to group
             if([selected isKindOfClass:Group.class]) {
                 
                 //cast contact to group
@@ -1134,7 +1382,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
                 
             }
             else {
-                //single contact
+                //add single contact to group
                 ContactDataModel *contactModel = [self prepareModelFromContact: managedObjectContext :selected];
                 
                 [groupModel addContactsObject:contactModel];
@@ -1167,9 +1415,8 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
             [selectedContactsList removeAllObjects];
             //refresh the view
             [self refreshPhonebook:nil];
-            
-            
-            
+            //will also add to the list of groups
+    
         }
     //}
     //else {

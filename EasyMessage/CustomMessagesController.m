@@ -38,12 +38,11 @@
         
         //self.addNewMessage = YES;
         
-        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"add.png"]
-                                                                       style:UIBarButtonItemStyleDone target:self action:@selector(selectFinished:)];
+        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"add",@"add") style:UIBarButtonItemStyleDone target:self action:@selector(selectFinished:)];
         //unlock = [UIImage imageNamed:@"Unlock32"];
         //lock = [UIImage imageNamed:@"Lock32"];
         
-        UIBarButtonItem *deleteButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"delete.png"] style:UIBarButtonItemStyleDone target:self action:@selector(deleteMessageClicked:)];
+        UIBarButtonItem *deleteButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Delete" style:UIBarButtonItemStyleDone target:self action:@selector(deleteMessageClicked:)];
       
         [doneButton setEnabled:YES];
         [deleteButtonItem setEnabled:NO];
@@ -149,34 +148,19 @@
 
 -(IBAction)deleteMessageClicked:(id)sender {
     
+    UIAlertView * alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"delete",@"delete")
+                                                     message:NSLocalizedString(@"confirm_delete",@"confirm_delete")
+                                                    delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
+    alert.tag = 999;
+    [alert show];
     
-    NSString *msg = [self getSelectedMessageIfAny];
-    if(msg!=nil) {
-        
-        [messagesList removeObject:msg];
-        
-        BOOL deleted = [CoreDataUtils deleteMessageDataModelByMsg:msg];
-        if(deleted) {
-            
-            //clear stuff
-            selectedMessage = nil;
-            selectedMessageIndex = -1;
-            self.rootViewController.body.text = @"";
-            
-            [self.tableView reloadData];
-            [self.navigationItem.leftBarButtonItem setEnabled:NO];
-            
-            [[[[iToast makeText:NSLocalizedString(@"deleted", @"deleted")]
-               setGravity:iToastGravityBottom] setDuration:2000] show];
-
-        }
-    }
 }
 
 //returns the selected message
 -(NSString * ) getSelectedMessageIfAny {
     if(selectedMessageIndex>-1 && selectedMessage!=nil && selectedMessageIndex < messagesList.count) {
-        return [messagesList objectAtIndex:selectedMessageIndex];
+        selectedMessage = [messagesList objectAtIndex:selectedMessageIndex];
+        return selectedMessage; // [messagesList objectAtIndex:selectedMessageIndex];
     }
     else {
      return nil;
@@ -234,8 +218,32 @@
     // Dispose of any resources that can be recreated.
 }
 
+-(void) deleteSelectedMessage {
+    NSString *msg = [self getSelectedMessageIfAny];
+    if(msg!=nil) {
+        
+        [messagesList removeObject:msg];
+        
+        BOOL deleted = [CoreDataUtils deleteMessageDataModelByMsg:msg];
+        if(deleted) {
+            
+            //clear stuff
+            selectedMessage = nil;
+            selectedMessageIndex = -1;
+            self.rootViewController.body.text = @"";
+            
+            [self.tableView reloadData];
+            [self.navigationItem.leftBarButtonItem setEnabled:NO];
+            
+            [[[[iToast makeText:NSLocalizedString(@"deleted", @"deleted")]
+               setGravity:iToastGravityBottom] setDuration:2000] show];
+            
+        }
+    }
+}
 -(void) createNewMessage {
-   UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"EasyMessage" message:NSLocalizedString(@"message_label",@"message_label") delegate:self cancelButtonTitle:NSLocalizedString(@"cancel",@"cancel") otherButtonTitles:NSLocalizedString(@"save",@"save"),nil];
+    //NSLocalizedString(@"message_label",@"message_label")
+   UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"compose",@"compose") message:@"" delegate:self cancelButtonTitle:NSLocalizedString(@"cancel",@"cancel") otherButtonTitles:NSLocalizedString(@"save",@"save"),nil];
     alert.alertViewStyle = UIAlertViewStylePlainTextInput;
     
     [alert show];
@@ -244,8 +252,13 @@
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     
     if(buttonIndex==1) { //0 - cancel, 1 - save
-      //TODO save message on database!
-        
+      
+        //delete message
+        if(alertView.tag == 999) {
+            [self deleteSelectedMessage];
+            return;
+        }
+        //else save message on database!
         NSString *message = [alertView textFieldAtIndex:0].text;
         NSLog(@"message is %@",message);
         if(message.length==0) {
@@ -354,10 +367,11 @@
     if(row==selectedMessageIndex) {
         selectedMessageIndex = -1;
         selectedMessage = nil;
+        [self clearRootMessageText];
         //Nothing selected
         
         [self.navigationItem.rightBarButtonItem setEnabled:YES];//no save
-        [self.navigationItem.rightBarButtonItem setTitle:@"Add"];//no save
+        [self.navigationItem.rightBarButtonItem setTitle:NSLocalizedString(@"add",@"add") ];//no save
         self.addNewMessage = YES;
         [self.navigationItem.leftBarButtonItem setEnabled:NO];//no delete
         //NOTE if the item is not purchased selection is not even possible
@@ -367,7 +381,7 @@
         selectedMessage = [messagesList objectAtIndex:selectedMessageIndex];
         [self.navigationItem.rightBarButtonItem setEnabled:YES];//can save
         self.addNewMessage = NO;
-        [self.navigationItem.rightBarButtonItem setTitle:NSLocalizedString(@"done_button", nil)];//can save
+        [self.navigationItem.rightBarButtonItem setTitle:NSLocalizedString(@"done_button", @"done_button")];//can save
         
         [self.navigationItem.leftBarButtonItem setEnabled:YES];//can delete
         
@@ -377,15 +391,16 @@
         else {
             [self.navigationItem.leftBarButtonItem setEnabled:YES];//no delete
         }
-        
+        //write the message on the main screen without apply
+        [self selectionFinishWithoutNavigation];
     }
     
     dispatch_async(dispatch_get_main_queue(), ^{
         if(self.addNewMessage){
-            [self.navigationItem.rightBarButtonItem setImage:[UIImage imageNamed:@"add.png"]];
+            [self.navigationItem.rightBarButtonItem setTitle:NSLocalizedString(@"add", @"add")];
         }
         else{
-            [self.navigationItem.rightBarButtonItem setImage:[UIImage imageNamed:@"done.png"]];
+            [self.navigationItem.rightBarButtonItem setTitle:NSLocalizedString(@"done_button", @"done_button")];
         }
     });
     
@@ -432,6 +447,18 @@
     }
     
     
+}
+
+-(void) clearRootMessageText{
+    if(selectedMessageIndex==-1 || selectedMessage==nil) {
+        self.rootViewController.body.text = @"";
+    }
+}
+
+-(void) selectionFinishWithoutNavigation{
+    if(selectedMessageIndex!=-1 && selectedMessage!=nil) {
+       self.rootViewController.body.text = selectedMessage;
+    }
 }
 
 @end

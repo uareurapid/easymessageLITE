@@ -6,7 +6,7 @@
 "subject_label" = "主题：";
 "message_label" = "消息：";
 "placeholder_your_message" = "您的留言（*）";
-"placeholder_subject" = "主题";
+"placeholder_subject" = " 主题";
 "send_message" = "送信";
 "compose" = "构成";
 "recipients" = "收件人";
@@ -89,7 +89,7 @@
 "custom_msg_noworry" = "不要担心。我没事";
 "custom_msg_wayhome" ="现在在回家的路上";
 "custom_msg_arrivesoon" = "我会到来";
-"add_to_group" = "创建组";
+"create_group" = "创建组";
 "create_contact" = "创建联系人";
 "clear" = "清洗";
 "delete" = "删除";
@@ -106,3 +106,13 @@
 "invalid_email" = "不合规电邮!";
 "attach_image" = "附上图像?";
 "app_name" = "轻松群发短信";
+"aniversary_of" = "这是周年纪念日 %@!";
+"add" = "加";
+"save_archive_explain" = "消息将被存档以供以后重用";
+"add_to_group" = "添加到组";
+"confirm_delete" = "你确定吗";
+"order_by_lastname" = "按姓氏排序";
+"order_by_firstname" = "按名字排序";
+"order_contacts" = "订购联系人";
+"order_contacts_explanation" = "按姓氏或名字订购联系人";
+
