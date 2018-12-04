@@ -178,15 +178,23 @@
 
 #pragma mark -
 
-+ (void)showPickerWithOptions:(NSArray *)options selectionBlock:(void (^)(NSString *selectedOption))block  {
-    [[self class] showPickerWithOptions:options title:nil selectionBlock:block];
++ (void)showPickerWithOptions:(NSArray *)options sender:(UIBarButtonItem *) senderButton selectionBlock:(void (^)(NSString *selectedOption))block  {
+    [[self class] showPickerWithOptions:options sender: senderButton title:nil selectionBlock:block];
 }
 
-+ (void)showPickerWithOptions:(NSArray *)options title:(NSString *)title selectionBlock:(void (^)(NSString *selectedOption))block  {
++ (void)showPickerWithOptions:(NSArray *)options sender:(UIBarButtonItem *) senderButton title:(NSString *)title selectionBlock:(void (^)(NSString *selectedOption))block  {
     PickerAlertController *alertController = [PickerAlertController alertControllerWithTitle:title message:@"\n\n\n\n\n\n\n\n\n\n\n"preferredStyle:UIAlertControllerStyleActionSheet];
     alertController.options = options;
     alertController.pickerTitle = title;
     [alertController setPickerDoneBlock:block];
+    
+    //alertController.popoverPresentationController.sourceView = [self class].view;
+    //alertController.popoverPresentationController.sourceRect = CGRectMake(self.view.bounds.midX, self.view.bounds.midY, 0, 0);
+    
+    //CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+    //alertController.popoverPresentationController.permittedArrowDirections = [[NSArray alloc] init];
+    
+    alertController.popoverPresentationController.barButtonItem = senderButton;
     
     [[[self class] presentationContorller] presentViewController:alertController animated:YES completion:nil];
 }

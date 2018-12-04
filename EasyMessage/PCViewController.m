@@ -849,7 +849,6 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         NSMutableArray *models = [self fetchLocalContactModelRecords];
         
         [recipientsController.contactsList addObjectsFromArray:models];
-        //[recipientsController.contactsList addObjectsFromArray:groupsFromAB];
         
         NSMutableArray *groupsFromDB = [self fetchGroupRecords];
         [recipientsController.contactsList addObjectsFromArray:groupsFromDB];
@@ -917,14 +916,48 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
 }
 
+-(BOOL) wasAlreadyAddedToList:(NSMutableArray *)existingContacts otherName:(NSString*)name otherLastName:(NSString *) lastName otherPhone:(NSString*) phone otherEmail:(NSString*) email {
+    
+    NSLog(@"existing contacts size: %ld", existingContacts.count);
+    BOOL exists = false;
+    for(Contact *existing in existingContacts) {
+        
+        NSLog(@"existing contact name: %@ lastname: %@", existing.name, existing.lastName);
+        if(name!=nil && existing.name!=nil) {
+            if([name isEqualToString:existing.name]) {
+                //also check last name, just the name is not enough
+                if(lastName!=nil && existing.lastName!=nil && [lastName isEqualToString:existing.lastName] ) {
+                    NSLog(@"same contact %@ %@",name, lastName);
+                    exists = true;
+                    break;
+                }
+            }
+        }
+        else if(email!=nil && existing.email!=nil) {
+            if([email isEqualToString:existing.email]) {
+                NSLog(@"same email %@",email);
+                exists = true;
+                break;
+            }
+        }
+        else if(phone!=nil && existing.phone!=nil) {
+            if([phone isEqualToString:existing.phone]) {
+                NSLog(@"same phone %@",phone);
+                exists = true;
+                break;
+            }
+        }
+        
+    }
+    return exists;
+}
 //ContactModel from the local database, not ALAAssets
 - (NSMutableArray*) fetchLocalContactModelRecords{
     
     NSMutableArray *records = [[NSMutableArray alloc] init];
     NSMutableArray *databaseRecords = [CoreDataUtils fetchContactModelRecordsFromDatabase];
+    //we already added the ones from AlaAssets here
     NSMutableArray* existingContacts = recipientsController.contactsList;
-    
-    NSMutableArray *nameOfContacts;
     
     NSDate *today = [NSDate date];
     //today date components
@@ -934,13 +967,8 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     //tomorrow date components
     NSDateComponents *componentsTomorrow = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate: tomorrow];
     
-    NSLog(@"num of database contacts %ld",(unsigned long) databaseRecords.count);
+    NSLog(@"num of core data database contacts %ld",(unsigned long) databaseRecords.count);
         for(ContactDataModel *contact in databaseRecords) {
-       
-            NSLog(@"readed model name: %@",contact.name);
-            NSLog(@"readed model lastname: %@",contact.lastname);
-            //NSLog(@"readed model email: %@",contact.email);
-            //NSLog(@"readed model phone: %@",contact.phone);
             
             NSString *name = contact.name;
             NSString *email = contact.email;
@@ -948,40 +976,17 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             NSString *lastname = contact.lastname;
             //NSDate *birthday = contact.birthday;
             
-            BOOL exists = false;
+            NSLog(@"readed model name: %@",name);
+            NSLog(@"readed model lastname: %@",lastname);
             
-            NSLog(@"existing contacts size: %ld", existingContacts.count);
-            for(Contact *existing in existingContacts) {
-                
-                if(name!=nil && existing.name!=nil) {
-                    if([name isEqualToString:existing.name]) {
-                        //also check last name, just the name is not enough
-                        if(lastname!=nil && existing.lastName!=nil && [lastname isEqualToString:existing.lastName] ) {
-                              NSLog(@"same contact %@ %@",name, lastname);
-                              exists = true;
-                              break;
-                        }
-                        
-                        //exists = true;
-                        //break;
-                    }
-                }
-                else if(email!=nil && existing.email!=nil) {
-                    if([email isEqualToString:existing.email]) {
-                        NSLog(@"same email %@",email);
-                        exists = true;
-                        break;
-                    }
-                }
-                else if(phone!=nil && existing.phone!=nil) {
-                    if([phone isEqualToString:existing.phone]) {
-                        NSLog(@"same phone %@",phone);
-                        exists = true;
-                        break;
-                    }
-                }
-                
+            BOOL exists = [self wasAlreadyAddedToList:existingContacts otherName:name otherLastName:lastname otherPhone:phone otherEmail:email];
+            NSLog(@"first pass: exists %d",exists);
+            if(!exists) {
+             //check also the other list
+                exists = [self wasAlreadyAddedToList:records otherName:name otherLastName:lastname otherPhone:phone otherEmail:email];
+                NSLog(@"second pass: exists %d so it was already added",exists);
             }
+            
             NSLog(@"it exists is? %d",exists);
             if(!exists) {
                 //avoid add repeating ones

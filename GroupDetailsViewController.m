@@ -93,9 +93,20 @@
         
         if(contact.name!=nil) {
             if(contact.lastName!=nil) {
-                cell.textLabel.text = [NSString stringWithFormat:@"%@ %@",contact.name, contact.lastName ];//use both
+                
+                NSRange range = [contact.name rangeOfString:contact.lastName
+                                                    options:NSCaseInsensitiveSearch];
+                if (range.length == 0) { //if the substring did not match
+                    //append also lastname
+                    cell.textLabel.text = [NSString stringWithFormat:@"%@ %@",contact.name, contact.lastName ];//use both
+                }
+                else {
+                    //append just the name, since the last name is already included (happens on native contacts, not core data models)
+                    cell.textLabel.text = contact.name;
+                }
             }
             else {
+                // just the name, since last name is null
                 cell.textLabel.text = contact.name;
             }
         }

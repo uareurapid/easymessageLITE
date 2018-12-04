@@ -470,6 +470,14 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         [group.contactsList removeAllObjects];
         [contactsList removeObject:group];
         
+        [groupsList removeObject:group];
+        
+        for(NSString *name in groupsNamesArray) {
+            if([name isEqualToString:group.name]) {
+                [groupsNamesArray removeObject:name];
+            }
+        }
+        
         [[[[iToast makeText:NSLocalizedString(@"deleted", @"deleted")]
            setGravity:iToastGravityBottom] setDuration:2000] show];
         
@@ -656,7 +664,6 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     initialSelectedContacts = selectedContactsList.count;
     groupLocked = false;
     
-    
     [self.navigationItem.rightBarButtonItem setEnabled:YES];
     
     if(selectedContactsList.count>1) {
@@ -673,6 +680,21 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     //from adding new contact
     if(self.reload) {
         [self refreshPhonebook:nil];
+    }
+    else {
+     //check if the setting changed or something
+        BOOL forceReload = [[NSUserDefaults standardUserDefaults] boolForKey:SETTINGS_PREF_ORDER_BY_KEY_FORCE_RELOAD];
+        if(forceReload) {
+            
+            NSString *current = [[NSUserDefaults standardUserDefaults] objectForKey:SETTINGS_PREF_ORDER_BY_KEY];
+            NSString *other = [[NSUserDefaults standardUserDefaults] objectForKey:SETTINGS_PREF_ORDER_BY_KEY_PREVIOUS_SETTINGS];
+            
+            //if they are different then force it too
+            if(current!=nil && other!=nil && ![current isEqualToString:other]){
+                //NSLog(@"different force it");
+                [self refreshPhonebook:nil];
+            }
+        }
     }
      
 }
@@ -1160,6 +1182,53 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     }
     return @"";//
 }
+
+/**
+ //add group to another group
+ if([selected isKindOfClass:Group.class]) {
+ 
+ //TODO PC CHECK
+ 
+ //cast contact to group
+ Group *theSelected = (Group *) selected;
+ 
+ 
+ //now get the real contacts on this group
+ for(Contact *contact in theSelected.contactsList) {
+ 
+ ContactDataModel *contactModelToAdd = nil;
+ bool found = false;
+ // get all the contacts by this name and find the best match
+ NSMutableArray *array = [CoreDataUtils fetchAllContactsDataModelByName: contact.name];
+ for(ContactDataModel *contactModel in array) {
+ 
+ if ([self isSameContact:contactModel contact:contact]) {
+ contactModelToAdd = contactModel;
+ //found the core data match for this selected contact in this group
+ //add to core data
+ [groupModel addContactsObject:contactModelToAdd];
+ [contactModelToAdd addGroupObject:groupModel];
+ [group.contactsList addObject:contact];
+ found = true;
+ NSLog(@"FOUND A MATCH ASSIGNING THIS ONE %@",contactModelToAdd.name);
+ break; //break the inner for loop
+ }
+ }
+ if(!found || contactModelToAdd==nil) {
+ NSLog(@"DID NOT FOUND A MATCH, creating a new contact on core data for %@",contactModelToAdd.name);
+ //not on core data, maybe internal address book one
+ contactModelToAdd = [self prepareModelFromContact: managedObjectContext :contact];
+ 
+ [groupModel addContactsObject:contactModelToAdd];
+ [contactModelToAdd addGroupObject:groupModel];
+ 
+ [group.contactsList addObject:contact];
+ }
+ 
+ }
+ 
+ }
+ */
 //TODO PC fetch the group model, the contact model and chage on CORE DATA + reflect changes on local lists
 -(void) addContactToGroup: (NSString *) groupName contact: (Contact *) contact {
     
@@ -1168,8 +1237,8 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     NSManagedObjectContext *managedObjectContext = [(PCAppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     [request setEntity:[NSEntityDescription entityForName:@"GroupDataModel" inManagedObjectContext:managedObjectContext]];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name == %@", groupName];
-    [request setPredicate:predicate];
+    //NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name == %@", groupName];
+    //[request setPredicate:predicate];
     NSError *error = nil;
     NSArray *results = [managedObjectContext executeFetchRequest:request error:&error];
     
@@ -1197,29 +1266,63 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
                         }
                     }
                 }
+                
+                if(group != nil && [contact isKindOfClass:Group.class]) {
+                    //TODO above
+                    NSLog(@"The other model to add to group %@ is another group named %@",groupName,contact.name);
+                    for(GroupDataModel *theOtherModel in results) {
+                        //also make sure we do not add to the same group
+                        NSLog(@"found group named: %@", theOtherModel.name);
+                        if([theOtherModel.name isEqualToString:contact.name]) {
+                            NSLog(@"OK, found the contact that is a group ( %@) gonna fetch all its contacts", contact.name);
+                            
+                            if(![theOtherModel.name isEqualToString:groupName]) {
+                                //found the contact group to add, add all his contacts to the groupModel
+                                NSLog(@"the other group size of contacts is: %lu", theOtherModel.contacts.count);
+                                for(ContactDataModel *cModel in theOtherModel.contacts){
+                                    NSLog(@"ADDING CONTACT %@ to group %@ ", cModel.name, groupName );
+                                    [self performContactToGroupAssignment:managedObjectContext contactModel: cModel groupModel:groupModel groupName:groupName contact: [self getContactFromContactModel:cModel]];
+                                }
+                                return;
+                            }
+                            else {
+                                NSLog(@"SKIP ADDING contacts from %@ on group %@", theOtherModel.name,groupName);
+                            }
+                            
+                           
+                        }
+                    }
+                    return;
+                }
 
                 //------------------
                 // get all the contacts by this name and find the best match
                 NSMutableArray *array = [CoreDataUtils fetchAllContactsDataModelByName: contact.name];
                 NSLog(@"FETCH RESULTS FOR NAME %@",contact.name);
+                BOOL foundMatch = false;
                 if(array !=nil) {
                     NSLog(@"GOT CONTACTS RESULTS COUNT %lu ",(unsigned long)array.count);
                     ContactDataModel *contactModel = nil;
+                    //find the correct contact and add it to the group (no need to create a new one o core data)
                     if(array.count == 1) {
                         contactModel = [array objectAtIndex:0];
+                        foundMatch = true;
                     }
                     else {
                         for(ContactDataModel *res in array) {
                             if(res.lastname !=nil && contact.lastName!=nil && [res.lastname isEqualToString:contact.lastName]) {
                                 contactModel = res;
+                                foundMatch = true;
                                 break;
                             }
                             else if(res.email !=nil && contact.email!=nil && [res.email isEqualToString:contact.email]) {
                                 contactModel = res;
+                                foundMatch = true;
                                 break;
                             }
                             else if(res.phone !=nil && contact.phone!=nil && [res.phone isEqualToString:contact.phone]) {
                                 contactModel = res;
+                                foundMatch = true;
                                 break;
                             }
                         }
@@ -1230,59 +1333,83 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
                     //gets duplicated, how to fix??
                     //DUPLICATE ON CORE DATA and hide it from the list if already exists
                     if(contactModel !=nil) {
-                        NSLog(@"GOT CONTACT MATCH %@ ",contactModel.name);
-                        //add the contact to the group
-                        [groupModel addContactsObject:contactModel];
-                        //assign the group to teh contact to the
-                        [contactModel addGroupObject:groupModel];
-                        
-                        // not needed [group.contactsList addObject:contact];
-                        
-                        BOOL OK = NO;
-                        NSError *error;
-                        
-                        if(![managedObjectContext save:&error]){
-                            NSLog(@"Unable to save object, error is: %@",error.description);
-                            //This is a serious error saying the record
-                            //could not be saved. Advise the user to
-                            //try again or restart the application.
-                        }
-                        else {
-                            OK = YES;
-                            [[[[iToast makeText:NSLocalizedString(@"added",@"added")]
-                               setGravity:iToastGravityBottom] setDuration:2000] show];
-                        }
-                        
-                        if(OK) {
-                            
-                            //if just added a group i clear the selection
-                            [selectedContactsList removeAllObjects];
-                            
-                            for(Contact *cont in contactsList) {
-                                if([contact isKindOfClass:Group.class] && [cont.name isEqualToString: groupName]) {
-                                    Group *gr = (Group *) contact;
-                                    [gr.contactsList addObject:contact];
-                                }
-                            }
-                            for(Group *group in groupsList) {
-                                if([group.name isEqualToString:groupName]) {
-                                    [group.contactsList addObject:contact];
-                                }
-                            }
-                            //refresh the view
-                            [self refreshPhonebook:nil];
-                            //will also add to the list of groups
-                            return;
-                        }
+                        [self performContactToGroupAssignment:managedObjectContext contactModel: contactModel groupModel:groupModel groupName:groupName contact:contact];
                         //------------------
-                    }else NSLog(@"IS NULLLLLL");
-                }else NSLog(@"ARRY IS NILLLLLL");
+                    }//else NSLog(@"IS NULLLLLL MAYBE IS NATIVE");
+                    else {
+                        // native contact? ok insert it anyway
+                        ContactDataModel *contactModel = [self prepareModelFromContact: managedObjectContext :contact];
+                        [self performContactToGroupAssignment:managedObjectContext contactModel:(ContactDataModel *)contactModel groupModel:groupModel groupName:groupName contact:contact];
+                    }
+                }
+                else {
+                    //no contacts on core data? insert a new one then
+                    ContactDataModel *contactModel = [self prepareModelFromContact: managedObjectContext :contact];
+                    [self performContactToGroupAssignment:managedObjectContext contactModel:(ContactDataModel *)contactModel groupModel:groupModel groupName:groupName contact:contact];
+                }
                 
             }
         }
             
     }
     
+}
+
+-(Contact *) getContactFromContactModel:(ContactDataModel *) model {
+    Contact *c = [[Contact alloc] init];
+    c.name = model.name;
+    c.lastName = model.lastname;
+    c.phone = model.phone;
+    c.email = model.email;
+    return c;
+}
+
+-(void) performContactToGroupAssignment: (NSManagedObjectContext *) managedObjectContext contactModel: (ContactDataModel *)contactModel groupModel: (GroupDataModel *) groupModel groupName:(NSString *) groupName contact: (Contact *) contact {
+    
+    NSLog(@"GOT CONTACT MATCH %@ ",contactModel.name);
+    //add the contact to the group
+    [groupModel addContactsObject:contactModel];
+    //assign the group to teh contact to the
+    [contactModel addGroupObject:groupModel];
+    
+    // not needed [group.contactsList addObject:contact];
+    
+    BOOL OK = NO;
+    NSError *error;
+    
+    if(![managedObjectContext save:&error]){
+        NSLog(@"Unable to save object, error is: %@",error.description);
+        //This is a serious error saying the record
+        //could not be saved. Advise the user to
+        //try again or restart the application.
+    }
+    else {
+        OK = YES;
+        [[[[iToast makeText:NSLocalizedString(@"added",@"added")]
+           setGravity:iToastGravityBottom] setDuration:2000] show];
+    }
+    
+    if(OK) {
+        
+        //if just added a group i clear the selection
+        [selectedContactsList removeAllObjects];
+        
+        for(Contact *cont in contactsList) {
+            if([contact isKindOfClass:Group.class] && [cont.name isEqualToString: groupName]) {
+                Group *gr = (Group *) contact;
+                [gr.contactsList addObject:contact];
+            }
+        }
+        for(Group *group in groupsList) {
+            if([group.name isEqualToString:groupName]) {
+                [group.contactsList addObject:contact];
+            }
+        }
+        //refresh the view
+        [self refreshPhonebook:nil];
+        //will also add to the list of groups
+        return;
+    }
 }
 //show the input new group dialog
 - (IBAction)addGroupClicked:(id)sender{
@@ -1291,12 +1418,24 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     //adding a contact
     if(self.groupLocked) {
         if(self.selectedContactsList.count == 1) {
-            [PickerView showPickerWithOptions:self.groupsNamesArray title:@"Select a group" selectionBlock:^(NSString *selectedOption) {
+            
+            NSMutableArray *options = [[NSMutableArray alloc] init];
+            [options addObjectsFromArray:self.groupsNamesArray];
+            Contact *c = [self.selectedContactsList objectAtIndex:0];
+            if([c isKindOfClass:Group.class]) {
+                //need to hide this name
+                NSLog(@"hide group %@ from options ", c.name);
+                [options removeObject:c.name];
+            }
+            
+            [PickerView showPickerWithOptions:options sender:sender title:@"Select a group" selectionBlock:^(NSString *selectedOption) {
                     //TODO
                     Contact *c = [self.selectedContactsList objectAtIndex:0];
                     [self addContactToGroup: selectedOption contact:c];
                 }];
-            
+            /**
+             has presented a UIAlertController (<PickerAlertController: 0x102806000>) of style UIAlertControllerStyleActionSheet from UITabBarController (<UITabBarController: 0x101809600>). The modalPresentationStyle of a UIAlertController with this style is UIModalPresentationPopover. You must provide location information for this popover through the alert controller's popoverPresentationController. You must provide either a sourceView and sourceRect or a barButtonItem.  If this information is not known when you present the alert controller, you may provide it in the UIPopoverPresentationControllerDelegate method -prepareForPopoverPresentation.'
+             */
             
         }
         else {
@@ -1346,6 +1485,19 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     
 }
 
+//check if modal and local contact are the same object
+-(BOOL) isSameContact: (ContactDataModel*) contactModel contact:(Contact*) contact {
+    if(contactModel.lastname!=nil && contact.lastName!=nil && [contactModel.lastname isEqualToString:contact.lastName]) {
+        return true;
+    }
+    else if(contactModel.email!=nil && contact.email!=nil && [contactModel.email isEqualToString:contact.email]) {
+        return true;
+    }
+    else if(contactModel.phone!=nil && contact.phone!=nil && [contactModel.phone isEqualToString:contact.phone]) {
+        return true;
+    }
+    return false;
+}
 //save the location record
 -(void)saveGroup:(NSString*)name {
     
@@ -1362,33 +1514,84 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         
         for(Contact *selected in selectedContactsList) {
             
-            //add group to group
+            //add group to another group
             if([selected isKindOfClass:Group.class]) {
+                
+                //TODO PC CHECK
                 
                 //cast contact to group
                 Group *theSelected = (Group *) selected;
                 
+                
                 //now get the real contacts on this group
                 for(Contact *contact in theSelected.contactsList) {
                     
-                    //add to core data
-                    ContactDataModel *contactModel = [self prepareModelFromContact: managedObjectContext :contact];
-                    
-                    [groupModel addContactsObject:contactModel];
-                    [contactModel addGroupObject:groupModel];
-                    
-                    [group.contactsList addObject:contact];
+                    ContactDataModel *contactModelToAdd = nil;
+                    bool found = false;
+                    // get all the contacts by this name and find the best match
+                    NSMutableArray *array = [CoreDataUtils fetchAllContactsDataModelByName: contact.name];
+                    for(ContactDataModel *contactModel in array) {
+                        
+                        if ([self isSameContact:contactModel contact:contact]) {
+                            contactModelToAdd = contactModel;
+                            //found the core data match for this selected contact in this group
+                            //add to core data
+                            [groupModel addContactsObject:contactModelToAdd];
+                            [contactModelToAdd addGroupObject:groupModel];
+                            [group.contactsList addObject:contact];
+                            found = true;
+                            NSLog(@"FOUND A MATCH ASSIGNING THIS ONE %@",contactModelToAdd.name);
+                            break; //break the inner for loop
+                        }
+                    }
+                    if(!found || contactModelToAdd==nil) {
+                        NSLog(@"DID NOT FOUND A MATCH, creating a new contact on core data for %@",contactModelToAdd.name);
+                        //not on core data, maybe internal address book one
+                        contactModelToAdd = [self prepareModelFromContact: managedObjectContext :contact];
+                        
+                        [groupModel addContactsObject:contactModelToAdd];
+                        [contactModelToAdd addGroupObject:groupModel];
+                        
+                        [group.contactsList addObject:contact];
+                    }
+ 
                 }
                 
             }
             else {
+                
                 //add single contact to group
-                ContactDataModel *contactModel = [self prepareModelFromContact: managedObjectContext :selected];
                 
-                [groupModel addContactsObject:contactModel];
-                [contactModel addGroupObject:groupModel];
+                //get the existing ones from core data models and found the matching one
+                NSMutableArray *array = [CoreDataUtils fetchAllContactsDataModelByName: selected.name];
+                ContactDataModel *contactModelToAdd = nil;
+                bool found = false;
+                for(ContactDataModel *contactModel in array) {
+                    //found the one matching the selected one
+                    if ([self isSameContact:contactModel contact:selected]) {
+                        contactModelToAdd = contactModel;
+                        NSLog(@"FOUND A MATCH ASSIGNING THIS ONE %@",contactModelToAdd.name);
+                        //found the core data match for this selected contact in this group
+                        //add to core data
+                        [groupModel addContactsObject:contactModelToAdd];
+                        [contactModelToAdd addGroupObject:groupModel];
+                        [group.contactsList addObject:selected];
+                        found = true;
+                        break; //break the inner for loop
+                    }
+                }
+                //not found a mathc on core data, insert a new one (even if it will duplicate the one on address book)
+                if(!found || contactModelToAdd==nil) {
+                    NSLog(@"DID NOT FOUND A MATCH, creating a new contact on core data for %@",contactModelToAdd.name);
+                    ContactDataModel *contactModel = [self prepareModelFromContact: managedObjectContext :selected];
+                    
+                    [groupModel addContactsObject:contactModel];
+                    [contactModel addGroupObject:groupModel];
+                    
+                    [group.contactsList addObject:selected];
+                }
                 
-                [group.contactsList addObject:selected];
+                
             }
             
             

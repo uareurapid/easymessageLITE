@@ -274,6 +274,17 @@
            setGravity:iToastGravityBottom] setDuration:2000] show];
     }
     
+    BOOL forceReload = selectOrderByOption != initiallySelectedOrderByOption;
+    [[NSUserDefaults standardUserDefaults] setBool:forceReload forKey:SETTINGS_PREF_ORDER_BY_KEY_FORCE_RELOAD];
+    if(forceReload) {
+        
+        if(initiallySelectedOrderByOption == OPTION_ORDER_BY_LASTNAME_ID) {
+           [[NSUserDefaults standardUserDefaults] setObject:OPTION_ORDER_BY_LASTNAME_KEY forKey:SETTINGS_PREF_ORDER_BY_KEY_PREVIOUS_SETTINGS];
+        }
+        else {
+           [[NSUserDefaults standardUserDefaults] setObject:OPTION_ORDER_BY_FIRSTNAME_KEY forKey:SETTINGS_PREF_ORDER_BY_KEY_PREVIOUS_SETTINGS];
+        }
+    }
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
