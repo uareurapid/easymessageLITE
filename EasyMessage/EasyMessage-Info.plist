@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>${PRODUCT_NAME}</string>
+	<string>Easy Message</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIcons</key>
@@ -21,7 +21,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.2</string>
+	<string>4.1.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -52,6 +52,8 @@
 	<string>2095874780642911</string>
 	<key>FacebookDisplayName</key>
 	<string>EasyMessage</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LIAppId</key>
 	<string>3233463</string>
 	<key>LSApplicationQueriesSchemes</key>

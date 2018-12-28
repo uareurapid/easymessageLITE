@@ -120,3 +120,8 @@
 "order_by_firstname" = "Ordenar pelo primeiro nome";
 "order_contacts" = "Ordenar contactos";
 "order_contacts_explanation" = "Ordenar os contactos pelo primeiro nome ou pelo apelido";
+"error_deleting_contact" = "Este contacto não pode ser eliminado";
+"rate_us" = "Avalie-nos";
+"contact_us" = "Contacte-nos";
+"send_feedback" = "Feedback e comentários";
+"select_group" = "Escolher grupo";

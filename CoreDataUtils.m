@@ -275,6 +275,60 @@
     
 }
 
++(BOOL) deleteContactDataModelByName: (Contact *) contact {
+    
+    BOOL deleted = NO;
+    @try {
+        NSManagedObjectContext *managedObjectContext = [(PCAppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
+        
+        
+        // Define our table/entity to use
+        NSEntityDescription *entity = [NSEntityDescription entityForName:@"ContactDataModel" inManagedObjectContext:managedObjectContext];
+        // Setup the fetch request
+        NSFetchRequest *request = [[NSFetchRequest alloc] init];
+        [request setEntity:entity];
+        
+        NSPredicate *predicateID = [NSPredicate predicateWithFormat:@"name == %@",contact.name];
+        [request setPredicate:predicateID];
+        NSError *error;
+        NSMutableArray *mutableFetchResults = [[managedObjectContext executeFetchRequest:request error:&error] mutableCopy];
+        
+        if(mutableFetchResults!=nil && mutableFetchResults.count>0) {
+            
+            ContactDataModel *toDelete = [mutableFetchResults objectAtIndex:0];
+            
+            for(ContactDataModel *possible in mutableFetchResults) {
+                //maybe a better one here
+                if(possible.lastname != nil && contact.lastName!=nil && [possible.lastname isEqualToString:contact.lastName]) {
+                    toDelete = possible;
+                }
+            }
+
+            [managedObjectContext deleteObject:toDelete];
+            NSError *error;
+            
+            if(![managedObjectContext save:&error]){
+                NSLog(@"Unable to delete object, error is: %@",error.description);
+                deleted = NO;
+            }
+            else {
+                deleted = YES;
+            }
+            
+        } else {
+            //model not on core data
+            deleted = NO;
+        }
+    }
+    @catch (NSException *exception) {
+        NSLog(@"error deleting contact on db %@",exception.description);
+    }
+    @finally {
+        return deleted;
+    }
+    
+}
+
 //delete message
 +(BOOL) deleteMessageDataModelByMsg: (NSString *) msg {
     

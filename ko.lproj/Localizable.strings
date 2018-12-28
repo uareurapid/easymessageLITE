@@ -119,4 +119,9 @@
 "order_by_firstname" = "이름으로 주문";
 "order_contacts" = "연락처 주문";
 "order_contacts_explanation" = "성 또는 이름으로 연락처 주문";
+"error_deleting_contact" = "이 연락처는 삭제할 수 없습니다.";
+"rate_us" = "우리를 평가해라.";
+"contact_us" = "문의하기";
+"send_feedback" = "의견 보내기";
+"select_group" = "그룹 선택";
 

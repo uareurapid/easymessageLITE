@@ -118,4 +118,9 @@
 "order_by_firstname" = "ترتيب حسب الاسم الأول";
 "order_contacts" = "ترتيب جهات الاتصال";
 "order_contacts_explanation" = "ترتيب جهات الاتصال حسب اسم العائلة أو الاسم الأول";
+"error_deleting_contact" = "لا يمكن حذف جهة الاتصال هذه";
+"rate_us" = "قيمنا";
+"contact_us" = "اتصل بنا";
+"send_feedback" = "أرسل لنا ملاحظاتك";
+"select_group" = "اختر مجموعة";
 

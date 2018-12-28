@@ -115,4 +115,9 @@
 "order_by_firstname" = "Commande par prénom";
 "order_contacts" = "Commander des contacts";
 "order_contacts_explanation" = "Ordre des contacts par nom ou prénom";
+"error_deleting_contact" = "Ce contact ne peut pas être supprimé";
+"rate_us" = "Évaluez nous";
+"contact_us" = "Contactez nous";
+"send_feedback" = "Envoyez-nous vos commentaires";
+"select_group" = "Sélectionner un groupe";
 

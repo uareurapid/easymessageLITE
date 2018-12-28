@@ -54,8 +54,9 @@
 @synthesize labelAttach;
 @synthesize subjectView;
 @synthesize recipientsLabel;
-
 @synthesize attachImage;
+@synthesize attachments;
+@synthesize labelAttachCount;
 //google plus sdk
 static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpdnlq.apps.googleusercontent.com";
 
@@ -68,6 +69,28 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     labelSaveArchive.text = NSLocalizedString(@"archive_message", @"save in archive");
  
     labelAttach.text = NSLocalizedString(@"attach_image", @"Attach an image?");
+    
+    //OOPPSS!!!
+    attachments = [[NSMutableArray alloc] init];
+    
+    [self.imagesCollection registerNib:[UINib nibWithNibName:@"AttachCellCollectionViewCell" bundle:nil] forCellWithReuseIdentifier:@"imageCell"];
+    
+    //[self.imagesCollection registerClass:AttachCellCollectionViewCell.class forCellWithReuseIdentifier:@"imageCell"];
+    [self updateAttachmentsLabel];
+   // [self.imagesCollection registerNib:[UINib nibWithNibName:@"AttachCellCollectionViewCell" bundle:nil] forCellWithReuseIdentifier:@"imageCell"];
+    
+    //.register(UINib(nibName: "name", bundle: nil), forCellWithReuseIdentifier: "cellIdentifier")
+    self.imagesCollection.scrollEnabled = true;
+   //  self.imagesCollection setS
+    self.imagesCollection.dataSource = self;
+    self.imagesCollection.delegate = self;
+    
+    
+    /*for(int i = 0; i < 3; i++) {
+     UIImage *img = [UIImage imageNamed:@"attachment"];
+        [attachments addObject:img];
+    }
+    [self.imagesCollection reloadData];*/
     
     smsSentOK = NO;
     emailSentOK = NO;
@@ -107,10 +130,15 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
     selectedRecipientsList = [[NSMutableArray alloc]init];
     [scrollView flashScrollIndicators];
-    [scrollView setContentSize:self.view.frame.size];
     
+    [scrollView setContentSize: CGSizeMake(0, self.view.frame.size.height)];//;self.view.frame.size
     [self.scrollView setContentOffset: CGPointMake(0, self.scrollView.contentOffset.y)];
     self.scrollView.directionalLockEnabled = YES;
+    
+    [self.attachmentsScrollview setContentSize: CGSizeMake(self.imagesCollection.frame.size.width,0 )];//;self.view.frame.size
+    [self.attachmentsScrollview setContentOffset: CGPointMake(self.attachmentsScrollview.contentOffset.x,0)];
+    self.attachmentsScrollview.directionalLockEnabled = YES;
+    
     //TODO possible solution check
     //CGSize scrollSize = CGSizeMake([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
     //[scrollView setContentSize: scrollSize];
@@ -182,6 +210,65 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
  
   
+}
+
+#pragma UICollectionViewDataSource
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    return self.attachments.count;
+}
+
+- (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *cellIdentifier = @"imageCell";
+    AttachCellCollectionViewCell *cell = (AttachCellCollectionViewCell*) [collectionView dequeueReusableCellWithReuseIdentifier:cellIdentifier forIndexPath:indexPath];
+    
+    /*if(cell==nil) {
+        // [self.imagesCollection registerNib:[UINib nibWithNibName:@"AttachCellCollectionViewCell" bundle:nil] forCellWithReuseIdentifier:@"imageCell"];
+       
+        NSArray *nib = [[NSBundle mainBundle] loadNibNamed:@"AttachCellCollectionViewCell" owner:self options:nil];
+        cell = [nib objectAtIndex:0];
+    }*/
+    cell.removeAttachment.tag = indexPath.row;
+    UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(removeAttachmentClicked:) ];
+    singleTap.numberOfTapsRequired = 1;
+    [cell.removeAttachment setUserInteractionEnabled:YES];
+    [cell.removeAttachment addGestureRecognizer:singleTap];
+
+    
+    // get the image
+    UIImage *image = [self.attachments objectAtIndex: indexPath.row];
+    
+     dispatch_async(dispatch_get_main_queue(), ^{
+         // populate the cell
+         cell.attachImage.image = image;
+     });
+    //cell.label.text =@"fucck";
+    // return the cell
+    return cell;
+}
+
+#pragma UICollectionViewDelegate
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    //UIImage *selected = [self.attachments objectAtIndex:indexPath.row];
+    NSLog(@"selected image at index %lu", indexPath.row);
+}
+
+-(void)removeAttachmentClicked:(UIGestureRecognizer* ) sender
+{
+    NSInteger pos = sender.view.tag;
+    if(pos < self.attachments.count) {
+        [self.attachments removeObjectAtIndex:pos];
+        [self.imagesCollection reloadData];
+        [self updateAttachmentsLabel];
+        NSString *msg = [NSString stringWithFormat:@"%@ %@!",NSLocalizedString(@"removed",@"removed"),[NSString stringWithFormat:@"pic %ld",(long)pos+1]];
+        
+        [[[[iToast makeText:msg]
+           setGravity:iToastGravityBottom] setDuration:3000] show];
+    }
 }
 
 -(void) writeImportTime {
@@ -789,8 +876,65 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
     
 }
+// we need to show this message if we don´t have permissions
+-(void) showPermissionsMessage {
+    
+    // Display an error.
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Permissions issue!"
+                                                        message:@"Permission was denied. Cannot load address book. Please change privacy settings in settings app"
+                                                       delegate:self
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        
+    [alert show];
+}
+
+// for these we do not need any special permissions
+-(void) loadContactsFromCoreDataOnly {
+    
+    NSInteger duplicates = 0;
+    NSMutableArray *cleanList = [[NSMutableArray alloc] init];
+    //load also the local contact models, from local database
+    NSMutableArray *models = [self fetchLocalContactModelRecords];
+    
+    //auxiliar list to check for duplicates (might slow down stuff)
+    for(Contact *c in models) {
+        if(![cleanList containsObject:c]) {
+            [cleanList addObject:c];
+        }
+        else {
+            duplicates++;
+        }
+    }
+    
+    NSLog(@"readed %ld contacts from core data models, but will only add %ld",(unsigned long)models.count, cleanList.count);
+    
+    [recipientsController.contactsList addObjectsFromArray:cleanList];
+    
+    [recipientsController.selectedContactsList removeAllObjects];
+    [recipientsController.selectedContactsList addObjectsFromArray:selectedRecipientsList];
+    
+    NSLog(@"Skipped %ld duplicated contacts",(long)duplicates);
+}
 
 -(IBAction)loadContactsList:(id)sender {
+    
+    //cannot proceed without this or a get a black screen
+    if ( ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusDenied ||
+        ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusRestricted ) {
+        [self showPermissionsMessage];
+        //still load these anyway, no need permissions
+        [self loadContactsFromCoreDataOnly];
+        //load also the groups
+        NSMutableArray *groupsFromDB = [self fetchGroupRecords];
+        [recipientsController.contactsList addObjectsFromArray:groupsFromDB];
+        
+        [recipientsController.groupsList removeAllObjects];
+        [recipientsController.groupsNamesArray removeAllObjects];
+        
+        [recipientsController refreshPhonebook:nil];
+        return;
+    }
     
     
     CFErrorRef * error = NULL;
@@ -808,25 +952,51 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         ABAddressBookRequestAccessWithCompletion(addressBook, ^(bool granted, CFErrorRef error) {
             // First time access has been granted, add the contact
             if(granted==true) {
+                
+                NSMutableArray *cleanList = [[NSMutableArray alloc] init];
                 NSLog(@"granted permission");
+                //load from address book
                 contacts = [self loadContacts: addressBook];
                 
-                NSLog(@"readed %ld contacts from local address book",(unsigned long)contacts.count);
+                NSInteger duplicates = 0;
+                //auxiliar list to check for duplicates (might slow down stuff)
+                for(Contact *c in contacts) {
+                    if(![cleanList containsObject:c]) {
+                        [cleanList addObject:c];
+                    }
+                    else {
+                        duplicates++;
+                    }
+                }
                 
+                NSLog(@"readed %ld contacts from local address book, but will only add %ld",(unsigned long)contacts.count, cleanList.count);
+                
+                NSLog(@"Skipped %ld duplicated contacts",(long)duplicates);
                 [recipientsController.contactsList removeAllObjects];
-                [recipientsController.contactsList addObjectsFromArray:contacts];
+                [recipientsController.contactsList addObjectsFromArray:cleanList];
                 
-                //load also the local contact models, from local database
-                NSMutableArray *models = [self fetchLocalContactModelRecords];
+                [self loadContactsFromCoreDataOnly];
                 
-                NSLog(@"readed %ld contacts from core data models",(unsigned long)models.count);
+                //load also the groups
+                NSMutableArray *groupsFromDB = [self fetchGroupRecords];
+                [recipientsController.contactsList addObjectsFromArray:groupsFromDB];
                 
-                [recipientsController.contactsList addObjectsFromArray:models];
+                [recipientsController.groupsList removeAllObjects];
+                [recipientsController.groupsNamesArray removeAllObjects];
+                
+                [recipientsController refreshPhonebook:nil];
+                
+                /*
+                
+                NSLog(@"readed %ld contacts from core data models, but will only add %ld",(unsigned long)models.count, cleanList.count);
+                
+                [recipientsController.contactsList addObjectsFromArray:cleanList];
                 
                 [recipientsController.selectedContactsList removeAllObjects];
                 [recipientsController.selectedContactsList addObjectsFromArray:selectedRecipientsList];
                 
                 [recipientsController refreshPhonebook:nil];
+                 */
             }
             
  
@@ -838,17 +1008,40 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         // The user has previously given access, add the contact
         contacts = [self loadContacts: addressBook];
         
-        //load the groups from addressbook (if they have contacts)
-        //NSMutableArray *groupsFromAB = [self loadGroups:addressBook];
-        
+        NSMutableArray *cleanList = [[NSMutableArray alloc] init];
+        NSInteger duplicates = 0;
+        //auxiliar list to check for duplicates (might slow down stuff)
+        for(Contact *c in contacts) {
+            if(![cleanList containsObject:c]) {
+                [cleanList addObject:c];
+            }
+            else {
+                duplicates++;
+            }
+        }
         
         [recipientsController.contactsList removeAllObjects];
-        [recipientsController.contactsList addObjectsFromArray:contacts];
+        [recipientsController.contactsList addObjectsFromArray:cleanList];
         
-        //load also the local contact models, from local database (the ones added manually)
-        NSMutableArray *models = [self fetchLocalContactModelRecords];
+        NSLog(@"readed %ld contacts from local address book, but will only add %ld",(unsigned long)contacts.count, cleanList.count);
         
-        [recipientsController.contactsList addObjectsFromArray:models];
+        NSLog(@"Skipped %ld duplicated contacts",(long)duplicates);
+        
+        [self loadContactsFromCoreDataOnly];
+        
+        //load also the groups
+        NSMutableArray *groupsFromDB = [self fetchGroupRecords];
+        [recipientsController.contactsList addObjectsFromArray:groupsFromDB];
+        
+        [recipientsController.groupsList removeAllObjects];
+        [recipientsController.groupsNamesArray removeAllObjects];
+        
+        [recipientsController refreshPhonebook:nil];
+        /*
+        
+        NSLog(@"readed %ld contacts from core data models, but will only add %ld",(unsigned long)models.count, cleanList.count);
+        
+        [recipientsController.contactsList addObjectsFromArray:cleanList];
         
         NSMutableArray *groupsFromDB = [self fetchGroupRecords];
         [recipientsController.contactsList addObjectsFromArray:groupsFromDB];
@@ -859,7 +1052,9 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         [recipientsController.selectedContactsList removeAllObjects];
         [recipientsController.selectedContactsList addObjectsFromArray:selectedRecipientsList];
         
-        [recipientsController refreshPhonebook:nil];
+        NSLog(@"Skipped %ld duplicated contacts",(long)duplicates);
+        
+        [recipientsController refreshPhonebook:nil];*/
         
     }
     else {
@@ -868,13 +1063,15 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         if ( ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusDenied ||
             ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusRestricted ) {
             // Display an error.
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Permissions issue!"
-                                                            message:@"Permission was denied. Cannot load address book. Please change privacy setting in settings app"
-                                                           delegate:self
-                                                  cancelButtonTitle:@"OK"
-                                                  otherButtonTitles:nil];
+            [self showPermissionsMessage];
             
-            [alert show];
+            //still load these anyway, no need permissions
+            [self loadContactsFromCoreDataOnly];
+            //load also the groups
+            NSMutableArray *groupsFromDB = [self fetchGroupRecords];
+            [recipientsController.contactsList addObjectsFromArray:groupsFromDB];
+            
+            [recipientsController refreshPhonebook:nil];
         }
         
     }
@@ -908,7 +1105,11 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             [group.contactsList addObject:c];
             
         }
-        [records addObject:group];
+        //avoid duplicates
+        if(![records containsObject:group]) {
+           [records addObject:group];
+        }
+        
 
        
     }
@@ -922,7 +1123,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     BOOL exists = false;
     for(Contact *existing in existingContacts) {
         
-        NSLog(@"existing contact name: %@ lastname: %@", existing.name, existing.lastName);
+        //NSLog(@"existing contact name: %@ lastname: %@", existing.name, existing.lastName);
         if(name!=nil && existing.name!=nil) {
             if([name isEqualToString:existing.name]) {
                 //also check last name, just the name is not enough
@@ -976,18 +1177,18 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             NSString *lastname = contact.lastname;
             //NSDate *birthday = contact.birthday;
             
-            NSLog(@"readed model name: %@",name);
-            NSLog(@"readed model lastname: %@",lastname);
+            //NSLog(@"readed model name: %@",name);
+            //NSLog(@"readed model lastname: %@",lastname);
             
             BOOL exists = [self wasAlreadyAddedToList:existingContacts otherName:name otherLastName:lastname otherPhone:phone otherEmail:email];
-            NSLog(@"first pass: exists %d",exists);
+            //NSLog(@"first pass: exists %d",exists);
             if(!exists) {
              //check also the other list
                 exists = [self wasAlreadyAddedToList:records otherName:name otherLastName:lastname otherPhone:phone otherEmail:email];
-                NSLog(@"second pass: exists %d so it was already added",exists);
+                //NSLog(@"second pass: exists %d so it was already added",exists);
             }
             
-            NSLog(@"it exists is? %d",exists);
+            //NSLog(@"it exists is? %d",exists);
             if(!exists) {
                 //avoid add repeating ones
                 Contact *c = [[Contact alloc] init];
@@ -1019,7 +1220,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                     
                 }
                 
-                NSLog(@"adding this contact: %@ %@",c.name, c.lastName);
+                NSLog(@"adding this contact: %@",c.description);
                 [records addObject:c];
             }
             
@@ -1186,6 +1387,10 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                 
             }
             
+            //NSLog(@"READED %@", name);
+            //NSLog(@"ANDREIA PHONE %@  count: %d", phone, countPhones);
+            
+            
             //add the phone number
             if(phone!=nil) {
                 contact.phone = phone;
@@ -1320,13 +1525,17 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         [mc setToRecipients:toRecipents];
         
         //Get all the image info
-        if(image!=nil && imageName!=nil) {
+        if(self.attachments.count > 0) {
             
-            //"image/jpeg" png
-            NSData *imageData = [self getImageInfoData];
-            BOOL isPNG = [self isImagePNG];
+            for(int i = 0; i < self.attachments.count; i++) {
+                //"image/jpeg" png
+                UIImage *img = [self.attachments objectAtIndex:i];
+                NSData *imageData = [self getImageInfoData: img];
+                BOOL isPNG = true;//[self isImagePNG];
+                NSString *name = [NSString stringWithFormat:@"pic_%d",i];
+                [mc addAttachmentData:imageData mimeType: isPNG ? @"image/png" : @"image/jpeg" fileName:name];//imageName
+            }
             
-            [mc addAttachmentData:imageData mimeType: isPNG ? @"image/png" : @"image/jpeg" fileName:imageName];
         }
         
         // Present mail view controller on screen
@@ -1422,7 +1631,9 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
 }
 
-
+-(void)updateAttachmentsLabel {
+    labelAttachCount.text = [NSString stringWithFormat:@"%d/%d",attachments.count, MAX_ATTACHMENTS];
+}
 
 //delegate for the sms controller
 - (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
@@ -1762,11 +1973,23 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         controller.recipients = recipients;
         controller.messageComposeDelegate = self;
         
-        if(image!=nil && imageName!=nil) {
+        if(self.attachments.count > 0) {
             if( IS_OS_7_OR_LATER && [MFMessageComposeViewController canSendAttachments]) {
-                NSData *imageData = [self getImageInfoData];
-                BOOL isPNG = [self isImagePNG];
-                [controller addAttachmentData:imageData typeIdentifier:isPNG ? @"image/png" : @"image/jpeg" filename:imageName];
+                
+                for(int i = 0; i < self.attachments.count; i++) {
+                    //"image/jpeg" png
+                    UIImage *img = [self.attachments objectAtIndex:i];
+                    NSData *imageData = [self getImageInfoData: img];
+                    BOOL isPNG = true;//[self isImagePNG];
+                    NSString *name = [NSString stringWithFormat:@"pic_%d",i];
+                    [controller addAttachmentData:imageData typeIdentifier:isPNG ? @"image/png" : @"image/jpeg" filename:name];
+                    //[controller addAttachmentData:imageData typeIdentifier:isPNG ? @"image/png" : @"image/jpeg" fileName:name];//imageName
+                }
+                
+                
+                //NSData *imageData = [self getImageInfoData: ];
+                //BOOL isPNG = [self isImagePNG];
+                //[controller addAttachmentData:imageData typeIdentifier:isPNG ? @"image/png" : @"image/jpeg" filename:imageName];
             }
         }
         
@@ -1896,15 +2119,16 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             
             Group *group = (Group *)c;
             for(Contact *other in group.contactsList) {
-                NSString *emailAddress = [self extractEmailAddress:other];
-                if(emailAddress!=nil) {
+                NSString *emailAddress = other.email; // [self extractEmailAddress:other];
+                if(emailAddress!=nil && ![emails containsObject:emailAddress]) {
                     [emails addObject:emailAddress];
                 }
             }  
          }
         else {
-            NSString *emailAddress = [self extractEmailAddress:c];
-            if(emailAddress!=nil) {
+            NSString *emailAddress = c.email;// [self extractEmailAddress:c];
+            NSLog(@"email address is: %@ for contact %@ ",emailAddress, c.description);
+            if(emailAddress!=nil && ![emails containsObject:emailAddress]) {
                 [emails addObject:emailAddress];
             }
         }
@@ -1912,7 +2136,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     }
     return emails;
 }
-
+//deprecated
 -(NSString *) extractEmailAddress: (Contact *)c {
     
     
@@ -1972,15 +2196,17 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             
             Group *group = (Group *)c;
             for(Contact *other in group.contactsList) {
-                NSString *phoneNumber = [self extractPhoneNumber:other];
-                if(phoneNumber!=nil) {
+                NSString *phoneNumber = other.phone;// [self extractPhoneNumber:other];
+                if(phoneNumber!=nil && ![phones containsObject:phoneNumber]) {
                     [phones addObject:phoneNumber];
                 }
             }
         }
         else {
-            NSString *phoneNumber = [self extractPhoneNumber:c];
-            if(phoneNumber!=nil) {
+            NSLog(@"CONTACT IS %@", c.description);
+            NSString *phoneNumber = c.phone;//[self extractPhoneNumber:c];
+            if(phoneNumber!=nil && ![phones containsObject:phoneNumber]) {
+                NSLog(@"adding phone number %@",phoneNumber);
                 [phones addObject:phoneNumber];
             }
         }
@@ -2115,13 +2341,84 @@ void addressBookChanged(ABAddressBookRef reference,
  */
 
 
+#pragma mark - QBImagePickerControllerDelegate
 
+- (void)qb_imagePickerController:(QBImagePickerController *)imagePickerController didFinishPickingAssets:(NSArray *)assets
+{
+    NSLog(@"Selected assets:");
+    NSLog(@"%@", assets);
+    
+    /**
+     let asset : PHAsset = self.selectedAssets[0].phAsset! as PHAsset
+     PHImageManager.default().requestImage(for: asset, targetSize: CGSize(width : 400, height : 400), contentMode: .aspectFit, options: options, resultHandler: {(result: UIImage!, info) in
+     if let image = result
+     {
+     let imageData: NSData = UIImageJPEGRepresentation(image, 1.0)! as NSData
+     mail.addAttachmentData(imageData as Data, mimeType: "image/jpg", fileName: "BeforePhoto.jpg")
+     }
+     })
+     */
+    
+    PHImageRequestOptions *requestOptions = [[PHImageRequestOptions alloc] init];
+    requestOptions.resizeMode   = PHImageRequestOptionsResizeModeExact;
+    requestOptions.networkAccessAllowed = true;
+    requestOptions.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat;
+    
+    // this one is key
+    requestOptions.synchronous = YES;
+    
+    self.imagesArray = [NSMutableArray arrayWithArray:assets];
+    PHImageManager *manager = [PHImageManager defaultManager];
+    //NSMutableArray *images = [NSMutableArray arrayWithCapacity:[assets count]];
+    
+    dispatch_async(dispatch_get_main_queue(), ^(){
+        for (PHAsset *asset in self.imagesArray) {
+            // Do something with the asset
+            
+            [manager requestImageForAsset:asset
+                               targetSize:PHImageManagerMaximumSize
+                              contentMode:PHImageContentModeDefault
+                                  options:requestOptions
+                            resultHandler:^void(UIImage *image, NSDictionary *info) {
+                                if(image!=nil) {
+                                    [self.attachments addObject:image];
+                                }
+                                
+                            }];
+            
+            
+        }
+        [self.imagesCollection reloadData];
+        [self updateAttachmentsLabel];
+    });
+    
+    
+    
+    
+    
+    [self dismissViewControllerAnimated:YES completion:NULL];
+}
 
+- (void)qb_imagePickerControllerDidCancel:(QBImagePickerController *)imagePickerController
+{
+    NSLog(@"Canceled.");
+    
+    [self dismissViewControllerAnimated:YES completion:NULL];
+}
 
 -(IBAction)presentMediaPicker:(id)sender {
     
+    QBImagePickerController *imagePickerController = [QBImagePickerController new];
+    imagePickerController.delegate = self;
+    imagePickerController.mediaType = QBImagePickerMediaTypeImage; //only images for now
+    imagePickerController.allowsMultipleSelection = YES;
+    imagePickerController.maximumNumberOfSelection = MAX_ATTACHMENTS;
+    imagePickerController.showsNumberOfSelectedAssets = YES;
+   
+    [self presentViewController:imagePickerController animated:YES completion:NULL];
+    //OLD IMPL
     //if i have something the idea is clear
-    if(image==nil && imageName==nil) {
+    /*if(image==nil && imageName==nil) {
         
         UIImagePickerController * picker = [[UIImagePickerController alloc] init];
         picker.delegate = self;
@@ -2142,7 +2439,7 @@ void addressBookChanged(ABAddressBookRef reference,
         image = nil;
         [self updateAttachButton];
         
-    }
+    }*/
     
     
     
@@ -2217,15 +2514,15 @@ void addressBookChanged(ABAddressBookRef reference,
 }
 
 //Get data
-- (NSData *) getImageInfoData {
+- (NSData *) getImageInfoData: (UIImage *)img {
     
     NSData *imageData = nil;
     
     if ([self isImagePNG]) {
-        imageData = UIImagePNGRepresentation(image);
+        imageData = UIImagePNGRepresentation(img);
     }
     else {
-        imageData = UIImageJPEGRepresentation(image, 0.7); // 0.7 is JPG quality
+        imageData = UIImageJPEGRepresentation(img, 0.7); // 0.7 is JPG quality
     }
 
     return imageData;
@@ -2252,8 +2549,8 @@ void addressBookChanged(ABAddressBookRef reference,
     //to get any selected ones
     [self checkIfPostToSocial];
     
-    imageName = @"icon-ipad-29";
-    image = [UIImage imageNamed:@"icon-ipad-29"];
+    imageName = @"icon60";
+    image = [UIImage imageNamed:@"icon60"];
     [self updateAttachButton];
     
     if(!sendToLinkedin && !sendToTwitter && !sendToFacebook) {

@@ -35,7 +35,7 @@
         isTwitterAvailable = [services containsObject:OPTION_SENDTO_TWITTER_ONLY];
         isLinkedinAvailable = [services containsObject:OPTION_SENDTO_LINKEDIN_ONLY];
         
-        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done.png"] style:UIBarButtonItemStyleDone target:self action:@selector(goBackAfterSelection:)];
+        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle: NSLocalizedString(@"done_button", @"done_button") style:UIBarButtonItemStyleDone target:self action:@selector(goBackAfterSelection:)];
         
         self.navigationItem.rightBarButtonItem = doneButton;
         //self.title = @"Advanced Options";

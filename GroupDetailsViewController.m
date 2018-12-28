@@ -132,8 +132,8 @@
             //only phone
             cell.detailTextLabel.text = NSLocalizedString(@"phone_label",@"Phone");
         }
+        
     }
-    
     
     
     return cell;
@@ -141,6 +141,41 @@
 
 -(NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     return group.name;
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    // Return YES if you want the specified item to be editable.
+    return YES;
+}
+
+// Override to support editing the table view.
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        //add code here for when you hit delete
+        if(indexPath.row < group.contactsList.count) {
+            
+            
+            SelectRecipientsViewController *root;
+            for(UIViewController *controller in self.navigationController.viewControllers) {
+                
+                if([controller isKindOfClass: SelectRecipientsViewController.class]) {
+                    root = (SelectRecipientsViewController*)controller;
+                    break;
+                }
+            }
+            if(root!=nil) {
+                
+                
+                UIAlertView * alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"delete",@"delete")
+                                                                 message:NSLocalizedString(@"confirm_delete",@"confirm_delete")
+                                                                delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
+                self.root = root;
+                alert.tag = indexPath.row;
+                [alert show];
+            }
+        }
+       
+    }
 }
 
 //delete the group and update the previous table
@@ -165,6 +200,7 @@
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"delete",@"delete")
                                                          message:NSLocalizedString(@"confirm_delete",@"confirm_delete")
                                                         delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
+        alert.tag = -1;
         [alert show];
         
         self.root = root;
@@ -178,10 +214,25 @@
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     
     if(buttonIndex==1 && self.root!=nil) {
-       // OK
-        [ (SelectRecipientsViewController *)self.root deleteGroup:group];
         
-        [self.navigationController popToRootViewControllerAnimated:YES];
+        if(alertView.tag == -1) {
+            
+            // OK delete group
+            [ (SelectRecipientsViewController *)self.root deleteGroup:group];
+            
+            [self.navigationController popToRootViewControllerAnimated:YES];
+        }
+        else if(alertView.tag > -1 && alertView.tag < group.contactsList.count) {
+            
+            //remove a contact from a group instead
+            Contact *toRemove = [group.contactsList objectAtIndex:alertView.tag];
+            [group.contactsList removeObjectAtIndex:alertView.tag];
+            [ (SelectRecipientsViewController *)self.root removeContactFromGroup: group.name contact: toRemove];
+            //TODO show removed from group message!!
+            [self.tableView reloadData];
+        }
+        
+       
     }
     else {
         [self.navigationController popToRootViewControllerAnimated:YES];

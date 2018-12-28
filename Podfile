@@ -7,4 +7,5 @@ target 'EasyMessage' do
 
   # Pods for EasyMessage
 pod "Appirater"
+pod "QBImagePickerController"
 end

@@ -24,6 +24,8 @@
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
 #import <FBSDKShareKit/FBSDKShareKit.h>
 #import <TwitterKit/TwitterKit.h>
+#import <QBImagePickerController/QBImagePickerController.h>
+#import "AttachCellCollectionViewCell.h"
 
 @class SelectRecipientsViewController;
 @class IAPMasterViewController;
@@ -35,10 +37,12 @@
 #define IS_OS_7_OR_LATER    ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
 
 #define PROMO_SHOW_COUNTER @"promo_show_counter"
+#define MAX_ATTACHMENTS 5
 
-
-@interface PCViewController : UIViewController <MFMailComposeViewControllerDelegate,MFMessageComposeViewControllerDelegate,UIImagePickerControllerDelegate,UITextViewDelegate,UITextFieldDelegate, FBSDKSharingDelegate,
-UITextFieldDelegate, NSURLConnectionDelegate,SKStoreProductViewControllerDelegate>
+@interface PCViewController : UIViewController <MFMailComposeViewControllerDelegate,MFMessageComposeViewControllerDelegate,UIImagePickerControllerDelegate,UITextViewDelegate,UITextFieldDelegate, FBSDKSharingDelegate,UICollectionViewDataSource,UICollectionViewDelegate,
+UITextFieldDelegate, NSURLConnectionDelegate,SKStoreProductViewControllerDelegate,QBImagePickerControllerDelegate>
+@property (weak, nonatomic) IBOutlet UIScrollView *attachmentsScrollview;
+@property (weak, nonatomic) IBOutlet UICollectionView *imagesCollection;
 - (IBAction)sendMessage:(id)sender;
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
 - (IBAction)switchSaveMessageValueChanged:(id)sender;
@@ -46,6 +50,7 @@ UITextFieldDelegate, NSURLConnectionDelegate,SKStoreProductViewControllerDelegat
 @property (strong, nonatomic) IBOutlet UILabel *labelMessage;
 @property (strong, nonatomic) IBOutlet UILabel *labelSubject;
 @property (strong, nonatomic) IBOutlet UILabel *labelOnlySocial;
+@property (weak, nonatomic) IBOutlet UILabel *labelAttachCount;
 
 @property (strong, nonatomic) IBOutlet UISwitch *saveMessageSwitch;
 @property (weak, nonatomic) IBOutlet UILabel *recipientsLabel;
@@ -59,8 +64,12 @@ UITextFieldDelegate, NSURLConnectionDelegate,SKStoreProductViewControllerDelegat
 @property (strong, nonatomic) IBOutlet UIImage *attachImage;
 //@property (strong, nonatomic) IBOutlet UIImage *previewImage;
 
+@property (strong, nonatomic) IBOutlet NSMutableArray *attachments;
+
 //for the linkdin request
 @property NSMutableData *responseData;
+
+@property NSMutableArray *imagesArray;
 
 @property (strong, nonatomic) LIALinkedInHttpClient *_client;
 
@@ -74,6 +83,7 @@ UITextFieldDelegate, NSURLConnectionDelegate,SKStoreProductViewControllerDelegat
 -(IBAction)presentMediaPicker:(id) sender;
 -(NSMutableArray *) getEmailAdresses;
 -(NSMutableArray *) getPhoneNumbers;
+- (NSData *) getImageInfoData: (UIImage *)img;
 
 void addressBookChanged(ABAddressBookRef reference,
                         CFDictionaryRef dictionary,

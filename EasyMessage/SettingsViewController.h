@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <Social/Social.h>
+#import <MessageUI/MessageUI.h>
 //#import <Accounts/Accounts.h>
 
 //TODO PC this is not translated??
@@ -56,7 +57,7 @@
 
 @class SocialNetworksViewController;
 
-@interface SettingsViewController : UITableViewController
+@interface SettingsViewController : UITableViewController<MFMailComposeViewControllerDelegate,MFMessageComposeViewControllerDelegate>
 
 @property(strong,nonatomic)NSMutableArray *sendOptions;
 @property(strong,nonatomic)NSMutableArray *preferedServiceOptions;

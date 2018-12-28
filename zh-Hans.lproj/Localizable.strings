@@ -115,4 +115,9 @@
 "order_by_firstname" = "按名字排序";
 "order_contacts" = "订购联系人";
 "order_contacts_explanation" = "按姓氏或名字订购联系人";
+"error_deleting_contact" = "此联系人无法删除";
+"rate_us" = "评价我们";
+"contact_us" = "联系我们";
+"send_feedback" = "向我们发送您的反馈";
+"select_group" = "选择组";
 

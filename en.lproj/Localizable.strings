@@ -121,5 +121,10 @@
 "order_by_firstname" = "Order by first name";
 "order_contacts" = "Order contacts";
 "order_contacts_explanation" = "Order contacts by last name or first name";
+"error_deleting_contact" = "This contact cannot be deleted";
+"rate_us" = "Rate us";
+"contact_us" = "Contact us";
+"send_feedback" = "Send us your feedback";
+"select_group" = "Select group";
 
 

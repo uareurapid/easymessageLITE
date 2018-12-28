@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="AttachCellCollectionViewCell"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="imageCell" id="gTV-IL-0wX" customClass="AttachCellCollectionViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="267" height="267"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="267" height="267"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="D99-5o-dSh">
+                        <rect key="frame" x="0.0" y="0.0" width="267" height="267"/>
+                    </imageView>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="delete_red.png" translatesAutoresizingMaskIntoConstraints="NO" id="Ts5-Fl-Dhr">
+                        <rect key="frame" x="240" y="0.0" width="24" height="24"/>
+                    </imageView>
+                </subviews>
+            </view>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="D99-5o-dSh" secondAttribute="bottom" id="8vj-DS-FWZ"/>
+                <constraint firstItem="Ts5-Fl-Dhr" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="LzX-PM-o5n"/>
+                <constraint firstAttribute="trailing" secondItem="Ts5-Fl-Dhr" secondAttribute="trailing" id="WaS-qL-yJ1"/>
+                <constraint firstAttribute="trailing" secondItem="D99-5o-dSh" secondAttribute="trailing" id="XyD-dW-8YO"/>
+                <constraint firstItem="D99-5o-dSh" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="fE3-3L-SIc"/>
+                <constraint firstItem="D99-5o-dSh" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="oLk-03-ndV"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="SEy-5g-ep8"/>
+            <size key="customSize" width="267" height="267"/>
+            <connections>
+                <outlet property="attachImage" destination="D99-5o-dSh" id="5d9-ur-9LG"/>
+                <outlet property="removeAttachment" destination="Ts5-Fl-Dhr" id="Oko-rJ-VrI"/>
+            </connections>
+            <point key="canvasLocation" x="173.59999999999999" y="-7.6461769115442282"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="delete_red.png" width="32" height="32"/>
+    </resources>
+</document>

@@ -9,7 +9,7 @@
 #import "SettingsViewController.h"
 #import "iToast.h"
 #import "SocialNetworksViewController.h"
-
+#import <StoreKit/StoreKit.h>
 @interface SettingsViewController ()
 
 @end
@@ -207,7 +207,7 @@
 #warning Potentially incomplete method implementation.
     // Return the number of sections.
     
-    return 3;
+    return 4;
 }
 
 -(IBAction)goBackAfterSelection:(id)sender {
@@ -269,7 +269,7 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
     
     //if there were any changes
-    if(initiallySelectedPreferredService != selectPreferredService || initiallySelectedSendOption!=selectSendOption || selectOrderByOption != initiallySelectedOrderByOption) {
+    if(initiallySelectedPreferredService != selectPreferredService || initiallySelectedSendOption!=selectSendOption /* || selectOrderByOption != initiallySelectedOrderByOption */) {
         [[[[iToast makeText:msg]
            setGravity:iToastGravityBottom] setDuration:2000] show];
     }
@@ -300,6 +300,9 @@
     else if(section == 2) {
         //order by last/first name
         return 2;
+    }else if(section == 3) {
+        //rate us/questions/suggestions
+        return 2;
     }
    
     return 1; //just one for the prefered item options
@@ -316,6 +319,10 @@
     else if(section == 2) {
         
         return NSLocalizedString(@"order_contacts",nil);
+    }
+    else if(section == 3) {
+        
+        return NSLocalizedString(@"contact_us", nil);
     }
     else {
        return @"Advanced Options";
@@ -334,6 +341,9 @@
     }
     else if(section==2) {
         return NSLocalizedString(@"order_contacts_explanation", nil);
+    }
+    else if(section==3) {
+        return NSLocalizedString(@"send_feedback", nil);
     }
     else {
         return @"Use social services";
@@ -387,11 +397,6 @@
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             
         }
-        
-        
-        
-
-        
     }
     else if(section==1){
         //if (section==1 ) {
@@ -419,12 +424,33 @@
         
     }
     else if(section == 2) {
-        cell.textLabel.text =  [self labelForOptionIndex:row atSection:section];;
+        cell.textLabel.text =  [self labelForOptionIndex:row atSection:section];
         if(row == selectOrderByOption) {
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
         }
         else {
             cell.accessoryType = UITableViewCellAccessoryNone;
+        }
+        if(row == 0) {
+          cell.imageView.image = [UIImage imageNamed:@"sorta"];;
+            
+        }
+        else{
+            cell.imageView.image = [UIImage imageNamed:@"sortb"];
+        }
+        
+        
+    }
+    else if(section == 3) {
+        if(row == 0) {
+            cell.textLabel.text =  NSLocalizedString(@"rate_us", nil);
+            cell.accessoryType = UITableViewCellAccessoryNone;
+            cell.imageView.image = [UIImage imageNamed:@"favorite"];
+        }
+        else {
+            cell.textLabel.text = NSLocalizedString(@"contact_us", nil); 
+            cell.accessoryType = UITableViewCellAccessoryNone;
+            cell.imageView.image = [UIImage imageNamed:@"contact"];
         }
         
     }
@@ -433,6 +459,63 @@
     return cell;
 }
 
+//delegate for the sms controller
+- (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
+{
+    
+    NSString *msg;
+    switch (result) {
+        case MessageComposeResultCancelled:
+            msg = NSLocalizedString(@"message_sms_canceled",@"Canceled");
+            break;
+        case MessageComposeResultFailed:
+            msg = NSLocalizedString(@"message_sms_unable_compose",@"Unable to compose SMS");
+            break;
+        case MessageComposeResultSent:
+            msg = NSLocalizedString(@"message_sms_sent",@"SMS sent");
+            break;
+        default:
+            break;
+    }
+    if(msg!=nil) {
+        [[[[iToast makeText:msg]
+           setGravity:iToastGravityBottom] setDuration:1000] show];
+    }
+    
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+//delegate for the email controller
+- (void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
+{
+    NSString *msg;
+    switch (result)
+    
+    {
+        case MFMailComposeResultCancelled:
+            msg = NSLocalizedString(@"message_mail_canceled",@"Mail cancelled");
+            break;
+        case MFMailComposeResultSaved:
+            msg = NSLocalizedString(@"message_mail_saved",@"Mail saved");
+            break;
+        case MFMailComposeResultSent:
+            msg = NSLocalizedString(@"message_mail_sent",@"Mail sent");
+            break;
+        case MFMailComposeResultFailed:
+            msg = [NSString stringWithFormat:NSLocalizedString(@"message_mail_sent_failure_%@", @"Mail sent failure"),[error localizedDescription]];
+            break;
+        default:
+            break;
+    }
+    if(msg!=nil) {
+        [[[[iToast makeText:msg]
+           setGravity:iToastGravityBottom] setDuration:2000] show];
+    }
+    
+    // Close the Mail Interface
+    [self dismissViewControllerAnimated:YES completion:nil];
+    
+    
+}
 //check if we have SMS support
 -(BOOL) deviceSupportSMS {
     
@@ -570,6 +653,18 @@
         [self.tableView reloadData];
         
     }
+    else if(section == 3) {
+        if(row==0) {
+            if (@available(iOS 10.3, *)) {
+                [SKStoreReviewController requestReview];
+            }
+            else {
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"itms-apps://itunes.apple.com/app/id668776671?mt=8&action=write-review"]];
+            }
+        }else {
+            [self sendEmail:nil];
+        }
+    }
     
     //else {
         //present the other table
@@ -591,6 +686,26 @@
      [self.navigationController pushViewController:detailViewController animated:YES];
      */
 }
-
+- (IBAction)sendEmail:(id)sender {
+    // Email Subject
+    NSString *emailTitle = @"Questions Or Suggestions";
+    // Email Content
+    NSString *messageBody = @"";
+    // To address
+    NSMutableArray *toRecipents = [[NSMutableArray alloc] initWithObjects:@"info@pcdreams-software.com", nil];
+    
+    
+    
+    if(toRecipents.count>0) {
+        
+        MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
+        mc.mailComposeDelegate = self;
+        [mc setSubject:emailTitle];
+        [mc setMessageBody:messageBody isHTML:NO];
+        [mc setToRecipients:toRecipents];
+        // Present mail view controller on screen
+        [self presentViewController:mc animated:YES completion:NULL];
+    }
+}
 
 @end

@@ -115,5 +115,10 @@
 "order_by_firstname" = "Ordenar por nombre";
 "order_contacts" = "Ordenar contactos";
 "order_contacts_explanation" = "Ordenar contactos por apellido o nombre";
+"error_deleting_contact" = "Este contacto no puede ser eliminado";
+"rate_us" = "Califica nos";
+"contact_us" = "Contáctenos";
+"send_feedback" = "Envíenos sus comentarios";
+"select_group" = "Selecciona grupo";
 
 

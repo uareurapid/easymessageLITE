@@ -13,14 +13,14 @@
 @interface GroupDataModel : NSManagedObject
 
 @property (nonatomic, retain) NSString * name;
-@property (nonatomic, retain) NSSet *contacts;
+@property (nonatomic, retain) NSMutableSet *contacts;
 @end
 
 @interface GroupDataModel (CoreDataGeneratedAccessors)
 
 - (void)addContactsObject:(NSManagedObject *)value;
 - (void)removeContactsObject:(NSManagedObject *)value;
-- (void)addContacts:(NSSet *)values;
-- (void)removeContacts:(NSSet *)values;
+- (void)addContacts:(NSMutableSet *)values;
+- (void)removeContacts:(NSMutableSet *)values;
 
 @end

@@ -11,6 +11,7 @@
 #import "ContactDataModel.h"
 #import "MessageDataModel.h"
 #import "PCAppDelegate.h"
+#import "Contact.h"
 
 @interface CoreDataUtils : NSObject
 
@@ -21,6 +22,7 @@
 +(NSMutableArray *) fetchAllContactsDataModelByName: (NSString *) contactName;
 +(GroupDataModel *) fetchGroupDataModelByName: (NSString *) groupName;
 +(BOOL) deleteGroupDataModelByName: (NSString *) groupName;
++(BOOL) deleteContactDataModelByName: (Contact *) contact;
 +(BOOL) deleteMessageDataModelByMsg: (NSString *) msg;
 +(BOOL) deleteContactsList;
 +(BOOL) deleteGroupsList;

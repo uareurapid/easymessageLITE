@@ -32,5 +32,26 @@
     return self.name;
 }
 
+-(BOOL) isEqual:(id)object {
+    
+    if(!object || ![object isKindOfClass: [self class]]) {
+        return NO;
+    }
+    
+    if(object==self) {
+        return YES;
+    }
+    
+    Group *other = (Group *) object;
+    if(other != nil && other.contactsList!=nil && self.contactsList!=nil) {
+        return [self.name isEqualToString: other.name] && self.contactsList.count == other.contactsList.count;
+    }
+    else if([other.name isEqualToString:self.name]) {
+        return YES;
+    }
+    
+    return NO;
+}
+
 
 @end

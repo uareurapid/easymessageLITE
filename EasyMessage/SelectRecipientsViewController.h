@@ -11,6 +11,7 @@
 #import "Group.h"
 #import "AddContactViewController.h"
 #import "PickerView.h"
+#import "ContactDataModel.h"
 
 
 @class PCViewController;
@@ -25,11 +26,14 @@
    selectedOnes: (NSMutableArray *) selectedRecipients rootViewController: (PCViewController*) viewController;
 -(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil rootViewController: (PCViewController*) viewController;
 -(void) addContactToGroup: (NSString *) groupName contact: (Contact *) contact;
+-(void) removeContactFromGroup: (NSString *) groupName contact: (Contact *) contact;
 @property (strong,nonatomic) AddContactViewController *addNewContactController;
+-(BOOL) isContactModel: (ContactDataModel *) model sameAsContact: (Contact *)contact;
 
 -(IBAction)refreshPhonebook:(id)sender;
 
 -(void) deleteGroup:(Group *)group;
+-(void) deleteContact:(Contact *)contact;
 
 -(void) searchForBirthdayIn: (NSInteger) day month: (NSInteger) month;
 

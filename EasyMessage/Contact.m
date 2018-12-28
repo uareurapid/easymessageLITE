@@ -98,6 +98,16 @@
     return NO;
 }
 
+-(NSString *) description {
+    
+    NSString *name = self.name;
+    NSString *lastname = self.lastName != nil ? self.lastName : @"";
+    NSString *phone = self.phone !=nil ? self.phone : @"";
+    NSString *email = self.email !=nil ? self.email: @"";
+    
+    return [NSString stringWithFormat:@"%@ %@ %@ %@", name, lastname, phone, email];
+    
+}
 /*
 -(Contact*) copyWithZone {
     Contact *newOne = [[Contact alloc] init];
