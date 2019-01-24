@@ -30,6 +30,15 @@
     return self;
 }
 
+-(void) showAlertBox:(NSString *) msg {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Easy Message"
+                                                    message:msg
+                                                   delegate:self
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+}
+
 -(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil rootViewController: (PCViewController *) rootViewControllerArg {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil ];
     if(self) {
@@ -242,11 +251,18 @@
     }
 }
 -(void) createNewMessage {
-    //NSLocalizedString(@"message_label",@"message_label")
-   UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"compose",@"compose") message:@"" delegate:self cancelButtonTitle:NSLocalizedString(@"cancel",@"cancel") otherButtonTitles:NSLocalizedString(@"save",@"save"),nil];
-    alert.alertViewStyle = UIAlertViewStylePlainTextInput;
     
-    [alert show];
+    if(self.messagesList.count > 15 &&  ![[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
+        [self showAlertBox:NSLocalizedString(@"lite_only_5_contacts_template_messages", nil)];
+    }
+    else {
+        //NSLocalizedString(@"message_label",@"message_label")
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"compose",@"compose") message:@"" delegate:self cancelButtonTitle:NSLocalizedString(@"cancel",@"cancel") otherButtonTitles:NSLocalizedString(@"save",@"save"),nil];
+        alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+        
+        [alert show];
+    }
+   
 }
 //the delegate for the new Group
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
@@ -268,16 +284,16 @@
         else {
             //check if exists already
             BOOL exists = false;
-            NSLog(@"checking if exists");
+            //NSLog(@"checking if exists");
             for(NSString *msg in messagesList) {
-                NSLog(@"model msg: %@",msg);
+                //NSLog(@"model msg: %@",msg);
                 if([msg isEqualToString:message]) {
                     exists = true;
                 }
                 
             }
             if(!exists) {
-                NSLog(@"not exists adding: %@",message);
+                //NSLog(@"not exists adding: %@",message);
                 NSManagedObjectContext *managedObjectContext = [(PCAppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
                 MessageDataModel *messageModel = (MessageDataModel *)[NSEntityDescription insertNewObjectForEntityForName:@"MessageDataModel" inManagedObjectContext:managedObjectContext];
                 messageModel.msg = message;

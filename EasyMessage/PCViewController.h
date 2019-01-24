@@ -38,6 +38,7 @@
 
 #define PROMO_SHOW_COUNTER @"promo_show_counter"
 #define MAX_ATTACHMENTS 5
+#define MAX_ATTACHMENTS_WITHOUT_PREMIUM 1
 
 @interface PCViewController : UIViewController <MFMailComposeViewControllerDelegate,MFMessageComposeViewControllerDelegate,UIImagePickerControllerDelegate,UITextViewDelegate,UITextFieldDelegate, FBSDKSharingDelegate,UICollectionViewDataSource,UICollectionViewDelegate,
 UITextFieldDelegate, NSURLConnectionDelegate,SKStoreProductViewControllerDelegate,QBImagePickerControllerDelegate>
@@ -45,6 +46,8 @@ UITextFieldDelegate, NSURLConnectionDelegate,SKStoreProductViewControllerDelegat
 @property (weak, nonatomic) IBOutlet UICollectionView *imagesCollection;
 - (IBAction)sendMessage:(id)sender;
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (weak, nonatomic) IBOutlet UILabel *lblAsterisk;
+@property (weak, nonatomic) IBOutlet UILabel *lblPremium;
 - (IBAction)switchSaveMessageValueChanged:(id)sender;
 @property (strong, nonatomic) IBOutlet UIButton *sendButton;
 @property (strong, nonatomic) IBOutlet UILabel *labelMessage;

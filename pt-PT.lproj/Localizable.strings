@@ -125,3 +125,10 @@
 "contact_us" = "Contacte-nos";
 "send_feedback" = "Feedback e comentários";
 "select_group" = "Escolher grupo";
+"unlock_premium" = "Desbloquear funcionalidades premium";
+"premium_feature_only" = "Esta funcionalidade apenas está disponível na versão premium";
+"lite_only_10_recipients" = "Na versão LITE o limite é de 10 destinatários";
+"lite_only_5_groups" = "Na versão LITE o limite é de 5 grupos";
+"lite_only_5_contacts_per_group" = "Na versão LITE o limite é de 5 contactos por groupo";
+"lite_only_5_contacts_template_messages" = "Na versão LITE o limite é de 5 templates";
+"lite_only_2_attachments" = "(*) 5 com a versão Premium";

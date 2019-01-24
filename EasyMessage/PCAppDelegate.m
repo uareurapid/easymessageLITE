@@ -44,6 +44,7 @@
     
     self.inAppPurchasesController = [[IAPMasterViewController alloc] initWithNibName:@"IAPMasterViewController" bundle:nil ];
     
+    self.settingsController.purchasesController = self.inAppPurchasesController;
     
     self.viewController.recipientsController = self.recipientsController;
     
@@ -76,11 +77,11 @@
     [[FBSDKApplicationDelegate sharedInstance] application:application
                              didFinishLaunchingWithOptions:launchOptions];
     // Add any custom logic here.
-    [[Twitter sharedInstance] startWithConsumerKey:@"SfrtbFrUq0IjXVaCHi8784rUN" consumerSecret:@"uMGMGTXzUaJFifZgdpel7Z5hA5MMovDn6vCKxQbvWDk7MOJJGC"];
+    [[Twitter sharedInstance] startWithConsumerKey:@"aDp4mgi28vaaLhpRztoX53c16" consumerSecret:@"JrVYSaJPbAZsfELXtladWxpIunu3aLYxfBBrjcoTJrY8OQkG0R"];
     
-    [Appirater setAppId:@"668776671"];
-    [Appirater setDaysUntilPrompt:0];
-    [Appirater setUsesUntilPrompt:1];
+    [Appirater setAppId:@"1448046358"];
+    [Appirater setDaysUntilPrompt:1];
+    [Appirater setUsesUntilPrompt:2];
     [Appirater setSignificantEventsUntilPrompt:-1];
     [Appirater setTimeBeforeReminding:2];
     [Appirater appLaunched:YES];

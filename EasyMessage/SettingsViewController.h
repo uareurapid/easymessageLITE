@@ -9,7 +9,6 @@
 #import <UIKit/UIKit.h>
 #import <Social/Social.h>
 #import <MessageUI/MessageUI.h>
-//#import <Accounts/Accounts.h>
 
 //TODO PC this is not translated??
 #define OPTION_ALWAYS_SEND_BOTH   @"Always send both"
@@ -56,6 +55,7 @@
 #define SETTINGS_PREF_ORDER_BY_KEY_PREVIOUS_SETTINGS       @"pref_order_by_key_previous_setting"
 
 @class SocialNetworksViewController;
+@class IAPMasterViewController;
 
 @interface SettingsViewController : UITableViewController<MFMailComposeViewControllerDelegate,MFMessageComposeViewControllerDelegate>
 
@@ -79,6 +79,7 @@
 @property BOOL isLinkedinAvailable;
 
 @property (strong,nonatomic) SocialNetworksViewController *socialOptionsController;
+@property (strong,nonatomic) IAPMasterViewController *purchasesController;
 -(void) resetSocialNetworks;
 
 @end

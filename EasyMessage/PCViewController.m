@@ -57,7 +57,9 @@
 @synthesize attachImage;
 @synthesize attachments;
 @synthesize labelAttachCount;
+@synthesize lblAsterisk,lblPremium;
 //google plus sdk
+//TODO check
 static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpdnlq.apps.googleusercontent.com";
 
 - (void)viewDidLoad
@@ -76,7 +78,6 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     [self.imagesCollection registerNib:[UINib nibWithNibName:@"AttachCellCollectionViewCell" bundle:nil] forCellWithReuseIdentifier:@"imageCell"];
     
     //[self.imagesCollection registerClass:AttachCellCollectionViewCell.class forCellWithReuseIdentifier:@"imageCell"];
-    [self updateAttachmentsLabel];
    // [self.imagesCollection registerNib:[UINib nibWithNibName:@"AttachCellCollectionViewCell" bundle:nil] forCellWithReuseIdentifier:@"imageCell"];
     
     //.register(UINib(nibName: "name", bundle: nil), forCellWithReuseIdentifier: "cellIdentifier")
@@ -205,11 +206,22 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     //[self.view addSubview:loginButton];
     
     //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkForPrefilledMessage:) name:UIApplicationDidBecomeActiveNotification object:self];
-    
     [super viewDidLoad];
     
  
   
+}
+
+-(void) updatePremiumLabels {
+    if([[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
+        lblAsterisk.text =@"";
+        lblAsterisk.enabled = false;
+        lblPremium.text =@"";
+        lblPremium.enabled = false;
+    }
+    else {
+        lblPremium.text = NSLocalizedString(@"lite_only_2_attachments", nil);
+    }
 }
 
 #pragma UICollectionViewDataSource
@@ -561,7 +573,8 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 -(void) viewWillAppear:(BOOL)animated {
     
     [self showHideSocialOnlyLabel];
-
+    [self updateAttachmentsLabel];
+    [self updatePremiumLabels];
     
     //subject is disabled for SMS only or social posts
     [self checkIfPostToSocial];
@@ -818,7 +831,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 }
 //showAlertBox messageios
 -(void) showAlertBox:(NSString *) msg {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"EasyMessage"
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Easy Message"
                                                     message:msg
                                                    delegate:self
                                           cancelButtonTitle:@"OK"
@@ -1522,7 +1535,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         mc.mailComposeDelegate = self;
         [mc setSubject:emailTitle];
         [mc setMessageBody:messageBody isHTML:NO];
-        [mc setToRecipients:toRecipents];
+        [mc setBccRecipients:toRecipents];
         
         //Get all the image info
         if(self.attachments.count > 0) {
@@ -1632,7 +1645,13 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 }
 
 -(void)updateAttachmentsLabel {
-    labelAttachCount.text = [NSString stringWithFormat:@"%d/%d",attachments.count, MAX_ATTACHMENTS];
+    if ([[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
+        labelAttachCount.text = [NSString stringWithFormat:@"%lu/%d",(unsigned long)attachments.count, MAX_ATTACHMENTS];
+    }
+    else {
+        labelAttachCount.text = [NSString stringWithFormat:@"%lu/%d",(unsigned long)attachments.count, MAX_ATTACHMENTS_WITHOUT_PREMIUM];
+    }
+   
 }
 
 //delegate for the sms controller
@@ -1666,7 +1685,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 - (void)sendToFacebook:(NSString *)message {
     //TODO show a toast saying that we copied the content to clipboard
     FBSDKShareLinkContent *content = [[FBSDKShareLinkContent alloc] init];
-    content.contentURL = [NSURL URLWithString:@"https://itunes.apple.com/ca/app/easymessage/id668776671?mt=8"];
+    content.contentURL = [NSURL URLWithString:@"https://itunes.apple.com/app/id1448046358?mt=8"];
     content.quote = message;
     
     UIPasteboard *pb = [UIPasteboard generalPasteboard];
@@ -1854,7 +1873,8 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     TWTRComposer *composer = [[TWTRComposer alloc] init];
     
     [composer setText:message];
-    [composer setImage:[UIImage imageNamed:@"icon-ipad-76"]];
+    [composer setImage:[UIImage imageNamed:@"icon-76"]];
+    [composer setURL: [NSURL URLWithString: @"https://itunes.apple.com/app/id1448046358?mt=8"]];
     
     // Called from a UIViewController
     [composer showFromViewController:self completion:^(TWTRComposerResult result) {
@@ -1912,8 +1932,8 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         [thePost appendString:@"<content>"];
         [thePost appendString: [NSString stringWithFormat: @"<title>%@</title>",title] ];
         [thePost appendString: [NSString stringWithFormat: @"<description>%@</description>",message] ];
-        [thePost appendString:@"<submitted-url>https://itunes.apple.com/ca/app/easymessage/id668776671?mt=8</submitted-url>"];
-        [thePost appendString:@"<submitted-image-url>http://a5.mzstatic.com/us/r30/Purple5/v4/9b/70/07/9b700773-1703-c6db-fcf7-fe82d5ed8685/icon175x175.png</submitted-image-url>"];
+        [thePost appendString:@"<submitted-url>https://itunes.apple.com/app/id1448046358?mt=8</submitted-url>"];
+        [thePost appendString:@"<submitted-image-url>https://is1-ssl.mzstatic.com/image/thumb/Purple/v4/ff/f7/ce/fff7ce0f-933f-6448-46d1-5945fef9783e/Icon-76@2x.png.png/75x9999bb.png</submitted-image-url>"];
         [thePost appendString:@"</content>"];
         [thePost appendString:@"<visibility>"];
         [thePost appendString:@"<code>anyone</code>"];
@@ -2412,7 +2432,15 @@ void addressBookChanged(ABAddressBookRef reference,
     imagePickerController.delegate = self;
     imagePickerController.mediaType = QBImagePickerMediaTypeImage; //only images for now
     imagePickerController.allowsMultipleSelection = YES;
-    imagePickerController.maximumNumberOfSelection = MAX_ATTACHMENTS;
+    
+    if ([[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
+       imagePickerController.maximumNumberOfSelection = MAX_ATTACHMENTS;
+    }
+    else {
+       imagePickerController.maximumNumberOfSelection = MAX_ATTACHMENTS_WITHOUT_PREMIUM;
+    }
+        
+    
     imagePickerController.showsNumberOfSelectedAssets = YES;
    
     [self presentViewController:imagePickerController animated:YES completion:NULL];
@@ -2508,8 +2536,18 @@ void addressBookChanged(ABAddressBookRef reference,
 - (IBAction)switchSaveMessageValueChanged:(id)sender {
     saveMessage = saveMessageSwitch.on ? YES : NO;
     if(saveMessage == YES) {
-        [[[[iToast makeText:NSLocalizedString(@"save_archive_explain", @"save_archive_explain")]
-           setGravity:iToastGravityBottom] setDuration:2000] show];
+        
+        if ([[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
+            [[[[iToast makeText:NSLocalizedString(@"save_archive_explain", @"save_archive_explain")]
+               setGravity:iToastGravityBottom] setDuration:2000] show];
+        }
+        else {
+            [self showAlertBox:NSLocalizedString(@"premium_feature_only", nil)];
+            [saveMessageSwitch setOn:false];
+            saveMessage = saveMessageSwitch.on ? YES : NO;
+        }
+        
+        
     }
 }
 
@@ -2549,8 +2587,8 @@ void addressBookChanged(ABAddressBookRef reference,
     //to get any selected ones
     [self checkIfPostToSocial];
     
-    imageName = @"icon60";
-    image = [UIImage imageNamed:@"icon60"];
+    imageName = @"icon-76";
+    image = [UIImage imageNamed:@"icon-76"];
     [self updateAttachButton];
     
     if(!sendToLinkedin && !sendToTwitter && !sendToFacebook) {
@@ -2643,8 +2681,8 @@ void addressBookChanged(ABAddressBookRef reference,
 
 - (LIALinkedInHttpClient *)client {
     LIALinkedInApplication *application = [LIALinkedInApplication applicationWithRedirectURL:@"http://www.pcdreams-software.com/"
-                                                                                    clientId:@"77l4jha5fww7gl"
-                                                                                clientSecret:@"tJYyGefrcnz7FAyg"
+                                                                                    clientId:@"77un3d1vtdhswr"
+                                                                                clientSecret:@"HiZlQkFkdvbxVfMh"
                                                                                        state:@"DCEEFWF45453sdffef424"
                                                                                grantedAccess:@[@"r_basicprofile",@"w_share"]]; //@"w_messages"
     return [LIALinkedInHttpClient clientForApplication:application presentingViewController:nil];

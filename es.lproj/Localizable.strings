@@ -120,5 +120,12 @@
 "contact_us" = "Contáctenos";
 "send_feedback" = "Envíenos sus comentarios";
 "select_group" = "Selecciona grupo";
+"unlock_premium" = "Desbloquear características premium";
+"premium_feature_only" = "Esta función solo está disponible en la versión premium";
+"lite_only_10_recipients" = "Con la versión LITE hay un límite de 10 destinatarios.";
+"lite_only_5_groups" = "Con la versión LITE hay un límite de 5 grupos.";
+"lite_only_5_contacts_per_group" = "Con la versión LITE hay un límite de 5 contactos por grupo.";
+"lite_only_5_contacts_template_messages" = "Con la versión LITE hay un límite de 5 mensajes de plantilla.";
+"lite_only_2_attachments" = "(*) 5 con la versión premium";
 
 

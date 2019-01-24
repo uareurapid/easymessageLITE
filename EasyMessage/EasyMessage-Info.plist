@@ -13,7 +13,7 @@
 	<key>CFBundleIcons~ipad</key>
 	<dict/>
 	<key>CFBundleIdentifier</key>
-	<string>com.pt.pcristo</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -21,7 +21,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>4.1.1</string>
+	<string>1.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -29,39 +29,40 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>twitterkit-SfrtbFrUq0IjXVaCHi8784rUN</string>
-				<string>li3233463</string>
+				<string>twitterkit-aDp4mgi28vaaLhpRztoX53c16</string>
+				<string>li7220813</string>
 				<string>tel</string>
-				<string>fb2095874780642911</string>
+				<string>fb312918469430233</string>
 			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>com.pt.pcristo</string>
+			<string>com.pcdreams.easymessage.lite</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.pt.pcristo</string>
+				<string>com.pcdreams.easymessage.lite</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1.0.0</string>
 	<key>FacebookAppID</key>
-	<string>2095874780642911</string>
+	<string>312918469430233</string>
 	<key>FacebookDisplayName</key>
 	<string>EasyMessage</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LIAppId</key>
-	<string>3233463</string>
+	<string>7220813</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>twitter</string>
 		<string>twitterauth</string>
 		<string>fbapi</string>
 		<string>fb-messenger-api</string>
+		<string>fb-messenger-share-api</string>
 		<string>tel</string>
 		<string>fbauth2</string>
 		<string>fbshareextension</string>

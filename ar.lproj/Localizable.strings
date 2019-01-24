@@ -123,4 +123,10 @@
 "contact_us" = "اتصل بنا";
 "send_feedback" = "أرسل لنا ملاحظاتك";
 "select_group" = "اختر مجموعة";
-
+"unlock_premium" = "فتح ميزات متميزة";
+"premium_feature_only" = "هذه الميزة متوفرة فقط في الإصدار المميز";
+"lite_only_10_recipients" = "مع الإصدار LITE هناك حد من 10 مستلمين";
+"lite_only_5_groups" = "مع الإصدار LITE هناك حد من 5 مجموعات";
+"lite_only_5_contacts_per_group" = "مع الإصدار LITE هناك حد من 5 جهات اتصال لكل مجموعة";
+"lite_only_5_contacts_template_messages" = "مع الإصدار LITE هناك حد من 5 رسائل قالب";
+"lite_only_2_attachments" = "(*) 5 مع الإصدار المميز";

@@ -120,4 +120,10 @@
 "contact_us" = "Contactez nous";
 "send_feedback" = "Envoyez-nous vos commentaires";
 "select_group" = "Sélectionner un groupe";
-
+"unlock_premium" = "Déverrouiller les fonctionnalités premium";
+"premium_feature_only" = "Cette fonctionnalité est uniquement disponible sur la version premium";
+"lite_only_10_recipients" = "Avec la version LITE, le nombre de destinataires est limité à 10.";
+"lite_only_5_groups" = "Avec la version LITE, il y a une limite de 5 groupes";
+"lite_only_5_contacts_per_group" = "Avec la version LITE, le nombre de contacts par groupe est limité à 5.";
+"lite_only_5_contacts_template_messages" = "Avec la version LITE, le nombre de messages de modèle est limité à 5.";
+"lite_only_2_attachments" = "(*) 5 avec la version Premium";

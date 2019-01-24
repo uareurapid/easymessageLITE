@@ -48,7 +48,14 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     }];
 }
 
-
+-(void) showAlertBox:(NSString *) msg {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Easy Message"
+                                                    message:msg
+                                                   delegate:self
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+}
 
 //THIS IS THE METHOD THAT IS CALLED FROM APPDELEGATE
 -(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil rootViewController: (PCViewController*) viewController{
@@ -1113,7 +1120,14 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     
     
    if(![selectedContactsList containsObject:contact]) {
-        [selectedContactsList addObject:contact];
+       
+       if(self.selectedContactsList.count >= 10 &&  ![[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
+           [self showAlertBox:NSLocalizedString(@"lite_only_10_recipients", nil)];
+       }
+       else {
+          [selectedContactsList addObject:contact];
+       }
+       
    }
    else {
      //already contains, remove it
@@ -1509,6 +1523,12 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 
 -(void) performContactToGroupAssignment: (NSManagedObjectContext *) managedObjectContext contactModel: (ContactDataModel *)contactModel groupModel: (GroupDataModel *) groupModel groupName:(NSString *) groupName contact: (Contact *) contact {
     
+    
+    if(groupModel.contacts.count >= 5 &&  ![[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
+        [self showAlertBox:NSLocalizedString(@"lite_only_5_contacts_per_group", nil)];
+        return;
+    }
+    
     NSLog(@"GOT CONTACT MATCH %@ ",contactModel.name);
     //add the contact to the group
     [groupModel addContactsObject:contactModel];
@@ -1557,7 +1577,6 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 //show the input new group dialog
 - (IBAction)addGroupClicked:(id)sender{
 
-    UIAlertView * alert;
     //adding a contact
     if(self.groupLocked) {
         if(self.selectedContactsList.count == 1) {
@@ -1570,7 +1589,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
                 NSLog(@"hide group %@ from options ", c.name);
                 [options removeObject:c.name];
             }
-            
+            //add a contact to an existing group
             [PickerView showPickerWithOptions:options sender:sender title:NSLocalizedString(@"select_group", @"select_group") selectionBlock:^(NSString *selectedOption) {
                     //TODO
                     Contact *c = [self.selectedContactsList objectAtIndex:0];
@@ -1586,13 +1605,21 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         }
     }
     else {
-        //adding a group allowed
-        alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"new_group",@"new_group") message:NSLocalizedString(@"enter_group_name",@"enter_group_name") delegate:self cancelButtonTitle:NSLocalizedString(@"cancel",@"cancel") otherButtonTitles:NSLocalizedString(@"save",@"save"),nil];
-        alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+        
+        if(self.groupsList.count >= 5 &&  ![[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
+            [self showAlertBox:NSLocalizedString(@"lite_only_5_groups", nil)];
+        }
+        else {
+            //adding a new group is allowed
+            UIAlertView * alert;
+            alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"new_group",@"new_group") message:NSLocalizedString(@"enter_group_name",@"enter_group_name") delegate:self cancelButtonTitle:NSLocalizedString(@"cancel",@"cancel") otherButtonTitles:NSLocalizedString(@"save",@"save"),nil];
+            alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+            [alert show];
+        }
+        
+        
     }
     
-    
-    [alert show];
 }
 
 

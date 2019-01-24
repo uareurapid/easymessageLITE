@@ -20,6 +20,8 @@
                 <outlet property="labelOnlySocial" destination="447" id="448"/>
                 <outlet property="labelSaveArchive" destination="450" id="460"/>
                 <outlet property="labelSubject" destination="221" id="445"/>
+                <outlet property="lblAsterisk" destination="HWs-80-TVV" id="mTl-aJ-3fn"/>
+                <outlet property="lblPremium" destination="LD0-Ep-gXh" id="yDJ-4N-8m7"/>
                 <outlet property="lockImage" destination="461" id="462"/>
                 <outlet property="recipientsLabel" destination="kdV-9X-J0n" id="g7T-S5-gfu"/>
                 <outlet property="saveMessageSwitch" destination="457" id="458"/>
@@ -155,6 +157,20 @@
                                 </collectionView>
                             </subviews>
                         </scrollView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="(*)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HWs-80-TVV" userLabel="lblAsterisk">
+                            <rect key="frame" x="17" y="335" width="20" height="21"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LD0-Ep-gXh" userLabel="lblPremium">
+                            <rect key="frame" x="25" y="533" width="399" height="21"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                            <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
                     </subviews>
                 </scrollView>
             </subviews>

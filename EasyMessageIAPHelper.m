@@ -27,7 +27,8 @@
         NSSet * productIdentifiers = [NSSet setWithObjects:
                                       //PRODUCT_COMMON_MESSAGES,
                                       //PRODUCT_GROUP_SUPPORT,
-                                      PRODUCT_ADS_FREE,
+                                      //PRODUCT_ADS_FREE,
+                                      PRODUCT_PREMIUM_UPGRADE,
                                       nil];
         sharedInstance = [[self alloc] initWithProductIdentifiers:productIdentifiers];
     });

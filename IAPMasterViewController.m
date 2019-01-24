@@ -185,16 +185,16 @@
             
             cell.imageView.image = [UIImage imageNamed:@"Lock32"];
             
-            UIImage *buyImage = [UIImage imageNamed:@"buy48"];
-            UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeContactAdd];
+            /*UIImage *buyImage = [UIImage imageNamed:@"80-shopping-cart"];
+            UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
             buyButton.frame = CGRectMake(0, 0, 48, 48);
             [buyButton setBackgroundImage:buyImage forState:UIControlStateNormal];
             //[buyButton setTitle:NSLocalizedString(@"buy",@"buy") forState:UIControlStateNormal];
             buyButton.tag = indexPath.row;
             [buyButton addTarget:self action:@selector(buyButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
-             
+            */
             
-            cell.accessoryView = buyButton;
+            cell.accessoryView = nil;// buyButton;
         }
         
     }
@@ -246,6 +246,11 @@
      
      }
      [self.tableView reloadData];
+    
+     if(_lastSelectedProduct !=nil) {
+         [self startPurchaseOf:_lastSelectedProduct];
+     }
+    
 }
 
 -(NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
@@ -301,6 +306,15 @@
     
 }
 
+- (void)startPurchaseOf:(SKProduct *) product {
+    
+    //UIButton *buyButton = (UIButton *)sender;
+    //SKProduct *product = _products[buyButton.tag];
+    
+    NSLog(@"Buying %@...", product.productIdentifier);
+    [[EasyMessageIAPHelper sharedInstance] buyProduct:product];
+    
+}
 //restore clicked
 - (void)restoreTapped:(id)sender {
     [[EasyMessageIAPHelper sharedInstance] restoreCompletedTransactions];

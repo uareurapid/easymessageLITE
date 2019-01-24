@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		720020E421F1326500698245 /* Icon-76.png in Resources */ = {isa = PBXBuildFile; fileRef = 720020E321F1326500698245 /* Icon-76.png */; };
 		720862FF17DD249C0024B662 /* 80-shopping-cart.png in Resources */ = {isa = PBXBuildFile; fileRef = 720862FE17DD249C0024B662 /* 80-shopping-cart.png */; };
 		7209458D1FD4B8AE00AD7EDF /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7209458A1FD4B8AC00AD7EDF /* FBSDKCoreKit.framework */; };
 		7209458E1FD4B8AE00AD7EDF /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7209458B1FD4B8AD00AD7EDF /* FBSDKLoginKit.framework */; };
@@ -174,6 +175,7 @@
 
 /* Begin PBXFileReference section */
 		2D5E9CC017E5903E74EB7D93 /* libPods-EasyMessage.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-EasyMessage.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		720020E321F1326500698245 /* Icon-76.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-76.png"; sourceTree = "<group>"; };
 		720862FE17DD249C0024B662 /* 80-shopping-cart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "80-shopping-cart.png"; path = "EasyMessage/80-shopping-cart.png"; sourceTree = "<group>"; };
 		7209458A1FD4B8AC00AD7EDF /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKCoreKit.framework; sourceTree = "<group>"; };
 		7209458B1FD4B8AD00AD7EDF /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKLoginKit.framework; sourceTree = "<group>"; };
@@ -482,6 +484,7 @@
 				72682BFC17C5184400A3318F /* world.png */,
 				72682BFF17C519DD00A3318F /* world2.png */,
 				72B843BC17A87D9500067A73 /* Default.png */,
+				720020E321F1326500698245 /* Icon-76.png */,
 				72B843BA17A8776F00067A73 /* emblem_package.png */,
 				72B843B817A8764E00067A73 /* Packed-48.png */,
 				729AAC4617DA854800CABCB0 /* 33-cabinet.png */,
@@ -793,6 +796,9 @@
 						DevelopmentTeam = VAZ5V665BS;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
+							com.apple.InAppPurchase = {
+								enabled = 1;
+							};
 							com.apple.Push = {
 								enabled = 1;
 							};
@@ -848,6 +854,7 @@
 				72D25CF021C79A660004EB21 /* sorta.png in Resources */,
 				72A2C27A177B99F2006FF12F /* email.png in Resources */,
 				7235CC3E1F0460C30039E8A3 /* AddContactViewController.xib in Resources */,
+				720020E421F1326500698245 /* Icon-76.png in Resources */,
 				72A2C27C177B9AE9006FF12F /* gear.png in Resources */,
 				72A2C27E177B9F6D006FF12F /* phone-book.png in Resources */,
 				7285A6AB177CACFA006137B8 /* concrete_wall.png in Resources */,
@@ -1138,6 +1145,7 @@
 					/Users/paulocristo/Downloads/Chartboost/Chartboost,
 				);
 				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pcdreams.easymessage.lite;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1176,6 +1184,7 @@
 					/Users/paulocristo/Downloads/Chartboost/Chartboost,
 				);
 				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pcdreams.easymessage.lite;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";

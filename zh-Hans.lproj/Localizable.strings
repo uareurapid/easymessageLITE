@@ -120,4 +120,10 @@
 "contact_us" = "联系我们";
 "send_feedback" = "向我们发送您的反馈";
 "select_group" = "选择组";
-
+"unlock_premium" = "解锁高级功能";
+"premium_feature_only" = "此功能仅适用于高级版本";
+"lite_only_10_recipients" = "使用LITE版本时，最多只有10个收件人";
+"lite_only_5_groups" = "LITE版本限制为5组";
+"lite_only_5_contacts_per_group" = "使用LITE版本，每组最多只能有5个联系人";
+"lite_only_5_contacts_template_messages" = "使用LITE版本时，限制为5个模板消息";
+"lite_only_2_attachments" = "(*) 5与高级版";

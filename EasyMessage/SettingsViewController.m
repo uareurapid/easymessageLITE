@@ -18,7 +18,7 @@
 
 @synthesize sendOptions,preferedServiceOptions,socialServicesOptions;
 @synthesize selectPreferredService,selectSendOption,selectOrderByOption;
-@synthesize socialOptionsController;
+@synthesize socialOptionsController, purchasesController;
 @synthesize showToast;
 @synthesize initiallySelectedPreferredService,initiallySelectedSendOption, initiallySelectedOrderByOption;
 @synthesize isFacebookAvailable,isTwitterAvailable,isLinkedinAvailable;
@@ -207,7 +207,7 @@
 #warning Potentially incomplete method implementation.
     // Return the number of sections.
     
-    return 4;
+    return 5; //added one for restore purchase/buy premium
 }
 
 -(IBAction)goBackAfterSelection:(id)sender {
@@ -304,6 +304,10 @@
         //rate us/questions/suggestions
         return 2;
     }
+    else if(section == 4) {
+        //restore/purchase premium
+        return 1;
+    }
    
     return 1; //just one for the prefered item options
     
@@ -323,6 +327,10 @@
     else if(section == 3) {
         
         return NSLocalizedString(@"contact_us", nil);
+    }
+    else if(section == 4) {
+        //TODO
+        return NSLocalizedString(@"unlock_premium", nil);
     }
     else {
        return @"Advanced Options";
@@ -344,6 +352,10 @@
     }
     else if(section==3) {
         return NSLocalizedString(@"send_feedback", nil);
+    }
+    else if(section==4) {
+        //TODO
+        return NSLocalizedString(@"unlock_premium", nil);
     }
     else {
         return @"Use social services";
@@ -453,6 +465,11 @@
             cell.imageView.image = [UIImage imageNamed:@"contact"];
         }
         
+    }//TODO
+    else if(section == 4) {
+        cell.textLabel.text =  NSLocalizedString(@"unlock_premium", nil);
+        cell.accessoryType = UITableViewCellAccessoryNone;
+        cell.imageView.image = [UIImage imageNamed:@"Unlock32"];
     }
  
     
@@ -663,6 +680,12 @@
             }
         }else {
             [self sendEmail:nil];
+        }
+    }
+    else if(section == 4 && row == 0) {
+        
+        if(self.purchasesController !=nil) {
+            [self.navigationController pushViewController:purchasesController animated:YES];
         }
     }
     

@@ -124,4 +124,10 @@
 "contact_us" = "문의하기";
 "send_feedback" = "의견 보내기";
 "select_group" = "그룹 선택";
-
+"unlock_premium" = "프리미엄 기능 잠금 해제";
+"premium_feature_only" = "이 기능은 프리미엄 버전에서만 사용할 수 있습니다.";
+"lite_only_10_recipients" = "LITE 버전에는 수신자가 10 명으로 제한됩니다.";
+"lite_only_5_groups" = "LITE 버전에는 5 개의 그룹 제한이 있습니다.";
+"lite_only_5_contacts_per_group" = "LITE 버전에는 그룹당 5 개의 연락처 수 제한이 있습니다.";
+"lite_only_5_contacts_template_messages" = "LITE 버전에는 템플릿 메시지가 5 개로 제한됩니다.";
+"lite_only_2_attachments" = "(*) 5 프리미엄 버전";
