@@ -250,7 +250,8 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 
     
     // get the image
-    UIImage *image = [self.attachments objectAtIndex: indexPath.row];
+    NSArray *data = [self.attachments objectAtIndex: indexPath.row];
+    UIImage *image = [data objectAtIndex:0]; //[self.attachments objectAtIndex: indexPath.row];
     
      dispatch_async(dispatch_get_main_queue(), ^{
          // populate the cell
@@ -1542,17 +1543,18 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             
             for(int i = 0; i < self.attachments.count; i++) {
                 //"image/jpeg" png
-                UIImage *img = [self.attachments objectAtIndex:i];
-                NSData *imageData = [self getImageInfoData: img];
-                BOOL isPNG = true;//[self isImagePNG];
-                NSString *name = [NSString stringWithFormat:@"pic_%d",i];
+                NSArray *data = [self.attachments objectAtIndex:i];
+                UIImage *img = [data objectAtIndex:0]; //[self.attachments objectAtIndex:i];
+                self.imageName = [data objectAtIndex:1];
+                NSData *imageData =  [self getImageInfoData: img];
+                BOOL isPNG = [self isImagePNG];
+                NSString *name = [NSString stringWithFormat:@"pic_%d.%@",i,isPNG ? @"png" : @"jpg"];
                 [mc addAttachmentData:imageData mimeType: isPNG ? @"image/png" : @"image/jpeg" fileName:name];//imageName
             }
-            
         }
-        
         // Present mail view controller on screen
         [self presentViewController:mc animated:YES completion:NULL];
+        
     }
     else if(settingsController.selectSendOption != OPTION_ALWAYS_SEND_BOTH_ID) {
         
@@ -1998,10 +2000,12 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                 
                 for(int i = 0; i < self.attachments.count; i++) {
                     //"image/jpeg" png
-                    UIImage *img = [self.attachments objectAtIndex:i];
+                    NSArray *data = [self.attachments objectAtIndex:i];
+                    UIImage *img = [data objectAtIndex:0]; //[self.attachments objectAtIndex:i];
+                    self.imageName = [data objectAtIndex:1];
                     NSData *imageData = [self getImageInfoData: img];
-                    BOOL isPNG = true;//[self isImagePNG];
-                    NSString *name = [NSString stringWithFormat:@"pic_%d",i];
+                    BOOL isPNG = [self isImagePNG];
+                    NSString *name = [NSString stringWithFormat:@"pic_%d.%@",i,isPNG ? @"png" : @"jpg"];
                     [controller addAttachmentData:imageData typeIdentifier:isPNG ? @"image/png" : @"image/jpeg" filename:name];
                     //[controller addAttachmentData:imageData typeIdentifier:isPNG ? @"image/png" : @"image/jpeg" fileName:name];//imageName
                 }
@@ -2401,7 +2405,13 @@ void addressBookChanged(ABAddressBookRef reference,
                                   options:requestOptions
                             resultHandler:^void(UIImage *image, NSDictionary *info) {
                                 if(image!=nil) {
-                                    [self.attachments addObject:image];
+                                    //PHImageFileURLKey could be nil if the key is not present, so we add dummy string instead
+                                    NSURL *url = [info objectForKey: @"PHImageFileURLKey"];
+                                    if(url==nil) {
+                                        url = [NSURL URLWithString:@"file:///var/mobile/media/dcim/100apple/pic.png"];
+                                    }
+                                    NSArray *data = [[NSArray alloc] initWithObjects:image, url.absoluteString, nil];
+                                    [self.attachments addObject:data];
                                 }
                                 
                             }];
@@ -2555,7 +2565,7 @@ void addressBookChanged(ABAddressBookRef reference,
 - (NSData *) getImageInfoData: (UIImage *)img {
     
     NSData *imageData = nil;
-    
+    // TODO
     if ([self isImagePNG]) {
         imageData = UIImagePNGRepresentation(img);
     }
@@ -2570,11 +2580,11 @@ void addressBookChanged(ABAddressBookRef reference,
 //check is is PNG
 -(BOOL) isImagePNG {
     bool isPNG = true;
-    if ([imageName rangeOfString:@".png"].location != NSNotFound) {
+    if ([imageName.lowercaseString rangeOfString:@".png"].location != NSNotFound) {
         return isPNG;
     }
-    else if([imageName rangeOfString:@".jpg"].location != NSNotFound
-            || [imageName rangeOfString:@".jpeg"].location != NSNotFound) {
+    else if([imageName.lowercaseString rangeOfString:@".jpg"].location != NSNotFound
+            || [imageName.lowercaseString rangeOfString:@".jpeg"].location != NSNotFound) {
         isPNG = false;
     }
     else {
