@@ -152,6 +152,7 @@
 		72E2253C1FD5F9DF0076C813 /* TwitterCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72E2253A1FD5F9DE0076C813 /* TwitterCore.framework */; };
 		72E225421FD5FFAE0076C813 /* TwitterKitResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 72E225401FD5FFAD0076C813 /* TwitterKitResources.bundle */; };
 		72E225431FD5FFAE0076C813 /* TwitterShareExtensionUIResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 72E225411FD5FFAE0076C813 /* TwitterShareExtensionUIResources.bundle */; };
+		72E2759B221DCAE100DD13F0 /* Batch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72E2759A221DCAE100DD13F0 /* Batch.framework */; };
 		72F787FB17DCC37500424519 /* 24-gift.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F787FA17DCC37500424519 /* 24-gift.png */; };
 		72F787FD17DCC38D00424519 /* 35-shopping.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F787FC17DCC38D00424519 /* 35-shopping.png */; };
 		72F99F8121C860F900FAE7D8 /* libQBImagePickerController.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F99F8021C860F900FAE7D8 /* libQBImagePickerController.a */; };
@@ -379,6 +380,7 @@
 		72E2253A1FD5F9DE0076C813 /* TwitterCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TwitterCore.framework; sourceTree = "<group>"; };
 		72E225401FD5FFAD0076C813 /* TwitterKitResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = TwitterKitResources.bundle; sourceTree = "<group>"; };
 		72E225411FD5FFAE0076C813 /* TwitterShareExtensionUIResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = TwitterShareExtensionUIResources.bundle; sourceTree = "<group>"; };
+		72E2759A221DCAE100DD13F0 /* Batch.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Batch.framework; path = Pods/Batch/Batch.embeddedframework/Batch.framework; sourceTree = "<group>"; };
 		72F787FA17DCC37500424519 /* 24-gift.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "24-gift.png"; sourceTree = "<group>"; };
 		72F787FC17DCC38D00424519 /* 35-shopping.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "35-shopping.png"; sourceTree = "<group>"; };
 		72F99F8021C860F900FAE7D8 /* libQBImagePickerController.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libQBImagePickerController.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -394,6 +396,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				72E2759B221DCAE100DD13F0 /* Batch.framework in Frameworks */,
 				72F99F8121C860F900FAE7D8 /* libQBImagePickerController.a in Frameworks */,
 				72D25D0421C85BCD0004EB21 /* PhotosUI.framework in Frameworks */,
 				72D25D0221C85BC30004EB21 /* Photos.framework in Frameworks */,
@@ -513,6 +516,7 @@
 		7224153A1771148800989C3B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				72E2759A221DCAE100DD13F0 /* Batch.framework */,
 				72F99F8021C860F900FAE7D8 /* libQBImagePickerController.a */,
 				72D25D0321C85BCD0004EB21 /* PhotosUI.framework */,
 				72D25D0121C85BC30004EB21 /* Photos.framework */,
@@ -1130,20 +1134,15 @@
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/MoPubSDK/AdNetworkSupport/Millennial/SDK/SpeechKit",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Pods/Batch/Batch.embeddedframework",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "EasyMessage/EasyMessage-Prefix.pch";
 				INFOPLIST_FILE = "EasyMessage/EasyMessage-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/MoPubSDK/AdNetworkSupport/GoogleAdMob/SDK",
-					"$(PROJECT_DIR)/MoPubSDK/AdNetworkSupport/Millennial/SDK",
-					/Users/paulocristo/Downloads/Chartboost/Chartboost,
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pcdreams.easymessage.lite;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1169,20 +1168,15 @@
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/MoPubSDK/AdNetworkSupport/Millennial/SDK/SpeechKit",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Pods/Batch/Batch.embeddedframework",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "EasyMessage/EasyMessage-Prefix.pch";
 				INFOPLIST_FILE = "EasyMessage/EasyMessage-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/MoPubSDK/AdNetworkSupport/GoogleAdMob/SDK",
-					"$(PROJECT_DIR)/MoPubSDK/AdNetworkSupport/Millennial/SDK",
-					/Users/paulocristo/Downloads/Chartboost/Chartboost,
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pcdreams.easymessage.lite;
 				PRODUCT_NAME = "$(TARGET_NAME)";

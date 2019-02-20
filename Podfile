@@ -8,4 +8,5 @@ target 'EasyMessage' do
   # Pods for EasyMessage
 pod "Appirater"
 pod "QBImagePickerController"
+pod 'Batch', '~> 1.13'
 end

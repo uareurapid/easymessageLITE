@@ -19,7 +19,7 @@
 #import <TwitterKit/TwitterKit.h>
 #import <Appirater.h>
 
-
+#import <Batch/Batch.h>
 
 
 @implementation PCAppDelegate
@@ -88,6 +88,20 @@
     [Appirater setDebug:NO];
     
     [self registerForRemoteNotifications];
+    
+    // Start Batch.
+    // TODO : switch to live api key before store release
+    [Batch startWithAPIKey:@"DEV5C6281062D7458A1A5011A11309"]; // dev
+    // [Batch startWithAPIKey:@"5C6281062D31F00273C12635993BA6"]; // live
+    
+    // Ask for the permission to display notifications
+    // The push token will automatically be fetched by the SDK
+    [BatchPush requestNotificationAuthorization];
+    
+    // Alternatively, you can call requestNotificationAuthorization later
+    // But, you should always refresh your token on each application start
+    // This will make sure that even if your user's token changes, you still get notifications
+    // [BatchPush refreshToken];
     
     return YES;
 }
@@ -312,9 +326,18 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 // Objective C
-#pragma TwitterDelegate
+#pragma TwitterDelegate + FacebookDelegate
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<NSString *,id> *)options {
-    return [[Twitter sharedInstance] application:app openURL:url options:options];
+    //twitter
+    BOOL handled = [[Twitter sharedInstance] application:app openURL:url options:options];
+    //facebook
+    BOOL handledFB = [[FBSDKApplicationDelegate sharedInstance] application:app
+                                                                    openURL:url
+                                                          sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
+                                                                 annotation:options[UIApplicationOpenURLOptionsAnnotationKey]];
+    
+    // Add any custom logic here.
+    return handled || handledFB;
 }
 
 @end
