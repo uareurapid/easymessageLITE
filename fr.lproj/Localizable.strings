@@ -127,3 +127,6 @@
 "lite_only_5_contacts_per_group" = "Avec la version LITE, le nombre de contacts par groupe est limité à 5.";
 "lite_only_5_contacts_template_messages" = "Avec la version LITE, le nombre de messages de modèle est limité à 5.";
 "lite_only_2_attachments" = "(*) 5 avec la version Premium";
+"lite_reached_max_attachments" = "Veuillez supprimer une image ou passer à la version Premium.";
+"social_networks_copy_paste" = "Certains réseaux sociaux n'autorisent pas les publications contenant des messages préremplis.\r\nDans ce cas, le message sera automatiquement copié dans le presse-papier et vous devrez le coller vous-même.";
+"message_copied_clipboard" = "Le message a été copié dans le presse-papier";

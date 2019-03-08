@@ -29,6 +29,8 @@
 -(void) removeContactFromGroup: (NSString *) groupName contact: (Contact *) contact;
 @property (strong,nonatomic) AddContactViewController *addNewContactController;
 -(BOOL) isContactModel: (ContactDataModel *) model sameAsContact: (Contact *)contact;
+-(UIImage*) drawText:(NSString*) text inImage:(UIImage*) image atPoint:(CGPoint) point;
+-(NSString *) getInitialsFromContact: (NSString *) firstString andLastString: (NSString *) lastString;
 
 -(IBAction)refreshPhonebook:(id)sender;
 

@@ -37,6 +37,8 @@
         
         UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle: NSLocalizedString(@"done_button", @"done_button") style:UIBarButtonItemStyleDone target:self action:@selector(goBackAfterSelection:)];
         
+        doneButton.tintColor = UIColor.whiteColor;
+        
         self.navigationItem.rightBarButtonItem = doneButton;
         //self.title = @"Advanced Options";
     }
@@ -284,7 +286,9 @@
 
 -(NSString *) tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
     if(section==0) {
-        return NSLocalizedString(@"footer_social_networks", @"settings not persisted between messages");
+        
+        NSString *str = [NSString stringWithFormat:@"%@\r\n\r\n%@",NSLocalizedString(@"footer_social_networks", @""),NSLocalizedString(@"social_networks_copy_paste", @"")];
+        return str;
     }
     else {
         return @"";

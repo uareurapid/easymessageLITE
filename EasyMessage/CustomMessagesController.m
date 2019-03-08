@@ -48,11 +48,13 @@
         //self.addNewMessage = YES;
         
         UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"add",@"add") style:UIBarButtonItemStyleDone target:self action:@selector(selectFinished:)];
-        //unlock = [UIImage imageNamed:@"Unlock32"];
-        //lock = [UIImage imageNamed:@"Lock32"];
+        
+        doneButton.tintColor = UIColor.whiteColor;
         
         UIBarButtonItem *deleteButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Delete" style:UIBarButtonItemStyleDone target:self action:@selector(deleteMessageClicked:)];
       
+        deleteButtonItem.tintColor = UIColor.whiteColor;
+        
         [doneButton setEnabled:YES];
         [deleteButtonItem setEnabled:NO];
         

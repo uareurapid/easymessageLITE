@@ -132,3 +132,7 @@
 "lite_only_5_contacts_per_group" = "Na versão LITE o limite é de 5 contactos por groupo";
 "lite_only_5_contacts_template_messages" = "Na versão LITE o limite é de 5 templates";
 "lite_only_2_attachments" = "(*) 5 com a versão Premium";
+"lite_reached_max_attachments" = "Por favor remova o anexo ou então faça o upgrade para a versão Premium";
+"social_networks_copy_paste" = "Algumas redes sociais não permitem posts com mensagens pré-preenchidas. \r\nNestes casos a mensagem será automaticamente copiada para a área de transferência e voçê vai ter de colá-la posteriormente";
+"message_copied_clipboard" = "A mensagem foi copiada para a área de transferência";
+

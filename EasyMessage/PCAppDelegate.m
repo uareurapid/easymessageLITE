@@ -31,6 +31,15 @@
     //CHECK WICH VIEWS TO LOAD
     //self.viewController = [[ViewController alloc] initWithNibName:IS_IPAD?@"ViewController~iPad":@"ViewController" bundle:nil];
     
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    if(![defaults objectForKey:SETTINGS_PREF_ORDER_BY_KEY]) {
+        [defaults setObject:OPTION_ORDER_BY_FIRSTNAME_KEY forKey:SETTINGS_PREF_ORDER_BY_KEY];
+    }
+    if(![defaults objectForKey:SETTINGS_PREF_ORDER_BY_KEY_PREVIOUS_SETTINGS]) {
+        [defaults setObject:OPTION_ORDER_BY_FIRSTNAME_KEY forKey:SETTINGS_PREF_ORDER_BY_KEY_PREVIOUS_SETTINGS];
+    }
+    
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     self.viewController = [[PCViewController alloc] initWithNibName:@"PCViewController" bundle:nil];
@@ -51,15 +60,22 @@
     UINavigationController *easyMessageController = [[UINavigationController alloc] init];
     [easyMessageController setViewControllers: [[NSArray alloc]  initWithObjects:self.viewController, nil]];
     
+    easyMessageController.navigationBar.barTintColor = [self colorFromHex:0xfb922b];
+    
     UINavigationController *navControllerSettings = [[UINavigationController alloc] init];
     [navControllerSettings setViewControllers: [[NSArray alloc]  initWithObjects:self.settingsController, nil]];
+    
+    navControllerSettings.navigationBar.barTintColor = [self colorFromHex:0xfb922b];
     
     UINavigationController *navControllerRecipients = [[UINavigationController alloc] init];
     [navControllerRecipients setViewControllers: [[NSArray alloc]  initWithObjects:self.recipientsController, nil]];
     
+    navControllerRecipients.navigationBar.barTintColor = [self colorFromHex:0xfb922b];
+    
     UINavigationController *customMessagesControllerNav = [[UINavigationController alloc] init];
     [customMessagesControllerNav setViewControllers: [[NSArray alloc]  initWithObjects:self.customMessagesController, nil]];
     
+    customMessagesControllerNav.navigationBar.barTintColor = [self colorFromHex:0xfb922b];
    // UINavigationController *inAppPurchasesControllerNav = [[UINavigationController alloc] init];
    // [inAppPurchasesControllerNav setViewControllers: [[NSArray alloc]  initWithObjects:self.inAppPurchasesController, nil]];
     
@@ -80,8 +96,8 @@
     [[Twitter sharedInstance] startWithConsumerKey:@"aDp4mgi28vaaLhpRztoX53c16" consumerSecret:@"JrVYSaJPbAZsfELXtladWxpIunu3aLYxfBBrjcoTJrY8OQkG0R"];
     
     [Appirater setAppId:@"1448046358"];
-    [Appirater setDaysUntilPrompt:1];
-    [Appirater setUsesUntilPrompt:2];
+    [Appirater setDaysUntilPrompt:2];
+    [Appirater setUsesUntilPrompt:1];
     [Appirater setSignificantEventsUntilPrompt:-1];
     [Appirater setTimeBeforeReminding:2];
     [Appirater appLaunched:YES];
@@ -104,6 +120,14 @@
     // [BatchPush refreshToken];
     
     return YES;
+}
+
+- (UIColor *)colorFromHex:(unsigned long)hex
+{
+    return [UIColor colorWithRed:((float)((hex & 0xFF0000) >> 16))/255.0
+                           green:((float)((hex & 0xFF00) >> 8))/255.0
+                            blue:((float)(hex & 0xFF))/255.0
+                           alpha:1.0];
 }
 
 - (void)registerForRemoteNotifications {

@@ -143,6 +143,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     //TODO possible solution check
     //CGSize scrollSize = CGSizeMake([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
     //[scrollView setContentSize: scrollSize];
+    self.tabBarController.tabBar.tintColor = [self colorFromHex:0xfb922b];
     
     //load the contacts list when the view loads
     [self setupAddressBook];
@@ -210,6 +211,14 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
  
   
+}
+
+- (UIColor *)colorFromHex:(unsigned long)hex
+{
+    return [UIColor colorWithRed:((float)((hex & 0xFF0000) >> 16))/255.0
+                           green:((float)((hex & 0xFF00) >> 8))/255.0
+                            blue:((float)(hex & 0xFF))/255.0
+                           alpha:1.0];
 }
 
 -(void) updatePremiumLabels {
@@ -475,12 +484,16 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         self.tabBarItem.title = NSLocalizedString(@"compose",nil);
         
         UIBarButtonItem *clearButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"clear", @"clear") style:UIBarButtonItemStyleDone target:self action:@selector(clearClicked:)];
+        
+        clearButton.tintColor = UIColor.whiteColor;
         self.navigationItem.rightBarButtonItem = clearButton;
         
    
         
         //attach buttom
         UIBarButtonItem *shareButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"share", @"share") style:UIBarButtonItemStyleDone target:self action:@selector(shareClicked:)];
+        
+        shareButton.tintColor = UIColor.whiteColor;
         self.navigationItem.leftBarButtonItem = shareButton;
         
     }
@@ -515,7 +528,12 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 }
 - (void)didTapAttachViewWithGesture:(UITapGestureRecognizer *)tapGesture {
     
-    [self presentMediaPicker:nil];
+    if (![[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE] && self.attachments.count == MAX_ATTACHMENTS_WITHOUT_PREMIUM) {
+        [self showAlertBox:NSLocalizedString(@"lite_reached_max_attachments", nil)];
+    }
+    else {
+        [self presentMediaPicker:nil];
+    }
     
 }
 
@@ -842,6 +860,12 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 
 //send to social networks
 -(void)sendToSocialNetworks: (NSString*) message {
+    
+    UIPasteboard *pb = [UIPasteboard generalPasteboard];
+    [pb setString:message];
+    
+    [[[[iToast makeText:NSLocalizedString(@"message_copied_clipboard", @"")]
+       setGravity:iToastGravityBottom] setDuration:1000] show];
     
         if(sendToFacebook) {
             //NOTE: if twitter is also selected, it will show up/send on facebook result
@@ -1330,8 +1354,13 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             Contact *contact = [[Contact alloc] init];
             ABRecordRef person = (__bridge ABRecordRef)[arrayOfPeople objectAtIndex:i];
             
+            //get the first name
             
-            NSString *name = (__bridge NSString*)ABRecordCopyCompositeName(person);
+            NSString *name = (__bridge NSString*)ABRecordCopyValue(person, kABPersonFirstNameProperty);
+            if(name == nil) {
+                name = (__bridge NSString*)ABRecordCopyCompositeName(person);
+            }
+            //NSString *name = (__bridge NSString*)ABRecordCopyCompositeName(person);
             NSString *lastName =  (__bridge NSString*)ABRecordCopyValue(person, kABPersonLastNameProperty);
             
             NSDate *data = (__bridge NSDate *)ABRecordCopyValue(person, kABPersonBirthdayProperty);
@@ -1433,10 +1462,10 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                         UIImage  *img = [UIImage imageWithData:imgData];
                         contact.photo = img;
                     }
-                    else {
-                        UIImage  *img = [UIImage imageNamed:@"111-user"];
-                        contact.photo = img;
-                    }
+                    //else {
+                    //    UIImage  *img = [UIImage imageNamed:@"user"];
+                    //    contact.photo = img;
+                    //}
                     
                 }
                 @catch (NSException *exception) {
@@ -1701,64 +1730,6 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     [FBSDKShareDialog showFromViewController:self
                                  withContent:content
                                     delegate:self];
-    
-    /*if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook]) {
-        
-        SLComposeViewController *mySLComposerSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
-        
-        [mySLComposerSheet setInitialText:message];
-        
-        if(image!=nil && imageName!=nil) {
-            [mySLComposerSheet addImage:image];
-        }
-        
-        if([self isEasyMessageShare:message]) {
-            [mySLComposerSheet addURL:[NSURL URLWithString:@"https://itunes.apple.com/ca/app/easymessage/id668776671?mt=8"]];
-        }
-        
-        //[mySLComposerSheet addURL:[NSURL URLWithString:@"http://stackoverflow.com/questions/12503287/tutorial-for-slcomposeviewcontroller-sharing"]];
-        
-        [mySLComposerSheet setCompletionHandler:^(SLComposeViewControllerResult result) {
-            
-            NSString *msg;
-            BOOL clear = YES;
-            switch (result) {
-                case SLComposeViewControllerResultCancelled:
-                    msg = NSLocalizedString(@"facebook_post_canceled", @"facebook_post_canceled");
-                    clear = NO;
-                    //NSLog(@"Post to Facebook Canceled");
-                    break;
-                case SLComposeViewControllerResultDone:
-                    //NSLog(@"Post to Facebook Sucessful");
-                    msg = NSLocalizedString(@"facebook_post_ok", @"facebook_post_ok");
-                    
-                    break;
-                    
-                default:
-                    break;
-            }
-            
-            if(msg!=nil) {
-                [[[[iToast makeText:msg]
-                   setGravity:iToastGravityBottom] setDuration:1000] show];
-            }
-            
-            
-            if(sendToTwitter) {
-                [self sendToTwitter:message]; //will reset inside
-            }
-            else if(sendToLinkedin) {
-                //before send check if we need authorization
-                [self authorizeAndSendToLinkedin:message];
-            }
-            else {
-                //reset now
-                [self resetSocialNetworks:clear];
-            }
-        }];
-        
-        [self presentViewController:mySLComposerSheet animated:YES completion:nil];
-    }*/
 }
 
 //reset the booleans after sending the message
@@ -1767,9 +1738,10 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     if(clear) {
         sendToFacebook = NO;
         sendToTwitter = NO;
+        sendToLinkedin = NO;
         [settingsController resetSocialNetworks];
         
-        if(body.text.length>0) {
+        if(body.text.length > 0) {
             //we still haven´t cleared
             [self clearFieldsAndRecipients];
         }
@@ -1801,74 +1773,6 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             }
         }];
     }
-    
-    
-    
-    
-    /*if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter]) {
-        
-        SLComposeViewController *mySLComposerSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
-        
-        [mySLComposerSheet setInitialText:message];
-        
-        if(image!=nil && imageName!=nil) {
-            [mySLComposerSheet addImage:image];
-        }
-        
-        
-        if([self isEasyMessageShare:message]) {
-            [mySLComposerSheet addURL:[NSURL URLWithString:@"https://itunes.apple.com/ca/app/easymessage/id668776671?mt=8"]];
-        }
-        
-        [mySLComposerSheet setCompletionHandler:^(SLComposeViewControllerResult result) {
-        
-            
-            NSString *msg;
-            BOOL clear = YES;
-            switch (result) {
-                case SLComposeViewControllerResultCancelled:
-                    msg = NSLocalizedString(@"twitter_post_canceled", @"twitter_post_canceled");
-                    clear = NO;
-                    
-                    break;
-                case SLComposeViewControllerResultDone:
-                    //NSLog(@"Post to Twitter Sucessful");
-                    msg = NSLocalizedString(@"twitter_post_ok", @"twitter_post_ok");
-                    break;
-                    
-                default:
-                    break;
-            }
-            
-            
-            //we need to dismiss manually for twitter
-            [mySLComposerSheet dismissViewControllerAnimated:YES completion:^{
-                
-                //check if send to linkedin
-                if(sendToLinkedin) {
-                    
-                    //before send check if we need authorization
-                    [self authorizeAndSendToLinkedin:message];
-                    
-                }
-                else {
-                    [self resetSocialNetworks:clear];
-                }
-            
-            
-            }];
-            
-            if(msg!=nil) {
-                [[[[iToast makeText:msg]
-                   setGravity:iToastGravityBottom] setDuration:1000] show];
-            }
-            
-            
-            
-        }];
-        
-        [self presentViewController:mySLComposerSheet animated:YES completion:nil];
-    }*/
 }
 
 -(void) doTwitterShare:(NSString *) message {
@@ -1881,6 +1785,9 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     // Called from a UIViewController
     [composer showFromViewController:self completion:^(TWTRComposerResult result) {
         
+        if(self.presentedViewController!=nil) {
+            [self.presentedViewController dismissViewControllerAnimated:NO completion:nil];
+        }
         NSString *msg;
         BOOL clear = YES;
         
@@ -2601,20 +2508,28 @@ void addressBookChanged(ABAddressBookRef reference,
     image = [UIImage imageNamed:@"icon-76"];
     [self updateAttachButton];
     
+    NSString *shareMessage = @"Checkout EasyMessage: SMS,Email & Social in one!";
+    
+    UIPasteboard *pb = [UIPasteboard generalPasteboard];
+    [pb setString:shareMessage];
+    
+    [[[[iToast makeText:NSLocalizedString(@"message_copied_clipboard", @"")]
+       setGravity:iToastGravityBottom] setDuration:1000] show];
+    
     if(!sendToLinkedin && !sendToTwitter && !sendToFacebook) {
         
         
         //send at least to twitter
         if([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter]) {
             
-           [self sendToTwitter:@"Checkout EasyMessage: SMS,Email & Social in one! "];
+           [self sendToTwitter:shareMessage];
         }
         else if([SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook]) {
 
-            [self sendToFacebook:@"Checkout EasyMessage: SMS,Email & Social in one!"];
+            [self sendToFacebook:shareMessage];
         }
         else {
-          [self authorizeAndSendToLinkedin:@"Checkout EasyMessage: SMS,Email & Social in one!"];
+          [self authorizeAndSendToLinkedin:shareMessage];
         }
         
         
@@ -2885,13 +2800,10 @@ void addressBookChanged(ABAddressBookRef reference,
         msg = NSLocalizedString(@"linkedin_post_canceled", @"linkedin_post_canceled");
     }
     
-    [self resetSocialNetworks:true];
-    
-    
     [[[[iToast makeText:msg]
            setGravity:iToastGravityBottom] setDuration:1000] show];
     
-    //NSLog(@"RECEIVED DATA IS %@",responseString);
+    [self resetSocialNetworks:true];
     
 }
 
@@ -3085,7 +2997,9 @@ void addressBookChanged(ABAddressBookRef reference,
         [[[[iToast makeText:msg]
            setGravity:iToastGravityBottom] setDuration:1000] show];
     }
-    
+    if(self.presentedViewController!=nil) {
+        [self.presentedViewController dismissViewControllerAnimated:NO completion:nil];
+    }
     if(sendToTwitter) {
         [self sendToTwitter:message]; //will reset inside
     }
@@ -3114,7 +3028,9 @@ void addressBookChanged(ABAddressBookRef reference,
         [[[[iToast makeText:msg]
            setGravity:iToastGravityBottom] setDuration:1000] show];
     }
-    
+    if(self.presentedViewController!=nil) {
+        [self.presentedViewController dismissViewControllerAnimated:NO completion:nil];
+    }
     if(sendToTwitter) {
         [self sendToTwitter:message]; //will reset inside
     }

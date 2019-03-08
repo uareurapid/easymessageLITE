@@ -47,6 +47,7 @@
         UIBarButtonItem *deteleContactButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"delete",@"delete")
                                                                           style:UIBarButtonItemStyleDone target:self action:@selector(deleteContactClicked:)];
     
+        deteleContactButton.tintColor = UIColor.whiteColor;
         self.navigationItem.rightBarButtonItem = deteleContactButton;
     }
     return self;

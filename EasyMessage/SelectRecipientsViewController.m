@@ -71,6 +71,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         
         UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"select_all",@"select_all")
                                                                        style:UIBarButtonItemStyleDone target:self action:@selector(selectAllContacts:)];
+        doneButton.tintColor = UIColor.whiteColor;
         //initWithTitle:NSLocalizedString(@"select_all",nil)
         self.navigationItem.leftBarButtonItem = doneButton;
         
@@ -79,6 +80,9 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
                                                                       //       style:UIBarButtonItemStyleDone target:self action:@selector(addGroupClicked:)];
         //also used to create a new contact if nothing is selected
         UIBarButtonItem *addToGroupButton = [[UIBarButtonItem alloc] initWithTitle: NSLocalizedString(@"new_contact",@"new_contact") style:UIBarButtonItemStyleDone target:self action:@selector(addGroupClicked:)];
+        
+        addToGroupButton.tintColor = UIColor.whiteColor;
+        
         //[addToGroupButton setTintColor:[UIColor redColor]];
     
     //initWithTitle:NSLocalizedString(@"new_contact",@"new_contact")
@@ -127,6 +131,20 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         
     }
     return self;
+}
+
+-(UIImage*) drawText:(NSString*) text inImage:(UIImage*) image atPoint:(CGPoint) point {
+  
+ UIFont *font = [UIFont boldSystemFontOfSize:22];
+ UIGraphicsBeginImageContext(image.size);
+ [image drawInRect:CGRectMake(0,0,image.size.width,image.size.height)];
+ CGRect rect = CGRectMake(point.x, point.y, image.size.width, image.size.height);
+ [[UIColor grayColor] set];
+ [text drawInRect:CGRectIntegral(rect) withFont:font];
+ UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+ UIGraphicsEndImageContext();
+ return newImage;
+    
 }
 
 //called from main to refresh the list
@@ -876,15 +894,16 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-   
+    
     static NSString *CellIdentifier = @"Cell";
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    if (cell == nil) {
+    if (cell == nil) { //UITableViewCellStyleSubtitle
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     }
     
-   
+    //cell.imageView.image=[UIImage imageNamed:@"24-gift"];
+    
     NSInteger section = indexPath.section;
     NSInteger row = indexPath.row;
     
@@ -914,35 +933,42 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     }
     else {
         
+        BOOL hasBoth = (contact.lastName!=nil && contact.name!=nil);
+        
+        NSString *selectedOrderBySaved = [[NSUserDefaults standardUserDefaults] objectForKey:SETTINGS_PREF_ORDER_BY_KEY];
+        if(selectedOrderBySaved == nil) {
+            selectedOrderBySaved = OPTION_ORDER_BY_LASTNAME_KEY;
+        }
+        
         cell.textLabel.font = [UIFont systemFontOfSize:(16.0)];
-        if(contact.name!=nil) {
-            cell.textLabel.text = contact.name;
-            if(contact.lastName!=nil) {//append also last name
-                
-                //get the selected options for order by
-                /*NSString *selectedOrderBySaved = [[NSUserDefaults standardUserDefaults] objectForKey:SETTINGS_PREF_ORDER_BY_KEY];
-                NSLog(@"CELL SORT BY: %@",selectedOrderBySaved);
-                if(selectedOrderBySaved == nil) {
-                    selectedOrderBySaved = OPTION_ORDER_BY_LASTNAME_KEY;
-                }*/
-                
-                
-                //check if last name is already include in name
-                NSRange range = [contact.name rangeOfString:contact.lastName
-                                            options:NSCaseInsensitiveSearch];
-                if (range.length == 0) { //if the substring did not match
-                    //append also lastname
-                    //if([selectedOrderBySaved isEqualToString: OPTION_ORDER_BY_LASTNAME_KEY]) {
-                    //   cell.textLabel.text = [NSString stringWithFormat:@"%@ %@",contact.lastName, contact.name];
-                    //}
-                    //else {
-                       cell.textLabel.text = [NSString stringWithFormat:@"%@ %@",contact.name,contact.lastName];
-                    //}
-                    
+        
+        //has both
+        if(hasBoth) {
+            
+            //check if last name is already include in name
+            NSRange range = [contact.name rangeOfString:contact.lastName
+                                                options:NSCaseInsensitiveSearch];
+            if (range.length == 0) { //if the substring did not match
+                if([selectedOrderBySaved isEqualToString: OPTION_ORDER_BY_LASTNAME_KEY]) {
+                    //last name first name
+                    cell.textLabel.text = [NSString stringWithFormat:@"%@ %@",contact.lastName,contact.name];
+                }
+                else {
+                    // first name last name
+                    cell.textLabel.text = [NSString stringWithFormat:@"%@ %@",contact.name,contact.lastName];
                 }
                 
-                
             }
+            else {
+                //just the first name
+                cell.textLabel.text = contact.name;
+            }
+            
+            
+            
+        }
+        else if(contact.name!=nil) {
+            cell.textLabel.text = contact.name;
         }
         else if(contact.lastName!=nil) {
             cell.textLabel.text = contact.lastName;
@@ -952,6 +978,32 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         }
         else if(contact.phone!=nil) {
             cell.textLabel.text = contact.phone;
+        }
+        //add a rounded photo
+        if(contact.photo!=nil) {
+            cell.imageView.image = contact.photo;
+            cell.imageView.layer.cornerRadius = 20.0;
+            cell.imageView.layer.masksToBounds = true;
+        }
+        else {
+            UIImage  *img = [UIImage imageNamed:@"user"];
+            
+            //ordered by last name (default) ?
+            NSString *text = @"";
+            if([selectedOrderBySaved isEqualToString: OPTION_ORDER_BY_LASTNAME_KEY] ) {
+                
+                text =  [self getInitialsFromContact:contact.lastName andLastString:contact.name];
+                img = [self drawText:text inImage:img atPoint:CGPointMake(11, 16)];
+                
+            }
+            else {
+                text =  [self getInitialsFromContact:contact.name andLastString:contact.lastName];
+                img = [self drawText:text inImage:img atPoint:CGPointMake(11, 16)];
+            }
+            cell.imageView.image = img;
+            cell.imageView.layer.cornerRadius = 20.0;
+            cell.imageView.layer.masksToBounds = true;
+            
         }
         
         BOOL hasPhone = contact.phone!=nil && contact.phone.length > 0;
@@ -971,13 +1023,13 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     
     
     if([selectedContactsList containsObject:contact]) {
-    
+        
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
     }
     else {
         //if(isGroup) {
-            //and not selected
-            cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
+        //and not selected
+        cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
         //}
         //else {
         //    cell.accessoryType = UITableViewCellAccessoryNone;
@@ -985,21 +1037,56 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         
     }
     
-  
+    
     
     
     return cell;
 }
 
+-(NSString *) getInitialsFromContact: (NSString *) firstString andLastString: (NSString *) lastString {
+    
+    if(firstString != nil && firstString.length > 0) {
+        if(lastString != nil && lastString.length > 0) {
+            
+            //return both
+            return [[NSString stringWithFormat:@"%@ %@", [firstString substringToIndex:1] , [lastString substringToIndex:1] ] uppercaseString];
+        }
+        else {
+            //just the first
+            return [[firstString substringToIndex:1] uppercaseString];
+        }
+    }
+    else {
+        //first is nil
+        if(lastString != nil && lastString.length > 0) {
+            //just the 2nd then
+            return [[lastString substringToIndex:1] uppercaseString];
+        }
+    }
+    return @"";
+}
+
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
     
-    NSString *key = [sortedKeys objectAtIndex:indexPath.section];
-    NSMutableArray *array = (NSMutableArray *) [contactsByLastNameInitial objectForKey:key];
+    NSInteger row = indexPath.row;
+    NSInteger section = indexPath.section;
+    Contact *contact = nil;
+    //it was crashing before
+    if (self.searchDisplayController.active) {
+        
+        contact = [self.searchData objectAtIndex:indexPath.row];
+    }
+    else {
+        
+        NSString *key = [sortedKeys objectAtIndex:section];
+        NSMutableArray *array = (NSMutableArray *) [contactsByLastNameInitial objectForKey:key];
+        contact = [array objectAtIndex:row];
+    }
+    //show it now
     
-    Contact *c = [array objectAtIndex:indexPath.row];
-    if([c isKindOfClass:Group.class]) {
-       Group *group = (Group*)c;
-       
+    if(contact!=nil && [contact isKindOfClass:Group.class]) {
+        Group *group = (Group*)contact;
+        
         GroupDetailsViewController *detailViewController = [[GroupDetailsViewController alloc] initWithNibName:@"GroupDetailsViewController" bundle:nil group:group];
         // ...
         // Pass the selected object to the new view controller.
@@ -1007,7 +1094,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     }
     else {
         
-        ContactDetailsViewController *detailViewController = [[ContactDetailsViewController alloc] initWithNibName:@"ContactDetailsViewController" bundle:nil contact:c];
+        ContactDetailsViewController *detailViewController = [[ContactDetailsViewController alloc] initWithNibName:@"ContactDetailsViewController" bundle:nil contact:contact];
         // ...
         // Pass the selected object to the new view controller.
         [self.navigationController pushViewController:detailViewController animated:YES];

@@ -36,7 +36,7 @@
         self.title = group.name;
         UIBarButtonItem *deteleGroupButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"delete",@"delete")
                                                                              style:UIBarButtonItemStyleDone target:self action:@selector(deleteGroupClicked:)];
-        
+        deteleGroupButton.tintColor = UIColor.whiteColor;
         self.navigationItem.rightBarButtonItem = deteleGroupButton;
     }
     return self;

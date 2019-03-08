@@ -127,22 +127,8 @@
 -(void) checkSocialServicesAvailability {
     
     isLinkedinAvailable = true;
-    //facebook
-    //if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook]) {
     isFacebookAvailable=true;
-
-    //}
-    //else {
-    //    isFacebookAvailable = NO;
-    //}
-    //twitter
-    
-    //if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter]) {
-    isTwitterAvailable=YES;
-    //}
-    //else {
-    //    isTwitterAvailable = NO;
-    //}
+    isTwitterAvailable=true;
     
     if(isTwitterAvailable || isFacebookAvailable || isLinkedinAvailable) {
         if(![sendOptions containsObject:OPTION_INCLUDE_SOCIAL_SERVICES]) {
