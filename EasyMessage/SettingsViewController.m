@@ -10,6 +10,8 @@
 #import "iToast.h"
 #import "SocialNetworksViewController.h"
 #import <StoreKit/StoreKit.h>
+#import "FilterOptionsViewController.h"
+#import "EasyMessageIAPHelper.h"
 @interface SettingsViewController ()
 
 @end
@@ -18,7 +20,7 @@
 
 @synthesize sendOptions,preferedServiceOptions,socialServicesOptions;
 @synthesize selectPreferredService,selectSendOption,selectOrderByOption;
-@synthesize socialOptionsController, purchasesController;
+@synthesize socialOptionsController, purchasesController, filterOptionsController;
 @synthesize showToast;
 @synthesize initiallySelectedPreferredService,initiallySelectedSendOption, initiallySelectedOrderByOption;
 @synthesize isFacebookAvailable,isTwitterAvailable,isLinkedinAvailable;
@@ -51,8 +53,7 @@
     
     socialServicesOptions = [[NSMutableArray alloc] init];
     
-    
-    
+    self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     
     [self checkSocialServicesAvailability];
     
@@ -116,9 +117,9 @@
     socialOptionsController = [[SocialNetworksViewController alloc] initWithNibName:@"SocialNetworksViewController"
                                                                               bundle:nil previousController:self services:services];
 
+    filterOptionsController = [[FilterOptionsViewController alloc] initWithNibName:@"FilterOptionsViewController" bundle:nil previousController:self];
+    
     showToast = YES;
-    
-    
     
 }
 
@@ -193,7 +194,7 @@
 #warning Potentially incomplete method implementation.
     // Return the number of sections.
     
-    return 5; //added one for restore purchase/buy premium
+    return 6; //added one for restore purchase/buy premium
 }
 
 -(IBAction)goBackAfterSelection:(id)sender {
@@ -286,11 +287,15 @@
     else if(section == 2) {
         //order by last/first name
         return 2;
-    }else if(section == 3) {
+    }
+    else if(section == 3) {
+        return 1; //filter options
+        
+    }else if(section == 4) {
         //rate us/questions/suggestions
         return 2;
     }
-    else if(section == 4) {
+    else if(section == 5) {
         //restore/purchase premium
         return 1;
     }
@@ -311,10 +316,13 @@
         return NSLocalizedString(@"order_contacts",nil);
     }
     else if(section == 3) {
+       return NSLocalizedString(@"filter_options",nil);
+    }
+    else if(section == 4) {
         
         return NSLocalizedString(@"contact_us", nil);
     }
-    else if(section == 4) {
+    else if(section == 5) {
         //TODO
         return NSLocalizedString(@"unlock_premium", nil);
     }
@@ -336,10 +344,13 @@
     else if(section==2) {
         return NSLocalizedString(@"order_contacts_explanation", nil);
     }
-    else if(section==3) {
+    else if(section == 3) {
+        return NSLocalizedString(@"filter_options_explanation",nil);
+        
+    }else if(section==4) {
         return NSLocalizedString(@"send_feedback", nil);
     }
-    else if(section==4) {
+    else if(section==5) {
         //TODO
         return NSLocalizedString(@"unlock_premium", nil);
     }
@@ -440,6 +451,11 @@
         
     }
     else if(section == 3) {
+        cell.textLabel.text = NSLocalizedString(@"filter_options",nil);
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        cell.imageView.image = [UIImage imageNamed:@"eyes"];
+    }
+    else if(section == 4) {
         if(row == 0) {
             cell.textLabel.text =  NSLocalizedString(@"rate_us", nil);
             cell.accessoryType = UITableViewCellAccessoryNone;
@@ -452,7 +468,7 @@
         }
         
     }//TODO
-    else if(section == 4) {
+    else if(section == 5) {
         cell.textLabel.text =  NSLocalizedString(@"unlock_premium", nil);
         cell.accessoryType = UITableViewCellAccessoryNone;
         cell.imageView.image = [UIImage imageNamed:@"Unlock32"];
@@ -655,20 +671,31 @@
         selectOrderByOption = row;
         [self.tableView reloadData];
         
-    }
+    }//TODO show premium message!!!!
     else if(section == 3) {
+        
+        if ([[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
+            [self.navigationController pushViewController:filterOptionsController animated:YES];
+        }
+        else {
+            //filtering is only for premium users
+            [self showAlertBox:NSLocalizedString(@"premium_feature_only", nil)];
+        }
+        
+    }
+    else if(section == 4) {
         if(row==0) {
             if (@available(iOS 10.3, *)) {
                 [SKStoreReviewController requestReview];
             }
             else {
-                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"itms-apps://itunes.apple.com/app/id668776671?mt=8&action=write-review"]];
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"itms-apps://itunes.apple.com/app/id1448046358?mt=8&action=write-review"]];
             }
         }else {
             [self sendEmail:nil];
         }
     }
-    else if(section == 4 && row == 0) {
+    else if(section == 5 && row == 0) {
         
         if(self.purchasesController !=nil) {
             [self.navigationController pushViewController:purchasesController animated:YES];
@@ -695,6 +722,16 @@
      [self.navigationController pushViewController:detailViewController animated:YES];
      */
 }
+
+-(void) showAlertBox:(NSString *) msg {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Easy Message"
+                                                    message:msg
+                                                   delegate:self
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+}
+
 - (IBAction)sendEmail:(id)sender {
     // Email Subject
     NSString *emailTitle = @"Questions Or Suggestions";

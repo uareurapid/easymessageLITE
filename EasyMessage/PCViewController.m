@@ -29,7 +29,8 @@
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 #define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
 #define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(v)     ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedDescending)
-
+//after 3 messages
+#define KEY_ASK_FOR_REVIEW  @"ask_for_review"
 
 @interface PCViewController ()
 
@@ -591,6 +592,10 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 //appear/disappear logic
 -(void) viewWillAppear:(BOOL)animated {
     
+    if (@available(iOS 11.0, *)) {
+        self.sendButton.accessibilityIgnoresInvertColors = true;
+    }
+    
     [self showHideSocialOnlyLabel];
     [self updateAttachmentsLabel];
     [self updatePremiumLabels];
@@ -833,6 +838,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             //if(isTwitterSelected || isFacebookSelected) {
             //    [self resetSocialNetworks];
             //}
+            
         }
 
         
@@ -848,6 +854,41 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
     
 }
+
+-(void) checkIfAskForReview {
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSInteger numMessages = [defaults integerForKey:KEY_ASK_FOR_REVIEW];
+    
+    numMessages+=1;
+    
+    //NSLog(@"NUM MESSAGES IS: %ld", (long)numMessages);
+    if(numMessages == 2) {
+        
+        if (@available(iOS 10.3, *)) {
+         [SKStoreReviewController requestReview];
+         }
+         else {
+        
+             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Easy Message"
+                                                        message: NSLocalizedString(@"ask_to_rate", nil)
+                                                       delegate:self
+                                              cancelButtonTitle: NSLocalizedString(@"cancel", nil)
+                                              otherButtonTitles:@"OK", nil];
+             [alert show];
+        }
+    }
+    
+    [defaults setInteger:numMessages forKey:KEY_ASK_FOR_REVIEW];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    
+    if(buttonIndex==1) { //0 - cancel, 1 - save/ok
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"itms-apps://itunes.apple.com/app/id1448046358?mt=8&action=write-review"]];
+    }
+}
+
 //showAlertBox messageios
 -(void) showAlertBox:(NSString *) msg {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Easy Message"
@@ -1653,12 +1694,23 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 }
 //This is called after send email , if option is send both, send the SMS
 -(void) checkIfSendBoth {
+    //#define OPTION_ALWAYS_SEND_BOTH_ID      0
+    //#define OPTION_SEND_EMAIL_ONLY_ID       1
+    //#define OPTION_SEND_SMS_ONLY_ID         2
+    
     if(settingsController.selectSendOption == OPTION_ALWAYS_SEND_BOTH_ID ) {//OPTION_ALWAYS_SEND_BOTH
         [self sendSMS:nil];
     }
     else {
+        //not sending to social media, ask for review?
+        if(!sendToTwitter && !sendToFacebook && !sendToLinkedin) {
+            [self checkIfAskForReview];
+            [self clearFieldsAndRecipients];
+        }
+        else {
+            [self doSocialNetworksIfSelected];
+        }
 
-        [self doSocialNetworksIfSelected];
     }
 }
 
@@ -1670,6 +1722,9 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
   
     }
     else {
+        
+       //should ask for review?
+       [self checkIfAskForReview];
        [self clearFieldsAndRecipients];
     }
     
@@ -1686,6 +1741,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 }
 
 //delegate for the sms controller
+#pragma sms delegate
 - (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
 {
     
@@ -1967,6 +2023,8 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
     //NSLog(@"clearing stuff...");
     
+    recipientsLabel.text = @"";
+    
     [selectedRecipientsList removeAllObjects];
     [recipientsController.selectedContactsList removeAllObjects];
     [recipientsController.tableView reloadData];
@@ -2134,10 +2192,10 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             }
         }
         else {
-            NSLog(@"CONTACT IS %@", c.description);
+            //NSLog(@"CONTACT IS %@", c.description);
             NSString *phoneNumber = c.phone;//[self extractPhoneNumber:c];
             if(phoneNumber!=nil && ![phones containsObject:phoneNumber]) {
-                NSLog(@"adding phone number %@",phoneNumber);
+                //NSLog(@"adding phone number %@",phoneNumber);
                 [phones addObject:phoneNumber];
             }
         }

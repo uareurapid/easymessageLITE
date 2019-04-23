@@ -40,6 +40,7 @@
         doneButton.tintColor = UIColor.whiteColor;
         
         self.navigationItem.rightBarButtonItem = doneButton;
+        self.navigationItem.backBarButtonItem.tintColor = UIColor.whiteColor;
         //self.title = @"Advanced Options";
     }
     return self;

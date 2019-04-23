@@ -141,3 +141,9 @@
 "lite_reached_max_attachments" = "Hapus 1 gambar atau tingkatkan ke versi Premium";
 "social_networks_copy_paste" = "Beberapa jejaring sosial tidak memperbolehkan posting dengan pesan yang sudah diisi sebelumnya. \r\nDalam kasus ini, pesan akan secara otomatis disalin ke clipboard dan Anda harus menempelnya sendiri";
 "message_copied_clipboard" = "Pesan telah disalin ke clipboard";
+"show_contacts_only" = "Hanya tampilkan kontak";
+"show_groups_only" = "Hanya tampilkan grup";
+"show_all" = "Tunjukkan semua";
+"filter_options" = "Opsi filter";
+"filter_options_explanation" = "Ubah opsi visualisasi";
+"ask_to_rate" = "Jika anda menyukai Easy Message, maukah anda memberikan rating kepada aplikasi ini?";

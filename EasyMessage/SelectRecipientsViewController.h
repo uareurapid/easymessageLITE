@@ -31,7 +31,7 @@
 -(BOOL) isContactModel: (ContactDataModel *) model sameAsContact: (Contact *)contact;
 -(UIImage*) drawText:(NSString*) text inImage:(UIImage*) image atPoint:(CGPoint) point;
 -(NSString *) getInitialsFromContact: (NSString *) firstString andLastString: (NSString *) lastString;
-
+-(void) createFilteredList: (NSString *) filterOption;
 -(IBAction)refreshPhonebook:(id)sender;
 
 -(void) deleteGroup:(Group *)group;
@@ -40,6 +40,8 @@
 -(void) searchForBirthdayIn: (NSInteger) day month: (NSInteger) month;
 
 -(void) reloadContacts: (NSMutableArray *) contacts;
+//filtered list
+@property (strong,nonatomic) NSMutableArray *filteredContactsList;
 
 @property (strong,nonatomic) NSMutableArray *contactsList;
 @property (strong,nonatomic) NSMutableArray *groupsList;
@@ -68,4 +70,5 @@
 @property NSInteger initialSelectedContacts;
 @property BOOL groupLocked;
 @property BOOL reload;
+@property BOOL isFiltered;
 @end

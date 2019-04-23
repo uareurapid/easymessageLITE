@@ -135,4 +135,9 @@
 "lite_reached_max_attachments" = "Por favor remova o anexo ou então faça o upgrade para a versão Premium";
 "social_networks_copy_paste" = "Algumas redes sociais não permitem posts com mensagens pré-preenchidas. \r\nNestes casos a mensagem será automaticamente copiada para a área de transferência e voçê vai ter de colá-la posteriormente";
 "message_copied_clipboard" = "A mensagem foi copiada para a área de transferência";
-
+"show_contacts_only" = "Mostrar apenas contactos";
+"show_groups_only" = "Mostrar apenas grupos ";
+"show_all" = "Mostrar todos";
+"filter_options" = "Opções de visualização";
+"filter_options_explanation" = "Alterar opções de visualização";
+"ask_to_rate" = "Se você gosta de usar o Easy Message, que tal avaliá-lo?";

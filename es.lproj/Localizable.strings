@@ -130,4 +130,9 @@
 "lite_reached_max_attachments" = "Por favor, elimine 1 adjunto o actualice a la versión Premium";
 "social_networks_copy_paste" = "Algunas redes sociales no permiten publicaciones con mensajes precargados.\r\nEn estos casos, el mensaje se copiará automáticamente en el portapapeles y tendrá que pegarlo usted mismo.";
 "message_copied_clipboard" = "El mensaje fue copiado al portapapeles.";
-
+"show_contacts_only" = "Mostrar solo contactos";
+"show_groups_only" = "Mostrar solo grupos";
+"show_all" = "Mostrar todos";
+"filter_options" = "Opciones de filtro";
+"filter_options_explanation" = "Cambiar opciones de visualización";
+"ask_to_rate" = "Si te ha gustado Easy Message ¿te gustaría calificarnos?";

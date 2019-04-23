@@ -33,6 +33,8 @@
     self.btnCancel.layer.borderWidth = 1.5f;
     self.btnCancel.layer.borderColor = [[UIColor grayColor] CGColor];
     
+    self.title = NSLocalizedString(@"new_contact", @"new_contact");
+    
     self.txtPhone.delegate = self;
     self.txtName.delegate=self;
     self.txtLastName.delegate=self;

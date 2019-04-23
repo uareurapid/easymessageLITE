@@ -24,7 +24,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 
 @implementation SelectRecipientsViewController
 
-@synthesize contactsList,selectedContactsList,rootViewController;
+@synthesize contactsList,selectedContactsList,rootViewController, filteredContactsList;
 @synthesize initialSelectedContacts,contactsByLastNameInitial; //TODO PC ORDER BY last name, first name
 @synthesize sortedKeys,groupLocked,databaseRecords;
 @synthesize groupsNamesArray, groupsList, activityIndicator;
@@ -43,7 +43,12 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
       self.addNewContactController = [[AddContactViewController alloc] initWithNibName:@"AddContactViewController" bundle:nil];
         self.addNewContactController.contactsList = self.contactsList;
     }
-    [self presentViewController:self.addNewContactController animated:YES completion:^{
+    PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
+    //we present it modally on a navigation controller to get a status bar
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:self.addNewContactController];
+    navigationController.navigationBar.barTintColor = [delegate colorFromHex:0xfb922b];
+    
+    [self presentViewController:navigationController animated:YES completion:^{
         self.reload = true;
     }];
 }
@@ -64,6 +69,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     
         self.contactsList = [[NSMutableArray alloc] init];
         self.groupsList = [[NSMutableArray alloc] init];
+        self.filteredContactsList = [[NSMutableArray alloc] init];
         
         self.selectedContactsList = [[NSMutableArray alloc] init];
         self.databaseRecords = [[NSMutableArray alloc] init];
@@ -150,6 +156,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 //called from main to refresh the list
 -(void) reloadContacts: (NSMutableArray *) contacts {
     [self.contactsList removeAllObjects];
+    [self.filteredContactsList removeAllObjects];
     [self.contactsList addObjectsFromArray:contacts];
     NSLog(@"the new list has %ld",(unsigned long)contacts.count);
     dispatch_async(dispatch_get_main_queue(), ^(){
@@ -161,6 +168,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if(self) {
         self.contactsList = [[NSMutableArray alloc] initWithArray:contacts];
+        self.filteredContactsList = [[NSMutableArray alloc] init];
         self.groupsList = [[NSMutableArray alloc] init];
         self.selectedContactsList = [[NSMutableArray alloc] init];
         self.rootViewController = viewController;
@@ -240,9 +248,29 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     if(self.groupsNamesArray == nil) {
         self.groupsNamesArray = [[NSMutableArray alloc] init];
     }
+    else if(self.groupsNamesArray.count > 0){
+       [self.groupsNamesArray removeAllObjects];
+    }
     
-    for(id contact in contactsList) {
-        if([contact isKindOfClass:Group.class]) {
+    if(self.groupsList.count > 0) {
+        [self.groupsList removeAllObjects];
+    }
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *filterOption = [defaults objectForKey:SETTINGS_FILTER_OPTIONS];
+    BOOL showAll = [filterOption isEqualToString:OPTION_FILTER_SHOW_ALL_KEY];
+    BOOL groupsOnly = [filterOption isEqualToString:OPTION_FILTER_GROUPS_ONLY_KEY];
+    //TODO clear the groupsNamesArray ??
+    NSMutableArray *workingContactsList;
+    if(self.isFiltered) {
+       workingContactsList = self.filteredContactsList;
+    }
+    else {
+      workingContactsList = self.contactsList;
+    }
+    
+    for(id contact in workingContactsList) {
+        if([contact isKindOfClass:Group.class] && (showAll || groupsOnly)) {
             Group *gr = (Group *)contact;
             
             if(![self.groupsNamesArray containsObject:gr.name]) {
@@ -327,8 +355,42 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     return YES;
 }*/
 
+//copies only the filtered contacts to the list
+-(void) createFilteredList: (NSString *) filterOption {
+    
+    BOOL groupsOnly = [filterOption isEqualToString:OPTION_FILTER_GROUPS_ONLY_KEY];
+    BOOL contactsOnly = [filterOption isEqualToString:OPTION_FILTER_CONTACTS_ONLY_KEY];
+    //clear first
+    if(self.filteredContactsList.count > 0) {
+       [self.filteredContactsList removeAllObjects];
+    }
+    
+    for(id contact in self.contactsList) {
+        BOOL isGroup = [contact isKindOfClass:Group.class];
+        if(groupsOnly && isGroup) {
+           [self.filteredContactsList addObject:contact];
+        }
+        else if(contactsOnly && !isGroup) {
+            [self.filteredContactsList addObject:contact];
+        }
+    }
+    NSLog(@"creating filtered list with %lu elements", (unsigned long)self.filteredContactsList.count);
+}
 
 -(IBAction)refreshPhonebook:(id)sender {
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *filterOption = [defaults objectForKey:SETTINGS_FILTER_OPTIONS];
+    
+    self.isFiltered = (filterOption != nil && ![filterOption isEqualToString:OPTION_FILTER_SHOW_ALL_KEY]);
+    if(self.isFiltered) {
+       [self createFilteredList:filterOption];
+    }
+    //clear first
+    if ( contactsByLastNameInitial.count > 0) {
+       [contactsByLastNameInitial removeAllObjects];
+    }
+    
     contactsByLastNameInitial = [self loadInitialNamesDictionary];
     NSLog(@"number of contacts in list: %lu", (unsigned long)self.contactsList.count);
     
@@ -343,25 +405,44 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 //will group the contacts by last name initial
 - (NSMutableDictionary *) loadInitialNamesDictionary {
     
-    
     NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
     self.sortedKeys = [[NSMutableArray alloc] init];
     
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     //either by first bname or last name
-    NSString *selectedOrderBySaved = [[NSUserDefaults standardUserDefaults] objectForKey:SETTINGS_PREF_ORDER_BY_KEY];
+    NSString *selectedOrderBySaved = [defaults objectForKey:SETTINGS_PREF_ORDER_BY_KEY];
     if(selectedOrderBySaved == nil) {
         selectedOrderBySaved = OPTION_ORDER_BY_LASTNAME_KEY;
     }
     
-    for(Contact *contact in contactsList) {
+    NSString *filterOption = [defaults objectForKey:SETTINGS_FILTER_OPTIONS];
+    
+    BOOL showAll = [filterOption isEqualToString:OPTION_FILTER_SHOW_ALL_KEY];
+    BOOL groupsOnly = [filterOption isEqualToString:OPTION_FILTER_GROUPS_ONLY_KEY];
+    BOOL contactsOnly = [filterOption isEqualToString:OPTION_FILTER_CONTACTS_ONLY_KEY];
+    
+    NSLog(@"filter option %@ show all -> %d  groups only -> %d contacts only --> %d", filterOption, showAll, groupsOnly, contactsOnly);
+    
+    NSMutableArray *workingContactsList;
+    
+    if(self.isFiltered) {
+        workingContactsList = self.filteredContactsList;
+    }
+    else {
+        workingContactsList = self.contactsList;
+    }
+    
+    for(Contact *contact in workingContactsList) {
         
+        BOOL isGroup = [contact isKindOfClass:Group.class];
         NSString *initial;
         
-        if([contact isKindOfClass:Group.class]) {
+        if(isGroup && (showAll || groupsOnly)) {
+            //group
             initial = [[contact.name substringToIndex:1] uppercaseString];
         }
-        else {
-            
+        else if( !isGroup && (showAll || contactsOnly) ) {
+            //contact
             if([selectedOrderBySaved isEqualToString:OPTION_ORDER_BY_LASTNAME_KEY]) {
                 //default, sort by last name
                 if(contact.lastName!=nil && contact.lastName.length>0) {
@@ -378,7 +459,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
                 }
             }
             else {
-             //sort by first name
+                //sort by first name
                 if(contact.name!=nil && contact.name.length>0) {
                     initial = [[contact.name substringToIndex:1] uppercaseString];
                 }
@@ -395,33 +476,32 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
             
         }
         
-        
-        
-        
-        id listForThatInitial = [dic objectForKey:initial];
-        if(listForThatInitial == nil) {
-            //doesnt exist yet, create the array
-            NSMutableArray *array = [[NSMutableArray alloc] initWithObjects:contact, nil];
-            [dic setObject:array forKey:initial];
-            [sortedKeys addObject:initial];
+        //make sure we have an initial
+        if(initial!=nil) {
+            
+            id listForThatInitial = [dic objectForKey:initial];
+            if(listForThatInitial == nil) {
+                //doesnt exist yet, create the array
+                NSMutableArray *array = [[NSMutableArray alloc] initWithObjects:contact, nil];
+                [dic setObject:array forKey:initial];
+                [sortedKeys addObject:initial];
+            }
+            else {
+                //already exists cast it
+                NSMutableArray *array = (NSMutableArray *) listForThatInitial;
+                [array addObject:contact];
+            }
         }
-        else {
-            //already exists cast it
-            NSMutableArray *array = (NSMutableArray *) listForThatInitial;
-            [array addObject:contact];
-        }
-           
-        
         
     }
-
+    
     if(self.sortedKeys.count > 0) {
         NSArray *other = [[NSArray alloc] initWithArray:self.sortedKeys];
         [self.sortedKeys removeAllObjects];
         [self.sortedKeys addObjectsFromArray: [other sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)]];
     }
     
-
+    
     return dic;
 }
 
@@ -439,6 +519,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     self.tableView.sectionFooterHeight = 2.0;
     [self refreshPhonebook:nil];
 
+    self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     //set the images
     //imageLock = [UIImage imageNamed:@"Lock32"];
     //imageUnlock = [UIImage imageNamed:@"Unlock32"];
@@ -705,12 +786,15 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 
 }
 
--(void) viewDidAppear:(BOOL)animated {
+-(void) viewWillAppear:(BOOL)animated {
     
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *currentFilterSetting = [defaults objectForKey:SETTINGS_FILTER_OPTIONS];
+    self.isFiltered = (currentFilterSetting != nil && ![currentFilterSetting isEqualToString:OPTION_FILTER_SHOW_ALL_KEY]);
     //always check this
-    NSString *selectedOrderBySaved = [[NSUserDefaults standardUserDefaults] objectForKey:SETTINGS_PREF_ORDER_BY_KEY];
+    NSString *selectedOrderBySaved = [defaults objectForKey:SETTINGS_PREF_ORDER_BY_KEY];
     if(selectedOrderBySaved == nil) {
-        [[NSUserDefaults standardUserDefaults] setObject:OPTION_ORDER_BY_LASTNAME_KEY forKey:SETTINGS_PREF_ORDER_BY_KEY];
+        [defaults setObject:OPTION_ORDER_BY_LASTNAME_KEY forKey:SETTINGS_PREF_ORDER_BY_KEY];
     }
     
     initialSelectedContacts = selectedContactsList.count;
@@ -734,18 +818,32 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         [self refreshPhonebook:nil];
     }
     else {
-     //check if the setting changed or something
-        BOOL forceReload = [[NSUserDefaults standardUserDefaults] boolForKey:SETTINGS_PREF_ORDER_BY_KEY_FORCE_RELOAD];
+        //check if the setting changed or something
+        
+        BOOL forceReload = [defaults boolForKey:SETTINGS_PREF_ORDER_BY_KEY_FORCE_RELOAD];
+        
+        
+        NSString *previousFilterSetting = [defaults objectForKey:SETTINGS_FILTER_PREVIOUS_OPTIONS];
+        NSLog(@"previous filter -> %@ , current filter -> %@",previousFilterSetting, currentFilterSetting);
+        BOOL filterChanged = false;
+        if(![currentFilterSetting isEqualToString:previousFilterSetting]) {
+            filterChanged = true;
+        }
+        //sorting option changed
         if(forceReload) {
             
             NSString *current = [[NSUserDefaults standardUserDefaults] objectForKey:SETTINGS_PREF_ORDER_BY_KEY];
             NSString *other = [[NSUserDefaults standardUserDefaults] objectForKey:SETTINGS_PREF_ORDER_BY_KEY_PREVIOUS_SETTINGS];
             
+            NSLog(@"other %@ current %@", other, current);
             //if they are different then force it too
             if(current!=nil && other!=nil && ![current isEqualToString:other]){
-                //NSLog(@"different force it");
+                NSLog(@"different force it");
                 [self refreshPhonebook:nil];
             }
+        }//maybe filter changed?
+        else if(filterChanged) {
+            [self refreshPhonebook:nil];
         }
     }
      
@@ -930,6 +1028,15 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         isGroup = YES;
         cell.textLabel.text = contact.name;
         cell.textLabel.font = [UIFont boldSystemFontOfSize:(16.0)];
+        
+        NSString *text = thisOne.name;
+        text = [[text substringToIndex:1] uppercaseString];
+        UIImage  *img = [UIImage imageNamed:@"user"];
+        img = [self drawText:text inImage:img atPoint:CGPointMake(24, 16)];
+        cell.imageView.image = img;
+        cell.imageView.layer.cornerRadius = 20.0;
+        cell.imageView.layer.masksToBounds = true;
+        
     }
     else {
         
@@ -990,16 +1097,21 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
             
             //ordered by last name (default) ?
             NSString *text = @"";
+            
             if([selectedOrderBySaved isEqualToString: OPTION_ORDER_BY_LASTNAME_KEY] ) {
-                
                 text =  [self getInitialsFromContact:contact.lastName andLastString:contact.name];
-                img = [self drawText:text inImage:img atPoint:CGPointMake(11, 16)];
-                
             }
             else {
                 text =  [self getInitialsFromContact:contact.name andLastString:contact.lastName];
-                img = [self drawText:text inImage:img atPoint:CGPointMake(11, 16)];
             }
+            
+            if(hasBoth && contact.name.length > 0 && contact.lastName.length > 0 ) {
+                img = [self drawText:text inImage:img atPoint:CGPointMake(12, 16)];
+            }
+            else {
+                img = [self drawText:text inImage:img atPoint:CGPointMake(24, 16)];
+            }
+            
             cell.imageView.image = img;
             cell.imageView.layer.cornerRadius = 20.0;
             cell.imageView.layer.masksToBounds = true;
@@ -1020,7 +1132,6 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
             cell.detailTextLabel.text = NSLocalizedString(@"phone_label",@"Phone");
         }
     }
-    
     
     if([selectedContactsList containsObject:contact]) {
         
@@ -1088,6 +1199,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         Group *group = (Group*)contact;
         
         GroupDetailsViewController *detailViewController = [[GroupDetailsViewController alloc] initWithNibName:@"GroupDetailsViewController" bundle:nil group:group];
+        self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
         // ...
         // Pass the selected object to the new view controller.
         [self.navigationController pushViewController:detailViewController animated:YES];
@@ -1095,6 +1207,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     else {
         
         ContactDetailsViewController *detailViewController = [[ContactDetailsViewController alloc] initWithNibName:@"ContactDetailsViewController" bundle:nil contact:contact];
+        self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
         // ...
         // Pass the selected object to the new view controller.
         [self.navigationController pushViewController:detailViewController animated:YES];

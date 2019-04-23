@@ -134,3 +134,9 @@
 "lite_reached_max_attachments" = "이미지 1 개를 제거하거나 프리미엄 버전으로 업그레이드하십시오.";
 "social_networks_copy_paste" = "일부 소셜 네트워크에서는 미리 채워진 메시지가있는 게시물을 허용하지 않습니다. 이 경우 메시지는 자동으로 클립 보드에 복사되며 직접 붙여 넣어야합니다.";
 "message_copied_clipboard" = "메시지가 클립 보드에 복사되었습니다.";
+"show_contacts_only" = "주소록 만 표시";
+"show_groups_only" = "그룹 만 표시";
+"show_all" = "모두 보이기";
+"filter_options" = "필터 옵션";
+"filter_options_explanation" = "시각화 옵션 변경";
+"ask_to_rate" = "Easy Message 사용이 맘에 드셨나요? 잠시만 시간을 내서 평가를 부탁드리겠습니다. 감사합니다!";

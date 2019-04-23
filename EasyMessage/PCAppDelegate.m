@@ -40,6 +40,13 @@
         [defaults setObject:OPTION_ORDER_BY_FIRSTNAME_KEY forKey:SETTINGS_PREF_ORDER_BY_KEY_PREVIOUS_SETTINGS];
     }
     
+    if(![defaults objectForKey:SETTINGS_FILTER_OPTIONS]) {
+        [defaults setObject:OPTION_FILTER_SHOW_ALL_KEY forKey:SETTINGS_FILTER_OPTIONS];
+    }
+    if(![defaults objectForKey:SETTINGS_FILTER_PREVIOUS_OPTIONS]) {
+        [defaults setObject:OPTION_FILTER_SHOW_ALL_KEY forKey:SETTINGS_FILTER_PREVIOUS_OPTIONS];
+    }
+    
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     self.viewController = [[PCViewController alloc] initWithNibName:@"PCViewController" bundle:nil];
@@ -107,8 +114,8 @@
     
     // Start Batch.
     // TODO : switch to live api key before store release
-    [Batch startWithAPIKey:@"DEV5C6281062D7458A1A5011A11309"]; // dev
-    // [Batch startWithAPIKey:@"5C6281062D31F00273C12635993BA6"]; // live
+    //[Batch startWithAPIKey:@"DEV5C6281062D7458A1A5011A11309"]; // dev
+    [Batch startWithAPIKey:@"5C6281062D31F00273C12635993BA6"]; // live
     
     // Ask for the permission to display notifications
     // The push token will automatically be fetched by the SDK

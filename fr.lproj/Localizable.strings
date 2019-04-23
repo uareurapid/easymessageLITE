@@ -130,3 +130,9 @@
 "lite_reached_max_attachments" = "Veuillez supprimer une image ou passer à la version Premium.";
 "social_networks_copy_paste" = "Certains réseaux sociaux n'autorisent pas les publications contenant des messages préremplis.\r\nDans ce cas, le message sera automatiquement copié dans le presse-papier et vous devrez le coller vous-même.";
 "message_copied_clipboard" = "Le message a été copié dans le presse-papier";
+"show_contacts_only" = "Montrer seulement les contacts";
+"show_groups_only" = "Montrer seulement les groupes";
+"show_all" = "Montrer tout";
+"filter_options" = "Options de filtrage";
+"filter_options_explanation" = "Changer les options de visualisation";
+"ask_to_rate" = "Si vous aimez Easy Message, voulez-vous prendre un moment pour l'évaluer ?";

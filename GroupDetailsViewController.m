@@ -38,6 +38,7 @@
                                                                              style:UIBarButtonItemStyleDone target:self action:@selector(deleteGroupClicked:)];
         deteleGroupButton.tintColor = UIColor.whiteColor;
         self.navigationItem.rightBarButtonItem = deteleGroupButton;
+        self.navigationItem.backBarButtonItem.tintColor = UIColor.whiteColor;
     }
     return self;
 }

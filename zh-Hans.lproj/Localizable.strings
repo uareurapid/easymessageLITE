@@ -130,3 +130,9 @@
 "lite_reached_max_attachments" = "请删除1张图片或升级到高级版";
 "social_networks_copy_paste" = "某些社交网络不允许包含预填充邮件的帖子。\r\n在这些情况下，邮件将自动复制到剪贴板，您必须自己粘贴它";
 "message_copied_clipboard" = "邮件已复制到剪贴板";
+"show_contacts_only" = "仅显示联系人";
+"show_groups_only" = "仅显示组";
+"show_all" = "显示所有";
+"filter_options" = "过滤选项";
+"filter_options_explanation" = "更改可视化选项";
+"ask_to_rate" = "如果你喜欢使用 Easy Message，你介意花一点时间给它评分吗？不会超过一分钟。感谢您的支持";

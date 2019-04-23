@@ -136,5 +136,11 @@
 "lite_reached_max_attachments" = "Please remove 1 attachment or upgrade to the Premium version";
 "social_networks_copy_paste" = "Some social networks do not allow posts with pre-filled messages. \r\nIn these cases the message will be automatically copied to the clipboard and you have to paste it yourself";
 "message_copied_clipboard" = "The message has been copied to the clipboard";
+"show_contacts_only" = "Show contacts only";
+"show_groups_only" = "Show groups only";
+"show_all" = "Show all";
+"filter_options" = "Filter options";
+"filter_options_explanation" = "Change visualization options";
+"ask_to_rate" = "If you enjoy using Easy Message, would you mind taking a moment to rate it?";
 
 

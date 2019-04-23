@@ -46,6 +46,12 @@
 #define OPTION_ORDER_BY_LASTNAME_ID    0
 #define OPTION_ORDER_BY_FIRSTNAME_ID    1
 
+#define OPTION_FILTER_CONTACTS_ONLY_KEY    @"show_contacts_only"
+#define OPTION_FILTER_GROUPS_ONLY_KEY    @"show_group_only"
+#define OPTION_FILTER_SHOW_ALL_KEY    @"show_all"
+#define SETTINGS_FILTER_OPTIONS         @"filter_options"
+#define SETTINGS_FILTER_PREVIOUS_OPTIONS         @"previous_filter_options"
+
 //save on device
 #define SETTINGS_PREF_SEND_OPTION_KEY    @"pref_send_option_key"
 #define SETTINGS_PREF_SERVICE_KEY        @"pref_service_key"
@@ -55,6 +61,7 @@
 #define SETTINGS_PREF_ORDER_BY_KEY_PREVIOUS_SETTINGS       @"pref_order_by_key_previous_setting"
 
 @class SocialNetworksViewController;
+@class FilterOptionsViewController;
 @class IAPMasterViewController;
 
 @interface SettingsViewController : UITableViewController<MFMailComposeViewControllerDelegate,MFMessageComposeViewControllerDelegate>
@@ -80,6 +87,7 @@
 
 @property (strong,nonatomic) SocialNetworksViewController *socialOptionsController;
 @property (strong,nonatomic) IAPMasterViewController *purchasesController;
+@property (strong,nonatomic) FilterOptionsViewController *filterOptionsController;
 -(void) resetSocialNetworks;
 
 @end

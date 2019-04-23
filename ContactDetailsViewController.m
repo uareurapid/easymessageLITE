@@ -49,6 +49,7 @@
     
         deteleContactButton.tintColor = UIColor.whiteColor;
         self.navigationItem.rightBarButtonItem = deteleContactButton;
+        self.navigationItem.backBarButtonItem.tintColor = UIColor.whiteColor;
     }
     return self;
 }
