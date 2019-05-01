@@ -5,6 +5,7 @@
  Copyright (c) 2013 Paulo Cristo. All rights reserved. */
 "subject_label" = "主题：";
 "message_label" = "消息：";
+"message" = "消息";
 "placeholder_your_message" = "您的留言（*）";
 "placeholder_subject" = " 主题";
 "send_message" = "送信";
@@ -136,3 +137,4 @@
 "filter_options" = "过滤选项";
 "filter_options_explanation" = "更改可视化选项";
 "ask_to_rate" = "如果你喜欢使用 Easy Message，你介意花一点时间给它评分吗？不会超过一分钟。感谢您的支持";
+"groups" = "组";

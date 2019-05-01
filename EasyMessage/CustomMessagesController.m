@@ -141,9 +141,11 @@
 
 -(void)viewWillAppear:(BOOL)animated {
     //if ([[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_COMMON_MESSAGES]) {
-        [self.navigationItem.leftBarButtonItem setEnabled:[self getSelectedMessageIfAny]!=nil];
+        [self.navigationItem.leftBarButtonItem setEnabled: ![self isDefaultMessageSelected] ];
         [self.navigationItem.rightBarButtonItem setEnabled: YES];
         [self.tableView setAllowsSelection:YES];
+    
+    
     
     self.addNewMessage = ([self getSelectedMessageIfAny]==nil);
     //}
@@ -155,6 +157,10 @@
     [self addRecordsFromDatabase];
     [self.navigationItem.rightBarButtonItem setEnabled:YES];
      
+}
+
+-(BOOL) isDefaultMessageSelected {
+    return (selectedMessageIndex > -1 && selectedMessage!=nil && selectedMessageIndex < NUM_DEFAULT_MESSAGES);
 }
 
 -(IBAction)deleteMessageClicked:(id)sender {
@@ -169,13 +175,11 @@
 
 //returns the selected message
 -(NSString * ) getSelectedMessageIfAny {
-    if(selectedMessageIndex>-1 && selectedMessage!=nil && selectedMessageIndex < messagesList.count) {
+    if(selectedMessageIndex > -1 && selectedMessage!=nil && selectedMessageIndex < messagesList.count) {
         selectedMessage = [messagesList objectAtIndex:selectedMessageIndex];
         return selectedMessage; // [messagesList objectAtIndex:selectedMessageIndex];
     }
-    else {
-     return nil;
-    }
+    return nil;
 }
 
 

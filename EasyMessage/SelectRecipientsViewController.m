@@ -38,6 +38,96 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     return self;
 }
 
+- (void) showMenu:(id)sender withEvent: (UIEvent *)event
+{
+    
+    FTPopOverMenuConfiguration *configuration = [FTPopOverMenuConfiguration defaultConfiguration];
+    configuration.textColor = [UIColor blackColor];
+    configuration.backgroundColor = [UIColor whiteColor];
+    configuration.menuWidth = 200;
+    
+    PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
+    configuration.separatorColor = [delegate colorFromHex:0x4f6781];
+    
+    //no selection
+    if(self.selectedContactsList.count == 0) {
+        //OPTIONS:
+        // Create Contact
+        // Create Group
+        [FTPopOverMenu showFromEvent:event withMenuArray:@[NSLocalizedString(@"new_contact", nil),NSLocalizedString(@"new_group", nil)]
+                          imageArray:@[@"add",@"add"]
+                       configuration:configuration
+                           doneBlock:^(NSInteger selectedIndex) {
+                               NSLog(@"selected %ld", (long)selectedIndex);
+                               if(selectedIndex == 0) {
+                                   [self showAddContactController];
+                               }
+                               else {
+                                   [self showCreateGroupAlert];
+                               }
+                           } dismissBlock:^{
+                               
+                           }];
+    }
+    else {
+        //more than one selected
+        
+        //OPTIONS:
+        // Create Contact
+        // Create Group
+        
+        if(self.groupsList.count > 0) {
+            //can add to group to
+            //OPTIONS:
+            // Add to group
+            [FTPopOverMenu showFromEvent:event withMenuArray:@[NSLocalizedString(@"new_contact", nil),NSLocalizedString(@"new_group", nil), NSLocalizedString(@"add_to_group",nil)]
+                              imageArray:@[@"add",@"add",@"group"]
+                           configuration:configuration
+                               doneBlock:^(NSInteger selectedIndex) {
+                                   NSLog(@"selected %ld", (long)selectedIndex);
+                                   
+                                   if(selectedIndex == 0) {
+                                       [self showAddContactController];
+                                   }
+                                   else if(selectedIndex == 1) {
+                                       [self showCreateGroupAlert];
+                                   }
+                                   else {
+                                       [self addContactsToExistingGroup: sender];
+                                   }
+                               } dismissBlock:^{
+                                   
+                               }];
+        }
+        else {
+            
+            //same as above, just 2 options
+            //OPTIONS:
+            // Create Contact
+            // Create Group
+            [FTPopOverMenu showFromEvent:event withMenuArray:@[NSLocalizedString(@"new_contact", nil),NSLocalizedString(@"new_group", nil)]
+                              imageArray:@[@"add",@"add"]
+                           configuration:configuration
+                               doneBlock:^(NSInteger selectedIndex) {
+                                   NSLog(@"selected %ld", (long)selectedIndex);
+                                   if(selectedIndex == 0) {
+                                       [self showAddContactController];
+                                   }
+                                   else {
+                                       [self showCreateGroupAlert];
+                                   }
+                               } dismissBlock:^{
+                                   
+                               }];
+        }
+        
+    }
+    
+    
+    
+    
+}
+
 -(void) showAddContactController {
     if(self.addNewContactController==nil) {
       self.addNewContactController = [[AddContactViewController alloc] initWithNibName:@"AddContactViewController" bundle:nil];
@@ -85,9 +175,10 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         //UIBarButtonItem *addToGroupButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"add_to_group",@"add_to_group")
                                                                       //       style:UIBarButtonItemStyleDone target:self action:@selector(addGroupClicked:)];
         //also used to create a new contact if nothing is selected
-        UIBarButtonItem *addToGroupButton = [[UIBarButtonItem alloc] initWithTitle: NSLocalizedString(@"new_contact",@"new_contact") style:UIBarButtonItemStyleDone target:self action:@selector(addGroupClicked:)];
+        //WAS OK UIBarButtonItem *addToGroupButton = [[UIBarButtonItem alloc] initWithTitle: NSLocalizedString(@"new_contact",@"new_contact") style:UIBarButtonItemStyleDone target:self action:@selector(addGroupClicked:)];
+        UIBarButtonItem *optionsButton = [[UIBarButtonItem alloc] initWithImage: [UIImage imageNamed:@"list"] style:UIBarButtonItemStyleDone target:self action:@selector(optionsClicked:event:)];
         
-        addToGroupButton.tintColor = UIColor.whiteColor;
+        optionsButton.tintColor = UIColor.whiteColor;
         
         //[addToGroupButton setTintColor:[UIColor redColor]];
     
@@ -95,9 +186,9 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
       //                                                                       style:UIBarButtonItemStyleDone target:self action:@selector(addGroupClicked:)];
         
         //[addToGroupButton setCustomView:[self setupGroupButton]];
-        self.navigationItem.rightBarButtonItem = addToGroupButton;
+        self.navigationItem.rightBarButtonItem = optionsButton;
         //[addToGroupButton setEnabled:NO];
-        [addToGroupButton setEnabled:YES];
+        [optionsButton setEnabled:YES];
         groupLocked = NO;
         
  
@@ -728,7 +819,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
             //[self.navigationItem.rightBarButtonItem setEnabled:NO];
             //can add a contact
             //self.navigationItem.rightBarButtonItem.title = NSLocalizedString(@"new_contact", @"new_contact");
-            self.navigationItem.rightBarButtonItem.title = NSLocalizedString(@"new_contact",@"new_contact");
+            //self.navigationItem.rightBarButtonItem.title = NSLocalizedString(@"new_contact",@"new_contact");
             
             self.groupLocked = true;
 
@@ -773,7 +864,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
             self.navigationItem.leftBarButtonItem.title = NSLocalizedString(@"unselect_all",@"unselect_all");
             //title = NSLocalizedString(@"unselect_all", @"remover selecção");
             //can add them to the group
-            self.navigationItem.rightBarButtonItem.title = NSLocalizedString(@"create_group", @"create_group");
+            //self.navigationItem.rightBarButtonItem.title = NSLocalizedString(@"create_group", @"create_group");
             self.groupLocked = false;
         });
         
@@ -805,12 +896,12 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     if(selectedContactsList.count>1) {
         //can add a new group
         groupLocked = false;
-        [self.navigationItem.rightBarButtonItem setTitle:NSLocalizedString(@"create_group",@"create_group")];
+        //[self.navigationItem.rightBarButtonItem setTitle:NSLocalizedString(@"create_group",@"create_group")];
     }
     else {
         //cannot add a group only a contact
         groupLocked = true;
-        [self.navigationItem.rightBarButtonItem setTitle:NSLocalizedString(@"new_contact",@"new_contact")];
+        //[self.navigationItem.rightBarButtonItem setTitle:NSLocalizedString(@"new_contact",@"new_contact")];
     }
     
     //from adding new contact
@@ -1341,16 +1432,16 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
             
             if(selectedContactsList.count>1) {
                 self.groupLocked = false;
-                self.navigationItem.rightBarButtonItem.title  = NSLocalizedString(@"new_group",@"new_group");
+                //self.navigationItem.rightBarButtonItem.title  = NSLocalizedString(@"new_group",@"new_group");
             }
             else {
                 //only 1 selected, cannot create a group
                 //TODO PC if i have groups show the option to add to an existing group
                 self.groupLocked = true;
                 
-                if(self.groupsList.count > 0) {
-                    self.navigationItem.rightBarButtonItem.title  = NSLocalizedString(@"add_to_group",@"add_to_group");
-                }
+                //if(self.groupsList.count > 0) {
+                //    self.navigationItem.rightBarButtonItem.title  = NSLocalizedString(@"add_to_group",@"add_to_group");
+                //}
         
                 //self.navigationItem.rightBarButtonItem.title = NSLocalizedString(@"new_contact",@"new_contact");
             }
@@ -1371,7 +1462,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
             //NSLocalizedString(@"select_all", @"seleccionar tudo");
             
             self.groupLocked = true;
-            self.navigationItem.rightBarButtonItem.title = NSLocalizedString(@"new_contact",@"new_contact");;
+            //self.navigationItem.rightBarButtonItem.title = NSLocalizedString(@"new_contact",@"new_contact");;
             //NSLocalizedString(@"new_contact", @"new_contact");
             
         });
@@ -1617,6 +1708,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
                         //contact already exists on group
                         if([c isEqual:contact]) {
                             //NSLog(@"ignore contact exists");
+                            //TODO hide this message
                             [[[[iToast makeText:NSLocalizedString(@"contact_already_exists",@"contact_already_exists")]
                                setGravity:iToastGravityBottom] setDuration:2000] show];
                             return;
@@ -1774,7 +1866,46 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         return;
     }
 }
+
+//adds a contact to an existing group
+-(void) addContactsToExistingGroup:(id)sender {
+    NSMutableArray *options = [[NSMutableArray alloc] init];
+    [options addObjectsFromArray:self.groupsNamesArray];
+    Contact *c = [self.selectedContactsList objectAtIndex:0];
+    if([c isKindOfClass:Group.class]) {
+        //need to hide this name
+        NSLog(@"hide group %@ from options ", c.name);
+        [options removeObject:c.name];
+    }
+    //if no options do not show it, otherwise it might crash on "done" with nothing selected
+    //ex: index 0 beyond bounds for empty array'
+    //TODO refactor this, cause now i can have more then 1 contact selected
+    if(options.count > 0) {
+        [PickerView showPickerWithOptions:options sender:sender title:NSLocalizedString(@"select_group", @"select_group") selectionBlock:^(NSString *selectedOption) {
+            //TODO
+            Contact *c = [self.selectedContactsList objectAtIndex:0];
+            [self addContactToGroup: selectedOption contact:c];
+        }];
+    }
+    
+    
+}
+
 //show the input new group dialog
+-(void) showCreateGroupAlert {
+    UIAlertView * alert;
+    //adding a group allowed
+    alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"new_group",@"new_group") message:NSLocalizedString(@"enter_group_name",@"enter_group_name") delegate:self cancelButtonTitle:NSLocalizedString(@"cancel",@"cancel") otherButtonTitles:NSLocalizedString(@"save",@"save"),nil];
+    alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+    [alert show];
+}
+
+- (void)optionsClicked:(id)sender event:(UIEvent *)event{
+    [self showMenu:sender withEvent: event];
+}
+
+//show the input new group dialog
+/*
 - (IBAction)addGroupClicked:(id)sender{
 
     //adding a contact
@@ -1798,7 +1929,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
             /**
              has presented a UIAlertController (<PickerAlertController: 0x102806000>) of style UIAlertControllerStyleActionSheet from UITabBarController (<UITabBarController: 0x101809600>). The modalPresentationStyle of a UIAlertController with this style is UIModalPresentationPopover. You must provide location information for this popover through the alert controller's popoverPresentationController. You must provide either a sourceView and sourceRect or a barButtonItem.  If this information is not known when you present the alert controller, you may provide it in the UIPopoverPresentationControllerDelegate method -prepareForPopoverPresentation.'
              */
-            
+ /*
         }
         else {
             [self showAddContactController];
@@ -1821,7 +1952,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     }
     
 }
-
+*/
 
 //the delegate for the new Group
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {

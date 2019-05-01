@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		186341782278756F00167AAE /* FTPopOverMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 186341772278756F00167AAE /* FTPopOverMenu.m */; };
+		1863417A227893C900167AAE /* group.png in Resources */ = {isa = PBXBuildFile; fileRef = 18634179227893C800167AAE /* group.png */; };
+		1863417C227893D400167AAE /* list.png in Resources */ = {isa = PBXBuildFile; fileRef = 1863417B227893D400167AAE /* list.png */; };
 		720020E421F1326500698245 /* Icon-76.png in Resources */ = {isa = PBXBuildFile; fileRef = 720020E321F1326500698245 /* Icon-76.png */; };
 		720862FF17DD249C0024B662 /* 80-shopping-cart.png in Resources */ = {isa = PBXBuildFile; fileRef = 720862FE17DD249C0024B662 /* 80-shopping-cart.png */; };
 		7209458D1FD4B8AE00AD7EDF /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7209458A1FD4B8AC00AD7EDF /* FBSDKCoreKit.framework */; };
@@ -179,6 +182,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		186341762278756F00167AAE /* FTPopOverMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FTPopOverMenu.h; sourceTree = "<group>"; };
+		186341772278756F00167AAE /* FTPopOverMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FTPopOverMenu.m; sourceTree = "<group>"; };
+		18634179227893C800167AAE /* group.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = group.png; sourceTree = "<group>"; };
+		1863417B227893D400167AAE /* list.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = list.png; sourceTree = "<group>"; };
 		2D5E9CC017E5903E74EB7D93 /* libPods-EasyMessage.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-EasyMessage.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		720020E321F1326500698245 /* Icon-76.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-76.png"; sourceTree = "<group>"; };
 		720862FE17DD249C0024B662 /* 80-shopping-cart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "80-shopping-cart.png"; path = "EasyMessage/80-shopping-cart.png"; sourceTree = "<group>"; };
@@ -455,6 +462,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		186341752278754C00167AAE /* FTPopOverMenu */ = {
+			isa = PBXGroup;
+			children = (
+				186341762278756F00167AAE /* FTPopOverMenu.h */,
+				186341772278756F00167AAE /* FTPopOverMenu.m */,
+			);
+			name = FTPopOverMenu;
+			sourceTree = "<group>";
+		};
 		7218B7362238482F00477F96 /* Filter */ = {
 			isa = PBXGroup;
 			children = (
@@ -476,6 +492,7 @@
 		7224152F1771148700989C3B = {
 			isa = PBXGroup;
 			children = (
+				186341752278754C00167AAE /* FTPopOverMenu */,
 				72B58BD221B1C4770021DE44 /* External */,
 				7285348118E341AC00826581 /* PCPopupViewController.h */,
 				7285348218E341AC00826581 /* PCPopupViewController.m */,
@@ -506,9 +523,11 @@
 				7298EC0617DE0F2D002C30AE /* Lock32.png */,
 				72682BFE17C519DD00A3318F /* world3.png */,
 				7298EC0917DE1937002C30AE /* Unlock32.png */,
+				1863417B227893D400167AAE /* list.png */,
 				7218B734223846BB00477F96 /* eyes.png */,
 				72682BFC17C5184400A3318F /* world.png */,
 				72682BFF17C519DD00A3318F /* world2.png */,
+				18634179227893C800167AAE /* group.png */,
 				72B843BC17A87D9500067A73 /* Default.png */,
 				720020E321F1326500698245 /* Icon-76.png */,
 				72F6BB8D2225C66900929A14 /* facebook.png */,
@@ -798,7 +817,6 @@
 				722415351771148800989C3B /* Frameworks */,
 				722415361771148800989C3B /* Resources */,
 				72E2253F1FD5FC160076C813 /* Embed Frameworks */,
-				29634CA2EE0A89510DECAD46 /* [CP] Embed Pods Frameworks */,
 				480B3C744C950EA9059557F2 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
@@ -839,6 +857,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				"pt-PT",
 				pt,
@@ -907,6 +926,7 @@
 				72B843B117A871CC00067A73 /* contact.png in Resources */,
 				72B843B317A8725000067A73 /* mail-1.png in Resources */,
 				72B843B517A872D100067A73 /* Sms-And-Mms-48.png in Resources */,
+				1863417C227893D400167AAE /* list.png in Resources */,
 				72B843B717A8737900067A73 /* Check-48.png in Resources */,
 				7272FAC021C9851B00ED12A6 /* AttachCellCollectionViewCell.xib in Resources */,
 				72B843B917A8764E00067A73 /* Packed-48.png in Resources */,
@@ -925,6 +945,7 @@
 				729AAC4717DA854800CABCB0 /* 33-cabinet.png in Resources */,
 				727906ED17DB677F0076F0FE /* IAPMasterViewController.xib in Resources */,
 				729ED6B121C9AA8A005C7F73 /* delete_red.png in Resources */,
+				1863417A227893C900167AAE /* group.png in Resources */,
 				7284D9721FE47E64000350D6 /* select_all.png in Resources */,
 				72F787FB17DCC37500424519 /* 24-gift.png in Resources */,
 				7285348518E341AC00826581 /* PCPopupViewController.xib in Resources */,
@@ -945,21 +966,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		29634CA2EE0A89510DECAD46 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-EasyMessage/Pods-EasyMessage-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		38C987B44F9D2F5AC23CFDAE /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -984,17 +990,18 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-EasyMessage/Pods-EasyMessage-resources.sh",
-				$PODS_CONFIGURATION_BUILD_DIR/Appirater/Appirater.bundle,
-				$PODS_CONFIGURATION_BUILD_DIR/QBImagePickerController/QBImagePicker.bundle,
+				"${PODS_ROOT}/Target Support Files/Pods-EasyMessage/Pods-EasyMessage-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/Appirater/Appirater.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/QBImagePickerController/QBImagePicker.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Appirater.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/QBImagePicker.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-EasyMessage/Pods-EasyMessage-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-EasyMessage/Pods-EasyMessage-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1018,6 +1025,7 @@
 				72BCE56718E20E9B00514A96 /* AFURLConnectionOperation.m in Sources */,
 				72BCE56318E20E9B00514A96 /* AFHTTPRequestOperationManager.m in Sources */,
 				729BEC5121C67DC300947062 /* ContactDetailsViewController.m in Sources */,
+				186341782278756F00167AAE /* FTPopOverMenu.m in Sources */,
 				72611B0B177216940043E508 /* SelectRecipientsViewController.m in Sources */,
 				72AA60F51BF80124006183D3 /* AddContactViewController.m in Sources */,
 				7269D4441774D6B500AE1662 /* UIPlaceHolderTextView.m in Sources */,

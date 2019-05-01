@@ -8,6 +8,7 @@
 
 "subject_label" = "Subyek:";
 "message_label" = "Pesan:";
+"message" = "Pesan";
 "placeholder_your_message" = "Pesanmu (*)";
 "placeholder_subject" = " Subyek";
 "send_message" = "Mengirim pesan";
@@ -147,3 +148,4 @@
 "filter_options" = "Opsi filter";
 "filter_options_explanation" = "Ubah opsi visualisasi";
 "ask_to_rate" = "Jika anda menyukai Easy Message, maukah anda memberikan rating kepada aplikasi ini?";
+"groups" = "Grup";

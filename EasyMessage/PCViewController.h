@@ -35,6 +35,8 @@
 #define IS_OS_5_OR_LATER    ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
 #define IS_OS_6_OR_LATER    ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
 #define IS_OS_7_OR_LATER    ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
+//after 3 messages
+#define KEY_ASK_FOR_REVIEW  @"ask_for_review"
 
 #define PROMO_SHOW_COUNTER @"promo_show_counter"
 #define MAX_ATTACHMENTS 5

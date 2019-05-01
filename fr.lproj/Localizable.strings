@@ -5,6 +5,7 @@
  Copyright (c) 2013 Paulo Cristo. All rights reserved. */
 "subject_label" = "Sujet:";
 "message_label" = "Message:";
+"message" = "Message";
 "placeholder_your_message" = "Votre message (*)";
 "placeholder_subject" = " Sujet";
 "send_message" = "Envoyer un message";
@@ -136,3 +137,4 @@
 "filter_options" = "Options de filtrage";
 "filter_options_explanation" = "Changer les options de visualisation";
 "ask_to_rate" = "Si vous aimez Easy Message, voulez-vous prendre un moment pour l'évaluer ?";
+"groups" = "Groupes";

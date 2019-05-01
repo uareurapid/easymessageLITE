@@ -25,6 +25,9 @@
 @synthesize initiallySelectedPreferredService,initiallySelectedSendOption, initiallySelectedOrderByOption;
 @synthesize isFacebookAvailable,isTwitterAvailable,isLinkedinAvailable;
 
+//ABOUT IOS MESSAGES:
+//https://support.apple.com/en-us/HT202724
+
 - (id)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:style];

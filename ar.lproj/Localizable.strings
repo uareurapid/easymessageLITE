@@ -8,6 +8,7 @@
 
 "subject_label" = "الموضوع:";
 "message_label" = "رسالة:";
+"message" = "رسالة";
 "placeholder_your_message" = "رسالتك";
 "placeholder_subject" = "موضوع";
 "send_message" = "إرسال رسالة";
@@ -139,3 +140,4 @@
 "filter_options" = "خيارات التصفية";
 "filter_options_explanation" = "تغيير خيارات التصور";
 "ask_to_rate" = "قيمنا?";
+"groups" = "المجموعات";

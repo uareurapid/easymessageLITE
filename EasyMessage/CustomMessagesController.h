@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "PCViewController.h"
 
+#define NUM_DEFAULT_MESSAGES 11
+
 @interface CustomMessagesController : UITableViewController
 
 

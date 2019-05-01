@@ -7,6 +7,7 @@
 */
 "subject_label" = "Assunto:";
 "message_label" = "Mensagem:";
+"message" = "Mensagem";
 "send_message" = "Enviar Mensagem";
 "placeholder_your_message" = "A sua mensagem (*)";
 "placeholder_subject" = " Assunto";
@@ -141,4 +142,4 @@
 "filter_options" = "Opções de visualização";
 "filter_options_explanation" = "Alterar opções de visualização";
 "ask_to_rate" = "Se você gosta de usar o Easy Message, que tal avaliá-lo?";
-
+"groups" = "Grupos";

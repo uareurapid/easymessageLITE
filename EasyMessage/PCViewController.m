@@ -29,8 +29,7 @@
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 #define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
 #define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(v)     ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedDescending)
-//after 3 messages
-#define KEY_ASK_FOR_REVIEW  @"ask_for_review"
+
 
 @interface PCViewController ()
 
@@ -2360,6 +2359,29 @@ void addressBookChanged(ABAddressBookRef reference,
     PHImageManager *manager = [PHImageManager defaultManager];
     //NSMutableArray *images = [NSMutableArray arrayWithCapacity:[assets count]];
     
+    NSUInteger maxAttach = [[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE] ? MAX_ATTACHMENTS : MAX_ATTACHMENTS_WITHOUT_PREMIUM;
+    
+    //already have the max 5, need to remove the extra ones
+    if(self.attachments.count >= maxAttach) {
+        //already have 5 remove all and replace them by the new ones
+        if(self.imagesArray.count == maxAttach) {
+            [self.attachments removeAllObjects];
+            [self.imagesCollection reloadData];
+            [self updateAttachmentsLabel];
+        }
+        else {
+            NSInteger toRemove = self.imagesArray.count;
+            for(int i = 0; i < toRemove; i++ ) {
+                [self.attachments removeObjectAtIndex:i];
+            }
+            [self.imagesCollection reloadData];
+            [self updateAttachmentsLabel];
+            
+        }
+        
+        
+    }
+    
     dispatch_async(dispatch_get_main_queue(), ^(){
         for (PHAsset *asset in self.imagesArray) {
             // Do something with the asset
@@ -2408,13 +2430,9 @@ void addressBookChanged(ABAddressBookRef reference,
     imagePickerController.mediaType = QBImagePickerMediaTypeImage; //only images for now
     imagePickerController.allowsMultipleSelection = YES;
     
-    if ([[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
-       imagePickerController.maximumNumberOfSelection = MAX_ATTACHMENTS;
-    }
-    else {
-       imagePickerController.maximumNumberOfSelection = MAX_ATTACHMENTS_WITHOUT_PREMIUM;
-    }
-        
+    NSUInteger maxAttach = [[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE] ? MAX_ATTACHMENTS : MAX_ATTACHMENTS_WITHOUT_PREMIUM;
+    //max i can add - the ones i already added
+    imagePickerController.maximumNumberOfSelection = maxAttach - self.attachments.count;
     
     imagePickerController.showsNumberOfSelectedAssets = YES;
    
