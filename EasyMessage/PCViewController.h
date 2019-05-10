@@ -26,6 +26,7 @@
 #import <TwitterKit/TwitterKit.h>
 #import <QBImagePickerController/QBImagePickerController.h>
 #import "AttachCellCollectionViewCell.h"
+#import "Popup.h"
 
 @class SelectRecipientsViewController;
 @class IAPMasterViewController;
@@ -43,7 +44,7 @@
 #define MAX_ATTACHMENTS_WITHOUT_PREMIUM 1
 
 @interface PCViewController : UIViewController <MFMailComposeViewControllerDelegate,MFMessageComposeViewControllerDelegate,UIImagePickerControllerDelegate,UITextViewDelegate,UITextFieldDelegate, FBSDKSharingDelegate,UICollectionViewDataSource,UICollectionViewDelegate,
-UITextFieldDelegate, NSURLConnectionDelegate,SKStoreProductViewControllerDelegate,QBImagePickerControllerDelegate>
+UITextFieldDelegate, NSURLConnectionDelegate,SKStoreProductViewControllerDelegate,QBImagePickerControllerDelegate, PopupDelegate>
 @property (weak, nonatomic) IBOutlet UIScrollView *attachmentsScrollview;
 @property (weak, nonatomic) IBOutlet UICollectionView *imagesCollection;
 - (IBAction)sendMessage:(id)sender;

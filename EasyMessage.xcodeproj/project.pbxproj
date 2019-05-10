@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		181330322285E5AF00939671 /* Popup.m in Sources */ = {isa = PBXBuildFile; fileRef = 181330312285E5AF00939671 /* Popup.m */; };
 		186341782278756F00167AAE /* FTPopOverMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 186341772278756F00167AAE /* FTPopOverMenu.m */; };
 		1863417A227893C900167AAE /* group.png in Resources */ = {isa = PBXBuildFile; fileRef = 18634179227893C800167AAE /* group.png */; };
 		1863417C227893D400167AAE /* list.png in Resources */ = {isa = PBXBuildFile; fileRef = 1863417B227893D400167AAE /* list.png */; };
@@ -182,6 +183,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		181330302285E5AF00939671 /* Popup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Popup.h; sourceTree = "<group>"; };
+		181330312285E5AF00939671 /* Popup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Popup.m; sourceTree = "<group>"; };
 		186341762278756F00167AAE /* FTPopOverMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FTPopOverMenu.h; sourceTree = "<group>"; };
 		186341772278756F00167AAE /* FTPopOverMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FTPopOverMenu.m; sourceTree = "<group>"; };
 		18634179227893C800167AAE /* group.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = group.png; sourceTree = "<group>"; };
@@ -462,6 +465,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1813302F2285E5AF00939671 /* Popup */ = {
+			isa = PBXGroup;
+			children = (
+				181330302285E5AF00939671 /* Popup.h */,
+				181330312285E5AF00939671 /* Popup.m */,
+			);
+			path = Popup;
+			sourceTree = "<group>";
+		};
 		186341752278754C00167AAE /* FTPopOverMenu */ = {
 			isa = PBXGroup;
 			children = (
@@ -492,7 +504,6 @@
 		7224152F1771148700989C3B = {
 			isa = PBXGroup;
 			children = (
-				186341752278754C00167AAE /* FTPopOverMenu */,
 				72B58BD221B1C4770021DE44 /* External */,
 				7285348118E341AC00826581 /* PCPopupViewController.h */,
 				7285348218E341AC00826581 /* PCPopupViewController.m */,
@@ -749,6 +760,8 @@
 		72B58BD221B1C4770021DE44 /* External */ = {
 			isa = PBXGroup;
 			children = (
+				1813302F2285E5AF00939671 /* Popup */,
+				186341752278754C00167AAE /* FTPopOverMenu */,
 				72B58BD421B1C48A0021DE44 /* PickerView.h */,
 				72B58BD321B1C48A0021DE44 /* PickerView.m */,
 			);
@@ -1011,6 +1024,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				181330322285E5AF00939671 /* Popup.m in Sources */,
 				7285348418E341AC00826581 /* PCPopupViewController.m in Sources */,
 				72BCE56218E20E9B00514A96 /* AFHTTPRequestOperation.m in Sources */,
 				722415481771148800989C3B /* main.m in Sources */,

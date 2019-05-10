@@ -150,3 +150,4 @@
 "ask_to_rate" = "Jika anda menyukai Easy Message, maukah anda memberikan rating kepada aplikasi ini?";
 "groups" = "Grup";
 "members" = "anggota";
+"imessage_warn" = "Jika Anda ingin mengirim pesan grup melalui SMS, Anda harus mempertimbangkan menonaktifkan iMessage pada pengaturan ponsel Anda terlebih dahulu. Ini akan memastikan bahwa pesan dikirim secara individual.";
