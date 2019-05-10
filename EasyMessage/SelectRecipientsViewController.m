@@ -1115,7 +1115,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     
     if([contact isKindOfClass:Group.class]) {
         Group *thisOne = (Group *) contact;
-        cell.detailTextLabel.text = [NSString stringWithFormat: @"Group (%lu members)",(unsigned long)thisOne.contactsList.count ];
+        cell.detailTextLabel.text = [NSString stringWithFormat: @"Group (%lu %@)",(unsigned long)thisOne.contactsList.count, NSLocalizedString(@"members", nil)  ];
         isGroup = YES;
         cell.textLabel.text = contact.name;
         cell.textLabel.font = [UIFont boldSystemFontOfSize:(16.0)];

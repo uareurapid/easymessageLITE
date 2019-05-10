@@ -21,7 +21,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.3.0</string>
+	<string>1.3.2</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -72,6 +72,8 @@
 	<true/>
 	<key>NSContactsUsageDescription</key>
 	<string>the application needs to read the contacts list in order to be able to choose recipients for the messages. No information about personal data is transmited anywhere.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>the app might use location to send push notifications</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>The application can send messages with attached images. User can choose the images from the device library</string>
 	<key>UILaunchStoryboardName</key>
