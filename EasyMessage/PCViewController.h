@@ -38,7 +38,7 @@
 #define IS_OS_7_OR_LATER    ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
 //after 3 messages
 #define KEY_ASK_FOR_REVIEW  @"ask_for_review"
-
+#define KEY_WARNED_ABOUT_IMESSAGE @"warn_about_imessage"
 #define PROMO_SHOW_COUNTER @"promo_show_counter"
 #define MAX_ATTACHMENTS 5
 #define MAX_ATTACHMENTS_WITHOUT_PREMIUM 1
@@ -96,6 +96,8 @@ void addressBookChanged(ABAddressBookRef reference,
                         void *context);
 -(void)setupAddressBook;
 -(void) checkForPrefilledMessage;
+-(BOOL) checkIfShouldWarnAboutImessage;
+-(void) warnAboutImessage;
 
 @property (strong, nonatomic) IBOutlet UITextField *subject;
 

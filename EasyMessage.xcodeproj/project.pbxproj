@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		181330322285E5AF00939671 /* Popup.m in Sources */ = {isa = PBXBuildFile; fileRef = 181330312285E5AF00939671 /* Popup.m */; };
+		184847C22289DD0B00C9940C /* ContactsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 184847C02289DD0B00C9940C /* ContactsUI.framework */; };
+		184847C32289DD0B00C9940C /* Contacts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 184847C12289DD0B00C9940C /* Contacts.framework */; };
 		186341782278756F00167AAE /* FTPopOverMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 186341772278756F00167AAE /* FTPopOverMenu.m */; };
 		1863417A227893C900167AAE /* group.png in Resources */ = {isa = PBXBuildFile; fileRef = 18634179227893C800167AAE /* group.png */; };
 		1863417C227893D400167AAE /* list.png in Resources */ = {isa = PBXBuildFile; fileRef = 1863417B227893D400167AAE /* list.png */; };
@@ -185,6 +187,8 @@
 /* Begin PBXFileReference section */
 		181330302285E5AF00939671 /* Popup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Popup.h; sourceTree = "<group>"; };
 		181330312285E5AF00939671 /* Popup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Popup.m; sourceTree = "<group>"; };
+		184847C02289DD0B00C9940C /* ContactsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ContactsUI.framework; path = System/Library/Frameworks/ContactsUI.framework; sourceTree = SDKROOT; };
+		184847C12289DD0B00C9940C /* Contacts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Contacts.framework; path = System/Library/Frameworks/Contacts.framework; sourceTree = SDKROOT; };
 		186341762278756F00167AAE /* FTPopOverMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FTPopOverMenu.h; sourceTree = "<group>"; };
 		186341772278756F00167AAE /* FTPopOverMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FTPopOverMenu.m; sourceTree = "<group>"; };
 		18634179227893C800167AAE /* group.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = group.png; sourceTree = "<group>"; };
@@ -417,6 +421,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				184847C22289DD0B00C9940C /* ContactsUI.framework in Frameworks */,
+				184847C32289DD0B00C9940C /* Contacts.framework in Frameworks */,
 				72E2759B221DCAE100DD13F0 /* Batch.framework in Frameworks */,
 				72F99F8121C860F900FAE7D8 /* libQBImagePickerController.a in Frameworks */,
 				72D25D0421C85BCD0004EB21 /* PhotosUI.framework in Frameworks */,
@@ -569,6 +575,8 @@
 		7224153A1771148800989C3B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				184847C12289DD0B00C9940C /* Contacts.framework */,
+				184847C02289DD0B00C9940C /* ContactsUI.framework */,
 				72E2759A221DCAE100DD13F0 /* Batch.framework */,
 				72F99F8021C860F900FAE7D8 /* libQBImagePickerController.a */,
 				72D25D0321C85BCD0004EB21 /* PhotosUI.framework */,

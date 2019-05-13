@@ -38,7 +38,8 @@
 -(void) deleteContact:(Contact *)contact;
 
 -(void) searchForBirthdayIn: (NSInteger) day month: (NSInteger) month;
-
+-(void)searchAndDeleteContactInContactsList: (Contact *)contact;
+-(void) showPermissionsMessage;
 -(void) reloadContacts: (NSMutableArray *) contacts;
 //filtered list
 @property (strong,nonatomic) NSMutableArray *filteredContactsList;

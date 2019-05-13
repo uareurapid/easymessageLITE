@@ -14,7 +14,9 @@
 #import "GroupDetailsViewController.h"
 #import "ContactDetailsViewController.h"
 #import "CoreDataUtils.h"
-
+//new contacts framework
+#import <Contacts/Contacts.h>
+#import <ContactsUI/ContactsUI.h>
 
 const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 
@@ -697,8 +699,9 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         [self refreshPhonebook:nil];
     }
     else {
-        [[[[iToast makeText:NSLocalizedString(@"error_deleting_contact", @"error_deleting_contact")]
-           setGravity:iToastGravityBottom] setDuration:2000] show];
+        [self searchAndDeleteContactInContactsList: contact];
+        //[[[[iToast makeText:NSLocalizedString(@"error_deleting_contact", @"error_deleting_contact")]
+        //   setGravity:iToastGravityBottom] setDuration:2000] show];
     }
     
     
@@ -1984,6 +1987,148 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         
     }
     
+}
+
+//https://stackoverflow.com/questions/32835853/cncontactstore-retrieve-a-contact-by-email-address
+//https://www.appsfoundation.com/post/create-edit-contacts-with-ios-9-contacts-ui-framework
+-(void)loadAllContactsList {
+    CNAuthorizationStatus status = [CNContactStore authorizationStatusForEntityType:CNEntityTypeContacts];
+    if( status == CNAuthorizationStatusDenied || status == CNAuthorizationStatusRestricted)
+    {
+        NSLog(@"access denied");
+        [self showPermissionsMessage];
+        
+    }
+    else
+    {
+        //Create repository objects contacts
+        CNContactStore *contactStore = [[CNContactStore alloc] init];
+        //Select the contact you want to import the key attribute  ( https://developer.apple.com/library/watchos/documentation/Contacts/Reference/CNContact_Class/index.html#//apple_ref/doc/constant_group/Metadata_Keys )
+        
+        NSArray *keys = [[NSArray alloc]initWithObjects:CNContactIdentifierKey, CNContactEmailAddressesKey, CNContactBirthdayKey, CNContactImageDataKey, CNContactPhoneNumbersKey, /*CNContactViewController.descriptorForRequiredKeys,*/ nil];
+        
+        // Create a request object
+        CNContactFetchRequest *request = [[CNContactFetchRequest alloc] initWithKeysToFetch:keys];
+        request.predicate = nil;
+        
+        [contactStore enumerateContactsWithFetchRequest:request
+                                                  error:nil
+                                             usingBlock:^(CNContact* __nonnull contact, BOOL* __nonnull stop)
+         {
+             // Contact one each function block is executed whenever you get
+             NSString *phoneNumber = @"";
+             if( contact.phoneNumbers)
+                 phoneNumber = [[[contact.phoneNumbers firstObject] value] stringValue];
+             
+             NSLog(@"phoneNumber = %@", phoneNumber);
+             NSLog(@"givenName = %@", contact.givenName);
+             NSLog(@"familyName = %@", contact.familyName);
+             NSLog(@"email = %@", contact.emailAddresses);
+             
+             
+             //[contactList addObject:contact];
+         }];
+        
+        // [contactTableView reloadData];
+    }
+    
+}
+
+/**
+ * Delete the contact from the actual device address book
+ */
+//https://www.oreilly.com/library/view/ios-9-swift/9781491936689/ch04.html
+-(void)searchAndDeleteContactInContactsList: (Contact *)contact {
+    CNAuthorizationStatus status = [CNContactStore authorizationStatusForEntityType:CNEntityTypeContacts];
+    if( status == CNAuthorizationStatusDenied || status == CNAuthorizationStatusRestricted)
+    {
+        NSLog(@"access denied");
+        [self showPermissionsMessage];
+    }
+    else
+    {
+        //Create repository objects contacts
+        CNContactStore *contactStore = [[CNContactStore alloc] init];
+        //Select the contact you want to import the key attribute  ( https://developer.apple.com/library/watchos/documentation/Contacts/Reference/CNContact_Class/index.html#//apple_ref/doc/constant_group/Metadata_Keys )
+        
+        NSArray *keys = [[NSArray alloc]initWithObjects:CNContactIdentifierKey, CNContactEmailAddressesKey, CNContactBirthdayKey, CNContactImageDataKey, CNContactPhoneNumbersKey, CNContactViewController.descriptorForRequiredKeys, nil];
+        
+        // Create a request object
+        CNContactFetchRequest *request = [[CNContactFetchRequest alloc] initWithKeysToFetch:keys];
+        request.predicate = nil;
+        
+        if(contact.name!=nil || contact.lastName!=nil) {
+            request.predicate = [CNContact predicateForContactsMatchingName: ( contact.name!=nil ? contact.name : contact.lastName) ];
+        }
+        else if(contact.email!=nil) {
+            if (@available(iOS 11.0, *)) {
+                request.predicate = [CNContact predicateForContactsMatchingEmailAddress:contact.email];
+            } else {
+                // Fallback on earlier versions
+                [[[[iToast makeText:NSLocalizedString(@"error_deleting_contact", @"error_deleting_contact")]
+                   setGravity:iToastGravityBottom] setDuration:2000] show];
+                return;
+            }
+        } else {
+            [[[[iToast makeText:NSLocalizedString(@"error_deleting_contact", @"error_deleting_contact")]
+               setGravity:iToastGravityBottom] setDuration:2000] show];
+            return;
+        }
+        
+        //it might delete more than 1
+        [contactStore enumerateContactsWithFetchRequest:request
+                                                  error:nil
+                                             usingBlock:^(CNContact* __nonnull contact, BOOL* __nonnull stop)
+         {
+             
+             CNSaveRequest *edit = [[CNSaveRequest alloc] init];
+             CNMutableContact* copyOfContact = (CNMutableContact *)[contact mutableCopy] ;
+             // Contact one each function block is executed whenever you get
+             
+             BOOL deleted = false;
+             NSError* contactError = nil;
+             @try {
+                 [edit deleteContact:copyOfContact];
+                 [contactStore executeSaveRequest:edit error: &contactError];
+                 if(contactError!=nil) {
+                     deleted = true;
+                 }
+                 
+             }@catch(NSException *e) {
+                 deleted = false;
+                 NSLog(@"Error deleting contact %@", copyOfContact.givenName);
+             }
+             if(deleted) {
+                 NSLog(@"deleted on db, contact: %@",contact.givenName);
+                 [contactsList removeObject:contact];
+                 [[[[iToast makeText:NSLocalizedString(@"deleted", @"deleted")]
+                    setGravity:iToastGravityBottom] setDuration:2000] show];
+                 
+                 [self refreshPhonebook:nil];
+                 return; //exit block
+             }
+             else {
+                 
+                 [[[[iToast makeText:NSLocalizedString(@"error_deleting_contact", @"error_deleting_contact")]
+                    setGravity:iToastGravityBottom] setDuration:2000] show];
+             }
+             
+         }];
+        
+    }
+    
+}
+
+-(void) showPermissionsMessage {
+    
+    // Display an error.
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Permissions issue!"
+                                                    message:@"Permission was denied. Cannot load address book. Please change privacy settings in settings app"
+                                                   delegate:self
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    
+    [alert show];
 }
 
 //check if modal and local contact are the same object

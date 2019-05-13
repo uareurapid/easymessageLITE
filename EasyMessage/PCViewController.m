@@ -817,47 +817,38 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
          **/
        
         @try {
-            if(settingsController.selectSendOption == OPTION_SEND_SMS_ONLY_ID || settingsController.selectSendOption == OPTION_ALWAYS_SEND_BOTH_ID) {
+            
+            //show the warning and exit!
+            if( (settingsController.selectSendOption == OPTION_SEND_SMS_ONLY_ID || settingsController.selectSendOption == OPTION_ALWAYS_SEND_BOTH_ID) && ![self checkIfShouldWarnAboutImessage]) {
+                [self warnAboutImessage];
                 
-                Popup *popup = [[Popup alloc] initWithTitle:@"Easy Message"
-                                                   subTitle:NSLocalizedString(@"imessage_warn",nil)
-                                                cancelTitle:@"Cancel"
-                                               successTitle:@"Ok"
-                                                cancelBlock:^{
-                                                    //Custom code after cancel button was pressed
-                                                    NSLog(@"nok");
-                                                } successBlock:^{
-                                                    //Custom code after success button was pressed
-                                                    NSLog(@"ok");
-                                                }];
-                
-                [popup setBackgroundColor:[self colorFromHex:0xfb922b]];
-                //https://github.com/miscavage/Popup
-                [popup setBorderColor:[UIColor blackColor]];
-                [popup setTitleColor:[UIColor whiteColor]];
-                [popup setSubTitleColor:[UIColor whiteColor]];
-                [popup setSuccessBtnColor:[UIColor greenColor]];
-                [popup setSuccessTitleColor:[UIColor whiteColor]];
-                [popup setCancelBtnColor:[UIColor redColor]];
-                [popup setCancelTitleColor:[UIColor whiteColor]];
-                //[popup setBackgroundBlurType:PopupBackGroundBlurTypeLight];
-                [popup setRoundedCorners:YES];
-                [popup setTapBackgroundToDismiss:YES];
-                [popup setDelegate:self];
-                [popup showPopup];
+                //proceeed normally only after dismiss the popup
+                if(settingsController.selectSendOption == OPTION_ALWAYS_SEND_BOTH_ID || settingsController.selectSendOption == OPTION_SEND_EMAIL_ONLY_ID) {
+                    
+                    emailSentOK = NO;
+                    
+                    [self sendEmail:nil];//will send sms on dismiss email
+                }
+                else if(settingsController.selectSendOption == OPTION_SEND_SMS_ONLY_ID) {
+                    
+                    smsSentOK = NO;
+                    [self sendSMS:nil];
+                }
+            } else {
+                //proceed normally
+                if(settingsController.selectSendOption == OPTION_ALWAYS_SEND_BOTH_ID || settingsController.selectSendOption == OPTION_SEND_EMAIL_ONLY_ID) {
+                    
+                    emailSentOK = NO;
+                    
+                    [self sendEmail:nil];//will send sms on dismiss email
+                }
+                else if(settingsController.selectSendOption == OPTION_SEND_SMS_ONLY_ID) {
+                    
+                    smsSentOK = NO;
+                    [self sendSMS:nil];
+                }
             }
             
-            if(settingsController.selectSendOption == OPTION_ALWAYS_SEND_BOTH_ID || settingsController.selectSendOption == OPTION_SEND_EMAIL_ONLY_ID) {
-                
-                emailSentOK = NO;
-                
-                [self sendEmail:nil];//will send sms on dismiss email
-            }
-            else if(settingsController.selectSendOption == OPTION_SEND_SMS_ONLY_ID) {
-                
-                smsSentOK = NO;
-                [self sendSMS:nil];
-            }
         }
         @catch (NSException *exception) {
             NSLog(@"Error sending message: %@", exception.description);
@@ -882,6 +873,51 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     });**/
     
     
+}
+
+//have i show this before? show only once
+-(BOOL) checkIfShouldWarnAboutImessage {
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL warnedBefore = [defaults boolForKey:KEY_WARNED_ABOUT_IMESSAGE];
+    
+    if(!warnedBefore) {
+        [defaults setBool:true forKey:KEY_WARNED_ABOUT_IMESSAGE];
+        return true;
+    }
+    return false;
+}
+
+//shows a message to disable iMessage
+-(void) warnAboutImessage {
+    
+    Popup *popup = [[Popup alloc] initWithTitle:@"Easy Message"
+                                       subTitle:NSLocalizedString(@"imessage_warn",nil)
+                                    cancelTitle:@"Cancel"
+                                   successTitle:@"Ok"
+                                    cancelBlock:^{
+                                        //Custom code after cancel button was pressed
+                                        NSLog(@"nok");
+                                    } successBlock:^{
+                                        //Custom code after success button was pressed
+                                        NSLog(@"ok");
+                                    }];
+    
+    [popup setBackgroundColor:[self colorFromHex:0xfb922b]];
+    //https://github.com/miscavage/Popup
+    [popup setBorderColor:[UIColor blackColor]];
+    [popup setTitleColor:[UIColor whiteColor]];
+    [popup setSubTitleColor:[UIColor whiteColor]];
+    [popup setSuccessBtnColor:[UIColor greenColor]];
+    [popup setSuccessTitleColor:[UIColor whiteColor]];
+    [popup setCancelBtnColor:[UIColor redColor]];
+    [popup setCancelTitleColor:[UIColor whiteColor]];
+    //[popup setBackgroundBlurType:PopupBackGroundBlurTypeLight];
+    [popup setRoundedCorners:YES];
+    [popup setTapBackgroundToDismiss:YES];
+    [popup setDelegate:self];
+    [popup showPopup];
+    //do not warn me again
 }
 
 -(void) checkIfAskForReview {
