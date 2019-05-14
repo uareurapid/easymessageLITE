@@ -146,3 +146,4 @@
 "groups" = "Groups";
 "members" = "members";
 "imessage_warn" = "If you want to send a group message via SMS, you should consider disabling iMessage on your phone settings first. This will make sure that the messages are sent individually!";
+"edit" = "Edit";

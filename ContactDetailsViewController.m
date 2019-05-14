@@ -8,7 +8,9 @@
 
 #import "ContactDetailsViewController.h"
 #import "SelectRecipientsViewController.h"
-
+#import <Contacts/Contacts.h>
+#import "PCAppDelegate.h"
+#import "AddContactViewController.h"
 @interface ContactDetailsViewController ()
 {
  Contact *contact;
@@ -17,6 +19,7 @@
 
 @implementation ContactDetailsViewController
 
+@synthesize contactModel;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -24,6 +27,7 @@
     if (self) {
         // Custom initialization
         contact = [[Contact alloc] init];
+        contactModel = nil;
     }
     return self;
 }
@@ -44,25 +48,107 @@
     if(self) {
         contact = contactToShow;
         self.title = contact.name;
-        UIBarButtonItem *deteleContactButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"delete",@"delete")
-                                                                          style:UIBarButtonItemStyleDone target:self action:@selector(deleteContactClicked:)];
+        //UIBarButtonItem *deteleContactButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"delete",@"delete")
+          //                                                                style:UIBarButtonItemStyleDone target:self action:@selector(deleteContactClicked:)];
     
-        deteleContactButton.tintColor = UIColor.whiteColor;
-        self.navigationItem.rightBarButtonItem = deteleContactButton;
+        //deteleContactButton.tintColor = UIColor.whiteColor;
+        //elf.navigationItem.rightBarButtonItem = deteleContactButton;
+        UIBarButtonItem *optionsButton = [[UIBarButtonItem alloc] initWithImage: [UIImage imageNamed:@"list"] style:UIBarButtonItemStyleDone target:self action:@selector(optionsClicked:event:)];
+        
+        optionsButton.tintColor = UIColor.whiteColor;
+        self.navigationItem.rightBarButtonItem = optionsButton;
         self.navigationItem.backBarButtonItem.tintColor = UIColor.whiteColor;
     }
     return self;
 }
 
+-(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil contact: (Contact*) contactToShow andModel: (NSObject *) model {
+    
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if(self) {
+        contact = contactToShow;
+        contactModel = model;
+        self.title = contact.name;
+        //UIBarButtonItem *deteleContactButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"delete",@"delete")
+        //                                                                      style:UIBarButtonItemStyleDone target:self action:@selector(deleteContactClicked:)];
+        
+        //deteleContactButton.tintColor = UIColor.whiteColor;
+        //self.navigationItem.rightBarButtonItem = deteleContactButton;
+        
+        UIBarButtonItem *optionsButton = [[UIBarButtonItem alloc] initWithImage: [UIImage imageNamed:@"list"] style:UIBarButtonItemStyleDone target:self action:@selector(optionsClicked:event:)];
+        
+        optionsButton.tintColor = UIColor.whiteColor;
+        self.navigationItem.rightBarButtonItem = optionsButton;
+        self.navigationItem.backBarButtonItem.tintColor = UIColor.whiteColor;
+        
+    }
+    return self;
+}
+
+-(BOOL) isNativeContact {
+    return contactModel!= nil && [contactModel isKindOfClass:CNMutableContact.class];
+}
+
+- (void)optionsClicked:(id)sender event:(UIEvent *)event{
+    [self showMenu:sender withEvent: event];
+}
+
+- (void) showMenu:(id)sender withEvent: (UIEvent *)event
+{
+    
+    FTPopOverMenuConfiguration *configuration = [FTPopOverMenuConfiguration defaultConfiguration];
+    configuration.textColor = [UIColor blackColor];
+    configuration.backgroundColor = [UIColor whiteColor];
+    configuration.menuWidth = 200;
+    
+    PCAppDelegate *delegate = (PCAppDelegate *) [[UIApplication sharedApplication] delegate];
+    configuration.separatorColor = [delegate colorFromHex:0xfb922b];
+    
+    //no selection
+    [FTPopOverMenu showFromEvent:event withMenuArray:@[NSLocalizedString(@"edit",@"edit"),NSLocalizedString(@"delete",@"delete")]
+                      imageArray:@[@"edit40",@"delete"]
+                   configuration:configuration
+                       doneBlock:^(NSInteger selectedIndex) {
+                           NSLog(@"selected %ld", (long)selectedIndex);
+                           if(selectedIndex == 0) {
+                               //edit
+                               //TODO
+                               [self showAddContactController];
+                           }
+                           else {
+                               //delete
+                               [self deleteContactClicked: sender];
+                           }
+                       } dismissBlock:^{
+                           
+                       }];
+}
+
+//edit contact
+-(void) showAddContactController {
+    
+    AddContactViewController *addNewContactController = [[AddContactViewController alloc] initWithNibName:@"AddContactViewController" bundle:nil];
+    addNewContactController.editMode = true;
+    addNewContactController.contactsList = [[NSMutableArray alloc] init]; //empty list
+    
+    PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
+    //we present it modally on a navigation controller to get a status bar
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController: addNewContactController];
+    navigationController.navigationBar.barTintColor = [delegate colorFromHex:0xfb922b];
+    
+    [self presentViewController:navigationController animated:YES completion:^{
+        //((SelectRecipientsViewController *) self.presentationController).reload = true;
+    }];
+    
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-#warning Incomplete implementation, return the number of sections
     return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-#warning Incomplete implementation, return the number of rows
     if(contact.phone!=nil && contact.email!=nil ){
         return 3;
     }

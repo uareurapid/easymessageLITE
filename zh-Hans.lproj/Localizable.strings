@@ -140,3 +140,4 @@
 "groups" = "组";
 "members" = "会员";
 "imessage_warn" = "如果要通过SMS发送群组消息，则应考虑首先在手机设置上禁用iMessage。 这将确保单独发送消息.";
+"edit" = "编辑";

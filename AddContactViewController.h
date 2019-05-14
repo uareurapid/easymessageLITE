@@ -27,5 +27,6 @@
 
 //reference to recipients controller list
 @property (strong,nonatomic) NSMutableArray *contactsList;
+@property (assign, nonatomic) BOOL editMode;
 
 @end

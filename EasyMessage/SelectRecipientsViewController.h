@@ -13,6 +13,9 @@
 #import "PickerView.h"
 #import "ContactDataModel.h"
 #import "FTPopOverMenu.h"
+//new contacts framework
+#import <Contacts/Contacts.h>
+#import <ContactsUI/ContactsUI.h>
 
 @class PCViewController;
 
@@ -41,6 +44,7 @@
 -(void)searchAndDeleteContactInContactsList: (Contact *)contact;
 -(void) showPermissionsMessage;
 -(void) reloadContacts: (NSMutableArray *) contacts;
+-(CNMutableContact*) searchContactOnNativeAddressBook: (Contact *) contact;
 //filtered list
 @property (strong,nonatomic) NSMutableArray *filteredContactsList;
 

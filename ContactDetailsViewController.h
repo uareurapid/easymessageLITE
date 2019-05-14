@@ -12,9 +12,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ContactDetailsViewController : UITableViewController
 
+@property (assign, nonatomic) NSObject *contactModel;
 @property (assign, nonatomic) UIViewController *root;
 -(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil contact: (Contact*) contactToShow;
-
+-(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil contact: (Contact*) contactToShow andModel: (NSObject *) model;
+-(BOOL) isNativeContact;
+-(void) showAddContactController;
 
 @end
 

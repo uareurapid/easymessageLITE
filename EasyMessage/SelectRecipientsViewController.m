@@ -14,9 +14,7 @@
 #import "GroupDetailsViewController.h"
 #import "ContactDetailsViewController.h"
 #import "CoreDataUtils.h"
-//new contacts framework
-#import <Contacts/Contacts.h>
-#import <ContactsUI/ContactsUI.h>
+
 
 const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 
@@ -49,7 +47,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     configuration.menuWidth = 200;
     
     PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
-    configuration.separatorColor = [delegate colorFromHex:0x4f6781];
+    configuration.separatorColor = [delegate colorFromHex:0xfb922b];
     
     //no selection
     if(self.selectedContactsList.count == 0) {
@@ -135,6 +133,8 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
       self.addNewContactController = [[AddContactViewController alloc] initWithNibName:@"AddContactViewController" bundle:nil];
         self.addNewContactController.contactsList = self.contactsList;
     }
+    self.addNewContactController.editMode = false;
+    
     PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
     //we present it modally on a navigation controller to get a status bar
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:self.addNewContactController];
@@ -1300,7 +1300,22 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     }
     else {
         
-        ContactDetailsViewController *detailViewController = [[ContactDetailsViewController alloc] initWithNibName:@"ContactDetailsViewController" bundle:nil contact:contact];
+        ContactDetailsViewController *detailViewController = nil;
+        
+        ContactDataModel *theModel = [CoreDataUtils fetchContactDataModelByName: contact.name];
+        if(theModel == nil) {
+            //try native search
+            CNMutableContact *modelNative = [self searchContactOnNativeAddressBook:contact];
+            if(modelNative!=nil) {
+                detailViewController = [[ContactDetailsViewController alloc] initWithNibName:@"ContactDetailsViewController" bundle:nil contact:contact andModel: modelNative];
+            } else {
+                detailViewController = [[ContactDetailsViewController alloc] initWithNibName:@"ContactDetailsViewController" bundle:nil contact:contact andModel:nil];
+            }
+        }
+        else {
+            detailViewController = [[ContactDetailsViewController alloc] initWithNibName:@"ContactDetailsViewController" bundle:nil contact:contact andModel:theModel];
+        }
+        
         self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
         // ...
         // Pass the selected object to the new view controller.
@@ -2069,54 +2084,128 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
                    setGravity:iToastGravityBottom] setDuration:2000] show];
                 return;
             }
+        } else if(contact.phone!=nil) {
+            if (@available(iOS 11.0, *)) {
+                CNPhoneNumber *num = [[CNPhoneNumber alloc] initWithStringValue:contact.phone];
+                request.predicate = [CNContact predicateForContactsMatchingPhoneNumber: num];
+            } else {
+                // Fallback on earlier versions
+                [[[[iToast makeText:NSLocalizedString(@"error_deleting_contact", @"error_deleting_contact")]
+                   setGravity:iToastGravityBottom] setDuration:2000] show];
+                return;
+            }
         } else {
             [[[[iToast makeText:NSLocalizedString(@"error_deleting_contact", @"error_deleting_contact")]
                setGravity:iToastGravityBottom] setDuration:2000] show];
             return;
         }
         
+        
         //it might delete more than 1
-        [contactStore enumerateContactsWithFetchRequest:request
-                                                  error:nil
-                                             usingBlock:^(CNContact* __nonnull contact, BOOL* __nonnull stop)
+        NSError* fetchError = nil;
+        NSArray *contacts = [contactStore unifiedContactsMatchingPredicate:request.predicate keysToFetch:keys error:&fetchError];
+        
+        //we just grab the first one
+        if(contacts.count > 0) {
+            
+            CNMutableContact* copyOfContact = (CNMutableContact *)[[contacts objectAtIndex:0] mutableCopy] ;
+            CNSaveRequest *edit = [[CNSaveRequest alloc] init];
+            
+            // Contact one each function block is executed whenever you get
+            
+            NSError* contactError = nil;
+            @try {
+                [edit deleteContact:copyOfContact];
+                [contactStore executeSaveRequest:edit error: &contactError];
+                if(contactError!=nil) {
+                    NSLog(@"deleted on db, contact: %@",copyOfContact.givenName);
+                    [contactsList removeObject:contact];
+                    
+                    [[[[iToast makeText:NSLocalizedString(@"deleted", @"deleted")]
+                       setGravity:iToastGravityBottom] setDuration:2000] show];
+                    
+                    [self refreshPhonebook:nil];
+                }
+                
+            }@catch(NSException *e) {
+                NSLog(@"Error deleting contact %@", copyOfContact.givenName);
+                [[[[iToast makeText:NSLocalizedString(@"error_deleting_contact", @"error_deleting_contact")]
+                   setGravity:iToastGravityBottom] setDuration:2000] show];
+            }
+            
+        }else {
+            //no results found!!
+            [[[[iToast makeText:NSLocalizedString(@"error_deleting_contact", @"error_deleting_contact")]
+               setGravity:iToastGravityBottom] setDuration:2000] show];
+        }
+        
+        /*[contactStore enumerateContactsWithFetchRequest:request
+         error:nil
+         usingBlock:^(CNContact* __nonnull contact, BOOL* __nonnull stop)
          {
-             
-             CNSaveRequest *edit = [[CNSaveRequest alloc] init];
-             CNMutableContact* copyOfContact = (CNMutableContact *)[contact mutableCopy] ;
-             // Contact one each function block is executed whenever you get
-             
-             BOOL deleted = false;
-             NSError* contactError = nil;
-             @try {
-                 [edit deleteContact:copyOfContact];
-                 [contactStore executeSaveRequest:edit error: &contactError];
-                 if(contactError!=nil) {
-                     deleted = true;
-                 }
-                 
-             }@catch(NSException *e) {
-                 deleted = false;
-                 NSLog(@"Error deleting contact %@", copyOfContact.givenName);
-             }
-             if(deleted) {
-                 NSLog(@"deleted on db, contact: %@",contact.givenName);
-                 [contactsList removeObject:contact];
-                 [[[[iToast makeText:NSLocalizedString(@"deleted", @"deleted")]
-                    setGravity:iToastGravityBottom] setDuration:2000] show];
-                 
-                 [self refreshPhonebook:nil];
-                 return; //exit block
-             }
-             else {
-                 
-                 [[[[iToast makeText:NSLocalizedString(@"error_deleting_contact", @"error_deleting_contact")]
-                    setGravity:iToastGravityBottom] setDuration:2000] show];
-             }
-             
-         }];
+         
+         }];*/
         
     }
     
+}
+
+//search contact on on Contacts framework
+-(CNMutableContact*) searchContactOnNativeAddressBook: (Contact *) contact {
+    CNAuthorizationStatus status = [CNContactStore authorizationStatusForEntityType:CNEntityTypeContacts];
+    if( status == CNAuthorizationStatusDenied || status == CNAuthorizationStatusRestricted)
+    {
+        NSLog(@"access denied");
+        [self showPermissionsMessage];
+    }
+    else
+    {
+        //Create repository objects contacts
+        CNContactStore *contactStore = [[CNContactStore alloc] init];
+        //Select the contact you want to import the key attribute  ( https://developer.apple.com/library/watchos/documentation/Contacts/Reference/CNContact_Class/index.html#//apple_ref/doc/constant_group/Metadata_Keys )
+        
+        NSArray *keys = [[NSArray alloc]initWithObjects:CNContactIdentifierKey, CNContactEmailAddressesKey, CNContactBirthdayKey, CNContactImageDataKey, CNContactPhoneNumbersKey, CNContactViewController.descriptorForRequiredKeys, nil];
+        
+        // Create a request object
+        CNContactFetchRequest *request = [[CNContactFetchRequest alloc] initWithKeysToFetch:keys];
+        request.predicate = nil;
+        
+        if(contact.name!=nil || contact.lastName!=nil) {
+            request.predicate = [CNContact predicateForContactsMatchingName: ( contact.name!=nil ? contact.name : contact.lastName) ];
+        }
+        else if(contact.email!=nil) {
+            if (@available(iOS 11.0, *)) {
+                request.predicate = [CNContact predicateForContactsMatchingEmailAddress:contact.email];
+            } else {
+                
+                return nil;
+            }
+        } else if(contact.phone!=nil) {
+            if (@available(iOS 11.0, *)) {
+                CNPhoneNumber *num = [[CNPhoneNumber alloc] initWithStringValue:contact.phone];
+                request.predicate = [CNContact predicateForContactsMatchingPhoneNumber: num];
+            } else {
+                // Fallback on earlier versions
+                return nil;
+            }
+        } else {
+            return nil;
+        }
+        
+        
+        //it might delete more than 1
+        NSError* fetchError = nil;
+        NSArray *contacts = [contactStore unifiedContactsMatchingPredicate:request.predicate keysToFetch:keys error:&fetchError];
+        
+        //we just grab the first one
+        if(contacts.count > 0) {
+            CNMutableContact* copyOfContact = (CNMutableContact *)[[contacts objectAtIndex:0] mutableCopy] ;
+            return copyOfContact;
+        }
+        
+    }
+    
+    return nil;
 }
 
 -(void) showPermissionsMessage {

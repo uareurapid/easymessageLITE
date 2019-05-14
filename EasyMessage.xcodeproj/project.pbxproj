@@ -13,6 +13,7 @@
 		186341782278756F00167AAE /* FTPopOverMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 186341772278756F00167AAE /* FTPopOverMenu.m */; };
 		1863417A227893C900167AAE /* group.png in Resources */ = {isa = PBXBuildFile; fileRef = 18634179227893C800167AAE /* group.png */; };
 		1863417C227893D400167AAE /* list.png in Resources */ = {isa = PBXBuildFile; fileRef = 1863417B227893D400167AAE /* list.png */; };
+		18E2B581228B23C600B9EAF7 /* edit40.png in Resources */ = {isa = PBXBuildFile; fileRef = 18E2B580228B23C600B9EAF7 /* edit40.png */; };
 		720020E421F1326500698245 /* Icon-76.png in Resources */ = {isa = PBXBuildFile; fileRef = 720020E321F1326500698245 /* Icon-76.png */; };
 		720862FF17DD249C0024B662 /* 80-shopping-cart.png in Resources */ = {isa = PBXBuildFile; fileRef = 720862FE17DD249C0024B662 /* 80-shopping-cart.png */; };
 		7209458D1FD4B8AE00AD7EDF /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7209458A1FD4B8AC00AD7EDF /* FBSDKCoreKit.framework */; };
@@ -193,6 +194,7 @@
 		186341772278756F00167AAE /* FTPopOverMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FTPopOverMenu.m; sourceTree = "<group>"; };
 		18634179227893C800167AAE /* group.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = group.png; sourceTree = "<group>"; };
 		1863417B227893D400167AAE /* list.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = list.png; sourceTree = "<group>"; };
+		18E2B580228B23C600B9EAF7 /* edit40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = edit40.png; sourceTree = "<group>"; };
 		2D5E9CC017E5903E74EB7D93 /* libPods-EasyMessage.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-EasyMessage.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		720020E321F1326500698245 /* Icon-76.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-76.png"; sourceTree = "<group>"; };
 		720862FE17DD249C0024B662 /* 80-shopping-cart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "80-shopping-cart.png"; path = "EasyMessage/80-shopping-cart.png"; sourceTree = "<group>"; };
@@ -642,6 +644,7 @@
 				7285348618E34FA600826581 /* close48.png */,
 				7285A6B1177CB6F2006137B8 /* forbidden.png */,
 				7284D97D1FE481C3000350D6 /* done.png */,
+				18E2B580228B23C600B9EAF7 /* edit40.png */,
 				7284D9711FE47E64000350D6 /* select_all.png */,
 				7284D96F1FE47E1D000350D6 /* add_contact.png */,
 				7285A6AD177CB0A3006137B8 /* tableViewBackground@2x.png */,
@@ -937,6 +940,7 @@
 				72BFDEDF203CAEA3009A3021 /* attachment.png in Resources */,
 				7284D97E1FE481C3000350D6 /* done.png in Resources */,
 				721D2B1821C587E600D5BDB6 /* favorite.png in Resources */,
+				18E2B581228B23C600B9EAF7 /* edit40.png in Resources */,
 				7285A6B2177CB6F2006137B8 /* forbidden.png in Resources */,
 				7284D9741FE47EB6000350D6 /* add.png in Resources */,
 				7285348718E34FA600826581 /* close48.png in Resources */,
