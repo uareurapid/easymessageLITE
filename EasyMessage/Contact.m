@@ -98,6 +98,10 @@
     return NO;
 }
 
+-(BOOL)isNativeContact {
+    return person!=nil || self.isNative == true;
+}
+
 -(NSString *) description {
     
     NSString *name = self.name;

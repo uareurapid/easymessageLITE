@@ -69,11 +69,7 @@
         contact = contactToShow;
         contactModel = model;
         self.title = contact.name;
-        //UIBarButtonItem *deteleContactButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"delete",@"delete")
-        //                                                                      style:UIBarButtonItemStyleDone target:self action:@selector(deleteContactClicked:)];
-        
-        //deteleContactButton.tintColor = UIColor.whiteColor;
-        //self.navigationItem.rightBarButtonItem = deteleContactButton;
+
         
         UIBarButtonItem *optionsButton = [[UIBarButtonItem alloc] initWithImage: [UIImage imageNamed:@"list"] style:UIBarButtonItemStyleDone target:self action:@selector(optionsClicked:event:)];
         
@@ -86,11 +82,19 @@
 }
 
 -(BOOL) isNativeContact {
-    return contactModel!= nil && [contactModel isKindOfClass:CNMutableContact.class];
+    return (contactModel!= nil && [contactModel isKindOfClass:CNMutableContact.class] ) || (contact!=nil && [contact isNativeContact ]);
 }
 
 - (void)optionsClicked:(id)sender event:(UIEvent *)event{
     [self showMenu:sender withEvent: event];
+}
+
+-(void) closeNativeContactController:(id) sender {
+    
+    [self dismissViewControllerAnimated:YES completion:^{
+        [self.navigationController popToRootViewControllerAnimated:YES];
+    }];
+    
 }
 
 - (void) showMenu:(id)sender withEvent: (UIEvent *)event
@@ -127,18 +131,55 @@
 //edit contact
 -(void) showAddContactController {
     
-    AddContactViewController *addNewContactController = [[AddContactViewController alloc] initWithNibName:@"AddContactViewController" bundle:nil];
-    addNewContactController.editMode = true;
-    addNewContactController.contactsList = [[NSMutableArray alloc] init]; //empty list
-    
-    PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
-    //we present it modally on a navigation controller to get a status bar
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController: addNewContactController];
-    navigationController.navigationBar.barTintColor = [delegate colorFromHex:0xfb922b];
-    
-    [self presentViewController:navigationController animated:YES completion:^{
-        //((SelectRecipientsViewController *) self.presentationController).reload = true;
-    }];
+    if([self isNativeContact]) {
+        
+        CNContactViewController *controller = [CNContactViewController viewControllerForContact:(CNMutableContact *) self.contactModel];
+        [controller setAllowsEditing:true];
+        
+        controller.delegate = self;
+        
+        
+        
+        UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController: controller];
+        
+        
+        PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
+        controller.navigationController.navigationBar.hidden = false;
+        controller.navigationController.navigationBar.tintColor = [UIColor blackColor];
+        
+        
+        controller.navigationController.navigationBar.hidden = false;
+        
+        
+        UIBarButtonItem *optionsButton = [[UIBarButtonItem alloc] initWithTitle: NSLocalizedString(@"done_button", nil)  style:UIBarButtonItemStyleDone target:self action:@selector(closeNativeContactController:)];
+        
+        optionsButton.tintColor = UIColor.whiteColor;
+        controller.navigationItem.leftBarButtonItem = optionsButton;
+        
+        controller.navigationController.navigationBar.backgroundColor = [delegate colorFromHex:0xfb922b];
+        controller.navigationController.navigationBar.tintColor = [UIColor whiteColor];
+        
+        [self showViewController:navigationController sender:self];
+        
+        
+    } else {
+        
+        AddContactViewController *addNewContactController = [[AddContactViewController alloc] initWithNibName:@"AddContactViewController" bundle:nil];
+        addNewContactController.editMode = true;
+        addNewContactController.contactsList = [[NSMutableArray alloc] init]; //empty list
+        addNewContactController.contactModel = contactModel; //same object
+        addNewContactController.contact = contact;//our contact class (we need to show this info, and maybe edit the other)
+        
+        
+        PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
+        //we present it modally on a navigation controller to get a status bar
+        UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController: addNewContactController];
+        navigationController.navigationBar.barTintColor = [delegate colorFromHex:0xfb922b];
+        
+        [self presentViewController:navigationController animated:YES completion:^{
+            //((SelectRecipientsViewController *) self.presentationController).reload = true;
+        }];
+    }
     
 }
 

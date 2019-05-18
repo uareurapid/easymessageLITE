@@ -8,16 +8,19 @@
 
 #import <UIKit/UIKit.h>
 #import "Contact.h"
+#import <ContactsUI/ContactsUI.h>
+
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ContactDetailsViewController : UITableViewController
+@interface ContactDetailsViewController : UITableViewController <CNContactViewControllerDelegate>
 
-@property (assign, nonatomic) NSObject *contactModel;
+@property (strong, nonatomic) NSObject *contactModel;
 @property (assign, nonatomic) UIViewController *root;
 -(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil contact: (Contact*) contactToShow;
 -(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil contact: (Contact*) contactToShow andModel: (NSObject *) model;
 -(BOOL) isNativeContact;
 -(void) showAddContactController;
+-(void) closeNativeContactController:(id) sender;
 
 @end
 

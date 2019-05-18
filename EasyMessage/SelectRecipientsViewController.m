@@ -1307,12 +1307,15 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
             //try native search
             CNMutableContact *modelNative = [self searchContactOnNativeAddressBook:contact];
             if(modelNative!=nil) {
+                contact.isNative = true;
                 detailViewController = [[ContactDetailsViewController alloc] initWithNibName:@"ContactDetailsViewController" bundle:nil contact:contact andModel: modelNative];
             } else {
+                contact.isNative = false;
                 detailViewController = [[ContactDetailsViewController alloc] initWithNibName:@"ContactDetailsViewController" bundle:nil contact:contact andModel:nil];
             }
         }
         else {
+            contact.isNative = false;
             detailViewController = [[ContactDetailsViewController alloc] initWithNibName:@"ContactDetailsViewController" bundle:nil contact:contact andModel:theModel];
         }
         

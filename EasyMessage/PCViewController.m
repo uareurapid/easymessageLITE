@@ -1043,6 +1043,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
     //auxiliar list to check for duplicates (might slow down stuff)
     for(Contact *c in models) {
+        c.isNative = false;
         if(![cleanList containsObject:c]) {
             [cleanList addObject:c];
         }
@@ -1105,6 +1106,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                 NSInteger duplicates = 0;
                 //auxiliar list to check for duplicates (might slow down stuff)
                 for(Contact *c in contacts) {
+                    c.isNative = true;
                     if(![cleanList containsObject:c]) {
                         [cleanList addObject:c];
                     }
@@ -1156,6 +1158,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         NSInteger duplicates = 0;
         //auxiliar list to check for duplicates (might slow down stuff)
         for(Contact *c in contacts) {
+            c.isNative = true;
             if(![cleanList containsObject:c]) {
                 [cleanList addObject:c];
             }
@@ -1499,6 +1502,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             }
             //save the reference
             contact.person=person;
+            contact.isNative = true;
             
             NSString *email;
             

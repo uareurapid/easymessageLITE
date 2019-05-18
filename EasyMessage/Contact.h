@@ -24,4 +24,9 @@
 -(BOOL) isEqual:(id)object;
 
 @property ABRecordRef person;//ref to the person
+
+@property (assign,nonatomic) BOOL isNative;
+
+-(BOOL) isNativeContact;
+
 @end

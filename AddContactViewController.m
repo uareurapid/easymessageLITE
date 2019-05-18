@@ -11,6 +11,8 @@
 #import "Contact.h"
 #import "PCAppDelegate.h"
 #import "iToast.h"
+#import <Contacts/Contacts.h>
+#import <ContactsUI/ContactsUI.h>
 
 @interface AddContactViewController ()
 
@@ -19,6 +21,8 @@
 //TODO README how to center this http://stackoverflow.com/questions/26471661/auto-layout-xcode-6-centering-ui-elements
 
 @implementation AddContactViewController
+
+@synthesize editMode, contact, contactModel;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -47,6 +51,36 @@
     [self.labelLastname setText: [NSString stringWithFormat:@"%@:",NSLocalizedString(@"contact_last_name",@"contact_last_name")] ];
     
 }
+- (void)viewWillAppear:(BOOL)animated {
+    if(self.editMode && self.contact!=nil) {
+        //populate fields
+        if(self.contact.name!=nil) {
+            self.txtName.text = self.contact.name;
+        }
+        if(self.contact.phone!=nil) {
+            self.txtPhone.text = self.contact.phone;
+        }
+        if(self.contact.email!=nil) {
+            self.txtEmail.text = self.contact.email;
+        }
+        if(self.contact.lastName!=nil) {
+            self.txtLastName.text = self.contact.lastName;
+        }
+        if(self.contact.birthday!=nil) {
+            //self.datePicker.enabled = true;
+            self.datePicker.date = self.contact.birthday;
+        }
+    } else {
+        
+        //clear all
+        self.txtName.text = @"";
+        self.txtPhone.text = @"";
+        self.txtEmail.text = @"";
+        self.txtLastName.text = @"";
+        //self.datePicker.enabled = false;
+    }
+}
+
 - (IBAction)btnCancelClicked:(id)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
 }
@@ -73,6 +107,74 @@
     return YES;
 }
 
+-(void) updateExistingContact{
+    
+    
+    NSDate *birthday = self.datePicker.date;
+    //name OK, save it!
+    contact.name = self.txtName.text;
+    contact.birthday = birthday;
+    contact.phone = self.txtPhone.text.length==0 ? @"" : self.txtPhone.text;
+    contact.email = self.txtEmail.text.length==0 ? @"" : self.txtEmail.text;
+    contact.lastName = self.txtLastName.text.length==0? @"": self.txtLastName.text;
+    
+    NSLog(@"-----------------------------------");
+    NSLog(@"contact name: %@",contact.name);
+    NSLog(@"contact birthday: %@",contact.birthday.description);
+    NSLog(@"contact phone: %@",contact.phone);
+    NSLog(@"contact last name: %@",contact.lastName);
+    NSLog(@"-----------------------------------");
+    
+    NSManagedObjectContext *managedObjectContext = [(PCAppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
+    ContactDataModel *contactModel = (ContactDataModel *) self.contactModel;
+    //copy the new values
+    contactModel.email = contact.email;
+    contactModel.birthday = contact.birthday;
+    contactModel.phone = contact.phone;
+    contactModel.lastname = contact.lastName;
+    contactModel.name = contact.name;
+    
+    BOOL OK = NO;
+    NSError *error;
+    
+    if(![managedObjectContext save:&error]){
+        [[[[iToast makeText: [NSString stringWithFormat:@"Unable to save object, error is: %@",error.description]]
+           setGravity:iToastGravityBottom] setDuration:2000] show];
+        NSLog(@"Unable to save object, error is: %@",error.description);
+        //This is a serious error saying the record
+        //could not be saved. Advise the user to
+        //try again or restart the application.
+        
+    }
+    else {
+        
+        NSLog(@"-----------------------------------");
+        NSLog(@"contactModel name: %@",contactModel.name);
+        NSLog(@"contactModel birthday: %@",contactModel.birthday.description);
+        NSLog(@"contactModel phone: %@",contactModel.phone);
+        NSLog(@"contactModel last name: %@",contactModel.lastname);
+        NSLog(@"-----------------------------------");
+        
+        OK = YES;
+        
+        [[[[iToast makeText:NSLocalizedString(@"added",@"added")]
+           setGravity:iToastGravityBottom] setDuration:2000] show];
+    }
+    
+    if(OK) {
+        //add to the list
+        [self.contactsList addObject:contact];
+        
+        //force a reload of list on viewDidAppear
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setBool:true forKey:@"force_import"];
+        
+        
+        [self dismissViewControllerAnimated:YES completion:nil];
+        
+    }
+}
+
 - (IBAction)btnCreateContactClicked:(id)sender {
     
     if(self.txtName.text.length==0 || (self.txtEmail.text.length==0 && self.txtPhone.text.length==0) ) {
@@ -94,7 +196,13 @@
         }
        
         if(emailValid) {
-            if([self checkIfContactExists]==NO) {
+            
+            if(![self isNativeContact] && self.editMode && contact!=nil && contactModel!=nil) {
+                //TODO EDIT change contact and call prepareModelFromContact
+                //then update on core data
+                [self updateExistingContact];
+            }
+            else if([self checkIfContactExists]==NO) {
                 
                 NSDate *birthday = self.datePicker.date;
                 //name OK, save it!
@@ -104,6 +212,8 @@
                 contact.phone = self.txtPhone.text.length==0 ? @"" : self.txtPhone.text;
                 contact.email = self.txtEmail.text.length==0 ? @"" : self.txtEmail.text;
                 contact.lastName = self.txtLastName.text.length==0? @"": self.txtLastName.text;
+                
+                contact.isNative = false;
                 
                 NSLog(@"-----------------------------------");
                 NSLog(@"contact name: %@",contact.name);
@@ -261,4 +371,9 @@
         self.datePicker.enabled = false;
     }
 }
+//repeated on ContactDetailsController
+-(BOOL) isNativeContact {
+    return (contactModel!= nil && [contactModel isKindOfClass:CNMutableContact.class]) || (contact!=nil && [contact isNativeContact ]);
+}
+
 @end
