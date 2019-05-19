@@ -157,7 +157,7 @@
         
         OK = YES;
         
-        [[[[iToast makeText:NSLocalizedString(@"added",@"added")]
+        [[[[iToast makeText:NSLocalizedString(@"done_button",@"done_button")]
            setGravity:iToastGravityBottom] setDuration:2000] show];
     }
     
