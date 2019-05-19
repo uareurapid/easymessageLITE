@@ -163,7 +163,7 @@
     
     if(OK) {
         //add to the list
-        [self.contactsList addObject:contact];
+        //[self.contactsList addObject:contact];
         
         //force a reload of list on viewDidAppear
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];

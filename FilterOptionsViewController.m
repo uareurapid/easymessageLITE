@@ -8,6 +8,7 @@
 
 #import "FilterOptionsViewController.h"
 #import "PCViewController.h"
+#import "EasyMessageIAPHelper.h"
 
 @interface FilterOptionsViewController ()
 
@@ -170,10 +171,26 @@
     if(section == 0) {
         NSInteger row = indexPath.row;
         if(row == 0) {
-            [defaults setObject:OPTION_FILTER_CONTACTS_ONLY_KEY forKey:SETTINGS_FILTER_OPTIONS];
+            
+            if ([[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
+                [defaults setObject:OPTION_FILTER_CONTACTS_ONLY_KEY forKey:SETTINGS_FILTER_OPTIONS];
+            }
+            else {
+                //this filtering is only for premium users
+                [self showAlertBox:NSLocalizedString(@"premium_feature_only", nil)];
+            }
+            
         }
         else if(row == 1) {
-            [defaults setObject:OPTION_FILTER_GROUPS_ONLY_KEY forKey:SETTINGS_FILTER_OPTIONS];
+            
+            if ([[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
+                [defaults setObject:OPTION_FILTER_GROUPS_ONLY_KEY forKey:SETTINGS_FILTER_OPTIONS];
+            }
+            else {
+                //this filtering is only for premium users
+                [self showAlertBox:NSLocalizedString(@"premium_feature_only", nil)];
+            }
+            
         }
         else {
             [defaults setObject:OPTION_FILTER_SHOW_ALL_KEY forKey:SETTINGS_FILTER_OPTIONS];
@@ -186,7 +203,14 @@
     
 }
 
-
+-(void) showAlertBox:(NSString *) msg {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Easy Message"
+                                                    message:msg
+                                                   delegate:self
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+}
 /*
  #pragma mark - Navigation
  

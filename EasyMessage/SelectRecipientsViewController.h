@@ -45,6 +45,8 @@
 -(void) showPermissionsMessage;
 -(void) reloadContacts: (NSMutableArray *) contacts;
 -(CNMutableContact*) searchContactOnNativeAddressBook: (Contact *) contact;
+
+-(BOOL) isNativeContact:(Contact *) contact;
 //filtered list
 @property (strong,nonatomic) NSMutableArray *filteredContactsList;
 

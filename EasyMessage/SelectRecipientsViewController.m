@@ -689,21 +689,21 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 //delete a contact
 -(void) deleteContact:(Contact *)contact{
     
-    BOOL deleted = [CoreDataUtils deleteContactDataModelByName: contact];
-    if(deleted) {
-        NSLog(@"deleted on db, contact: %@",contact.name);
-        [contactsList removeObject:contact];
-        [[[[iToast makeText:NSLocalizedString(@"deleted", @"deleted")]
-           setGravity:iToastGravityBottom] setDuration:2000] show];
-        
-        [self refreshPhonebook:nil];
+    if([self isNativeContact:contact]) {
+      [self searchAndDeleteContactInContactsList: contact];
     }
     else {
-        [self searchAndDeleteContactInContactsList: contact];
-        //[[[[iToast makeText:NSLocalizedString(@"error_deleting_contact", @"error_deleting_contact")]
-        //   setGravity:iToastGravityBottom] setDuration:2000] show];
+        
+        BOOL deleted = [CoreDataUtils deleteContactDataModelByName: contact];
+        if(deleted) {
+            NSLog(@"deleted on db, contact: %@",contact.name);
+            [contactsList removeObject:contact];
+            [[[[iToast makeText:NSLocalizedString(@"deleted", @"deleted")]
+                setGravity:iToastGravityBottom] setDuration:2000] show];
+                
+            [self refreshPhonebook:nil];
+        }
     }
-    
     
 }
 
@@ -1328,6 +1328,9 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     
 }
 
+-(BOOL) isNativeContact:(Contact *) contact {
+    return (contact!=nil && [contact isNativeContact ]);
+}
 
 #pragma mark - Table view delegate
 
@@ -2074,8 +2077,9 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         // Create a request object
         CNContactFetchRequest *request = [[CNContactFetchRequest alloc] initWithKeysToFetch:keys];
         request.predicate = nil;
-        
-        if(contact.name!=nil || contact.lastName!=nil) {
+        //trim start and end white spaces
+        if( (contact.name!=nil &&  [contact.name stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]].length > 0 ) ||
+           ( contact.lastName!=nil && [contact.lastName stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]].length > 0 ) ) {
             request.predicate = [CNContact predicateForContactsMatchingName: ( contact.name!=nil ? contact.name : contact.lastName) ];
         }
         else if(contact.email!=nil) {
@@ -2141,13 +2145,6 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
             [[[[iToast makeText:NSLocalizedString(@"error_deleting_contact", @"error_deleting_contact")]
                setGravity:iToastGravityBottom] setDuration:2000] show];
         }
-        
-        /*[contactStore enumerateContactsWithFetchRequest:request
-         error:nil
-         usingBlock:^(CNContact* __nonnull contact, BOOL* __nonnull stop)
-         {
-         
-         }];*/
         
     }
     

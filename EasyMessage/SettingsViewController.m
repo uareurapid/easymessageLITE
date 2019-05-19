@@ -11,7 +11,6 @@
 #import "SocialNetworksViewController.h"
 #import <StoreKit/StoreKit.h>
 #import "FilterOptionsViewController.h"
-#import "EasyMessageIAPHelper.h"
 @interface SettingsViewController ()
 
 @end
@@ -674,17 +673,11 @@
         selectOrderByOption = row;
         [self.tableView reloadData];
         
-    }//TODO show premium message!!!!
+    }//we show the options but only allow the default one (all contacts)
     else if(section == 3) {
         
-        if ([[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
-            [self.navigationController pushViewController:filterOptionsController animated:YES];
-        }
-        else {
-            //filtering is only for premium users
-            [self showAlertBox:NSLocalizedString(@"premium_feature_only", nil)];
-        }
-        
+        [self.navigationController pushViewController:filterOptionsController animated:YES];
+
     }
     else if(section == 4) {
         if(row==0) {
@@ -724,15 +717,6 @@
      // Pass the selected object to the new view controller.
      [self.navigationController pushViewController:detailViewController animated:YES];
      */
-}
-
--(void) showAlertBox:(NSString *) msg {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Easy Message"
-                                                    message:msg
-                                                   delegate:self
-                                          cancelButtonTitle:@"OK"
-                                          otherButtonTitles:nil];
-    [alert show];
 }
 
 - (IBAction)sendEmail:(id)sender {
