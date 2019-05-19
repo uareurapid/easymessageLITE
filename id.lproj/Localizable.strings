@@ -152,3 +152,4 @@
 "members" = "anggota";
 "imessage_warn" = "Jika Anda ingin mengirim pesan grup melalui SMS, Anda harus mempertimbangkan menonaktifkan iMessage pada pengaturan ponsel Anda terlebih dahulu. Ini akan memastikan bahwa pesan dikirim secara individual.";
 "edit" = "Meredaksi";
+"update_contact" = "Ubah kontak";

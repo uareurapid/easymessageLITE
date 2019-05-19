@@ -141,3 +141,4 @@
 "members" = "membres";
 "imessage_warn" = "Si vous souhaitez envoyer un message de groupe par SMS, vous devez d'abord envisager de désactiver iMessage dans les paramètres de votre téléphone. Cela fera en sorte que les messages sont envoyés individuellement!";
 "edit" = "Modifier";
+"update_contact" = "Modifier contact";

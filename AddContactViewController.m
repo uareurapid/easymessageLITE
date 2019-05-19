@@ -53,6 +53,9 @@
 }
 - (void)viewWillAppear:(BOOL)animated {
     if(self.editMode && self.contact!=nil) {
+        
+        [self.btnAddContact setTitle:NSLocalizedString(@"update_contact",@"update_contact") forState:UIControlStateNormal];
+        self.title = NSLocalizedString(@"update_contact", @"update_contact");
         //populate fields
         if(self.contact.name!=nil) {
             self.txtName.text = self.contact.name;
@@ -71,7 +74,8 @@
             self.datePicker.date = self.contact.birthday;
         }
     } else {
-        
+        [self.btnAddContact setTitle:NSLocalizedString(@"create_contact",@"create_contact") forState:UIControlStateNormal];
+        self.title = NSLocalizedString(@"new_contact", @"new_contact");
         //clear all
         self.txtName.text = @"";
         self.txtPhone.text = @"";

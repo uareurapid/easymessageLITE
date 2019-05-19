@@ -146,3 +146,4 @@
 "members" = "membros";
 "imessage_warn" = "Se quer mandar uma mesagem para um grupo via SMS, deve considerar desactivar o iMessage no seu telefone primeiro. Isto garante que as mensagens serão enviadas individualmente!";
 "edit" = "Editar";
+"update_contact" = "Alterar contacto";
