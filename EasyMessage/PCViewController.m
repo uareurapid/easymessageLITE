@@ -819,8 +819,11 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         @try {
             
             //show the warning and exit!
-            if( (settingsController.selectSendOption == OPTION_SEND_SMS_ONLY_ID || settingsController.selectSendOption == OPTION_ALWAYS_SEND_BOTH_ID) && ![self checkIfShouldWarnAboutImessage]) {
-                [self warnAboutImessage];
+            if( (settingsController.selectSendOption == OPTION_SEND_SMS_ONLY_ID || settingsController.selectSendOption == OPTION_ALWAYS_SEND_BOTH_ID) ) {
+                
+                if([self checkIfShouldWarnAboutImessage]) {
+                  [self warnAboutImessage];
+                }
                 
                 //proceeed normally only after dismiss the popup
                 if(settingsController.selectSendOption == OPTION_ALWAYS_SEND_BOTH_ID || settingsController.selectSendOption == OPTION_SEND_EMAIL_ONLY_ID) {

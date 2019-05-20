@@ -121,14 +121,14 @@
     contact.phone = self.txtPhone.text.length==0 ? @"" : self.txtPhone.text;
     contact.email = self.txtEmail.text.length==0 ? @"" : self.txtEmail.text;
     contact.lastName = self.txtLastName.text.length==0? @"": self.txtLastName.text;
-    
+    /**
     NSLog(@"-----------------------------------");
     NSLog(@"contact name: %@",contact.name);
     NSLog(@"contact birthday: %@",contact.birthday.description);
     NSLog(@"contact phone: %@",contact.phone);
     NSLog(@"contact last name: %@",contact.lastName);
     NSLog(@"-----------------------------------");
-    
+    */
     NSManagedObjectContext *managedObjectContext = [(PCAppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
     ContactDataModel *contactModel = (ContactDataModel *) self.contactModel;
     //copy the new values
@@ -151,14 +151,14 @@
         
     }
     else {
-        
+        /**
         NSLog(@"-----------------------------------");
         NSLog(@"contactModel name: %@",contactModel.name);
         NSLog(@"contactModel birthday: %@",contactModel.birthday.description);
         NSLog(@"contactModel phone: %@",contactModel.phone);
         NSLog(@"contactModel last name: %@",contactModel.lastname);
         NSLog(@"-----------------------------------");
-        
+        */
         OK = YES;
         
         [[[[iToast makeText:NSLocalizedString(@"done_button",@"done_button")]
@@ -218,16 +218,16 @@
                 contact.lastName = self.txtLastName.text.length==0? @"": self.txtLastName.text;
                 
                 contact.isNative = false;
-                
+                /**
                 NSLog(@"-----------------------------------");
                 NSLog(@"contact name: %@",contact.name);
                 NSLog(@"contact birthday: %@",contact.birthday.description);
                 NSLog(@"contact phone: %@",contact.phone);
                 NSLog(@"contact last name: %@",contact.lastName);
                 NSLog(@"-----------------------------------");
-                
+                */
                 NSManagedObjectContext *managedObjectContext = [(PCAppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
-                ContactDataModel *contactModel = [self prepareModelFromContact:managedObjectContext :contact ];
+                [self prepareModelFromContact:managedObjectContext :contact ];
                 
                 BOOL OK = NO;
                 NSError *error;
@@ -242,14 +242,14 @@
                     
                 }
                 else {
-                    
+                    /**
                     NSLog(@"-----------------------------------");
                     NSLog(@"contactModel name: %@",contactModel.name);
                     NSLog(@"contactModel birthday: %@",contactModel.birthday.description);
                     NSLog(@"contactModel phone: %@",contactModel.phone);
                     NSLog(@"contactModel last name: %@",contactModel.lastname);
                     NSLog(@"-----------------------------------");
-                    
+                    */
                     OK = YES;
                     
                     [[[[iToast makeText:NSLocalizedString(@"added",@"added")]

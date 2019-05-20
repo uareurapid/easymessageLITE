@@ -2124,7 +2124,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
             @try {
                 [edit deleteContact:copyOfContact];
                 [contactStore executeSaveRequest:edit error: &contactError];
-                if(contactError!=nil) {
+                if(contactError==nil) {
                     NSLog(@"deleted on db, contact: %@",copyOfContact.givenName);
                     [contactsList removeObject:contact];
                     
