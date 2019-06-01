@@ -145,6 +145,6 @@
 "ask_to_rate" = "If you enjoy using Easy Message, would you mind taking a moment to rate it?";
 "groups" = "Groups";
 "members" = "members";
-"imessage_warn" = "If you want to send a group message via SMS, you should consider disabling iMessage on your phone settings first. This will make sure that the messages are sent individually!";
+"imessage_warn" = "If you want to send a group message via SMS, you should consider disabling iMessage and MMS Messaging on your phone settings first. This will make sure that the messages are sent individually!";
 "edit" = "Edit";
 "update_contact" = "Edit contact";

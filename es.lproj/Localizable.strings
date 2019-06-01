@@ -139,6 +139,6 @@
 "ask_to_rate" = "Si te ha gustado Easy Message ¿te gustaría calificarnos?";
 "groups" = "Grupos";
 "members" = "miembros";
-"imessage_warn" = "Si desea enviar un mensaje de grupo por SMS, primero debe considerar la desactivación de iMessage en la configuración de su teléfono. Esto asegurará que los mensajes sean enviados individualmente.";
+"imessage_warn" = "Si desea enviar un mensaje de grupo por SMS, primero debe considerar la desactivación de iMessage y MMS en la configuración de su teléfono. Esto asegurará que los mensajes sean enviados individualmente.";
 "edit" = "Editar";
 "update_contact" = "Modificar contacto";

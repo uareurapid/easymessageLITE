@@ -139,6 +139,6 @@
 "ask_to_rate" = "如果你喜欢使用 Easy Message，你介意花一点时间给它评分吗？不会超过一分钟。感谢您的支持";
 "groups" = "组";
 "members" = "会员";
-"imessage_warn" = "如果要通过SMS发送群组消息，则应考虑首先在手机设置上禁用iMessage。 这将确保单独发送消息.";
+"imessage_warn" = "如果您想通过短信发送群组短信，则应考虑先在手机设置中禁用iMessage和彩信。 这将确保消息单独发送.";
 "edit" = "编辑";
 "update_contact" = "更改联系资料";

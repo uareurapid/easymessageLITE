@@ -295,7 +295,7 @@
         
     }else if(section == 4) {
         //rate us/questions/suggestions
-        return 2;
+        return 1;
     }
     else if(section == 5) {
         //restore/purchase premium
@@ -458,16 +458,16 @@
         cell.imageView.image = [UIImage imageNamed:@"eyes"];
     }
     else if(section == 4) {
-        if(row == 0) {
-            cell.textLabel.text =  NSLocalizedString(@"rate_us", nil);
-            cell.accessoryType = UITableViewCellAccessoryNone;
-            cell.imageView.image = [UIImage imageNamed:@"favorite"];
-        }
-        else {
+        //if(row == 0) {
+        //    cell.textLabel.text =  NSLocalizedString(@"rate_us", nil);
+        //    cell.accessoryType = UITableViewCellAccessoryNone;
+        //    cell.imageView.image = [UIImage imageNamed:@"favorite"];
+        //}
+        //else {
             cell.textLabel.text = NSLocalizedString(@"contact_us", nil); 
             cell.accessoryType = UITableViewCellAccessoryNone;
             cell.imageView.image = [UIImage imageNamed:@"contact"];
-        }
+        //}
         
     }//TODO
     else if(section == 5) {
@@ -680,16 +680,7 @@
 
     }
     else if(section == 4) {
-        if(row==0) {
-            if (@available(iOS 10.3, *)) {
-                [SKStoreReviewController requestReview];
-            }
-            else {
-                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"itms-apps://itunes.apple.com/app/id1448046358?mt=8&action=write-review"]];
-            }
-        }else {
-            [self sendEmail:nil];
-        }
+        [self sendEmail:nil];
     }
     else if(section == 5 && row == 0) {
         

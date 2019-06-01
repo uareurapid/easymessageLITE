@@ -194,6 +194,8 @@
 		186341772278756F00167AAE /* FTPopOverMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FTPopOverMenu.m; sourceTree = "<group>"; };
 		18634179227893C800167AAE /* group.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = group.png; sourceTree = "<group>"; };
 		1863417B227893D400167AAE /* list.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = list.png; sourceTree = "<group>"; };
+		18B1117022A2CA92000CD0C5 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		18B1117122A2CA92000CD0C5 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		18E2B580228B23C600B9EAF7 /* edit40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = edit40.png; sourceTree = "<group>"; };
 		2D5E9CC017E5903E74EB7D93 /* libPods-EasyMessage.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-EasyMessage.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		720020E321F1326500698245 /* Icon-76.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-76.png"; sourceTree = "<group>"; };
@@ -893,6 +895,7 @@
 				ar,
 				ko,
 				id,
+				ru,
 			);
 			mainGroup = 7224152F1771148700989C3B;
 			productRefGroup = 722415391771148800989C3B /* Products */;
@@ -1096,6 +1099,7 @@
 				72890FBE17C6695D00EAF817 /* ko */,
 				72890FC217C66C7E00EAF817 /* ar */,
 				72F6BB932225C77600929A14 /* id */,
+				18B1117022A2CA92000CD0C5 /* ru */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -1112,6 +1116,7 @@
 				72890FC117C66C7E00EAF817 /* ar */,
 				7298EBFF17DDE688002C30AE /* zh-Hans */,
 				72F6BB942225C77600929A14 /* id */,
+				18B1117122A2CA92000CD0C5 /* ru */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
