@@ -911,9 +911,9 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     [popup setBorderColor:[UIColor blackColor]];
     [popup setTitleColor:[UIColor whiteColor]];
     [popup setSubTitleColor:[UIColor whiteColor]];
-    [popup setSuccessBtnColor:[UIColor greenColor]];
+    [popup setSuccessBtnColor:[self colorFromHex:0x4f6781]];
     [popup setSuccessTitleColor:[UIColor whiteColor]];
-    [popup setCancelBtnColor:[UIColor redColor]];
+    [popup setCancelBtnColor:[self colorFromHex:0x4f6781]];
     [popup setCancelTitleColor:[UIColor whiteColor]];
     //[popup setBackgroundBlurType:PopupBackGroundBlurTypeLight];
     [popup setRoundedCorners:YES];
