@@ -7,13 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Popup.h"
+#import "PCViewController.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FilterOptionsViewController : UITableViewController
+@interface FilterOptionsViewController : UITableViewController<PopupDelegate>
 
--(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil previousController: (UIViewController *) previous;
-@property (strong,nonatomic) UIViewController *previousController;
+-(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil;
+
 
 @end
 

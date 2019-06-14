@@ -58,7 +58,7 @@
 "twitter_post_canceled" = "Publier sur Twitter annulé";
 "linkedin_post_ok" = "Message envoyé à Linkedin";
 "linkedin_post_canceled" = "Publier sur Linkedin annulé";
-"no_recipients_only_social" = "Vous n'avez pas de destinataires. Le message sera affiché sur les réseaux sociaux seulement";
+"no_recipients_only_social" = "(*) Vous n'avez pas de destinataires.\r\nLe message sera affiché sur les réseaux sociaux seulement";
 "done_button" = "Fait";
 "archive_message" = "Enregistrer dans l´archive?";
 "archive" = "Archive";
@@ -122,7 +122,7 @@
 "send_feedback" = "Envoyez-nous vos commentaires";
 "select_group" = "Sélectionner un groupe";
 "unlock_premium" = "Déverrouiller les fonctionnalités premium";
-"premium_feature_only" = "Cette fonctionnalité est uniquement disponible sur la version premium";
+"premium_feature_only" = "Cette fonctionnalité est uniquement disponible sur la version premium.\r\nMettre à jour maintenant?";
 "lite_only_10_recipients" = "Avec la version LITE, le nombre de destinataires est limité à 10.";
 "lite_only_5_groups" = "Avec la version LITE, il y a une limite de 5 groupes";
 "lite_only_5_contacts_per_group" = "Avec la version LITE, le nombre de contacts par groupe est limité à 5.";
@@ -142,3 +142,5 @@
 "imessage_warn" = "Si vous souhaitez envoyer un message de groupe par SMS, vous devez d'abord envisager de désactiver iMessage et MMS dans les paramètres de votre téléphone. Cela fera en sorte que les messages sont envoyés individuellement!";
 "edit" = "Modifier";
 "update_contact" = "Modifier contact";
+"no_recipients" = "Vous n'avez pas de destinataires";
+"upgrade_now" = "Mettre à jour maintenant?";

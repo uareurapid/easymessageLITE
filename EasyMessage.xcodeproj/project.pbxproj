@@ -13,6 +13,8 @@
 		186341782278756F00167AAE /* FTPopOverMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 186341772278756F00167AAE /* FTPopOverMenu.m */; };
 		1863417A227893C900167AAE /* group.png in Resources */ = {isa = PBXBuildFile; fileRef = 18634179227893C800167AAE /* group.png */; };
 		1863417C227893D400167AAE /* list.png in Resources */ = {isa = PBXBuildFile; fileRef = 1863417B227893D400167AAE /* list.png */; };
+		1874DF0522B0E6BB006E82BB /* CustomMessagesDetailController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1874DF0222B0E6BB006E82BB /* CustomMessagesDetailController.m */; };
+		1874DF0622B0E6BB006E82BB /* CustomMessagesDetailController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1874DF0422B0E6BB006E82BB /* CustomMessagesDetailController.xib */; };
 		18E2B581228B23C600B9EAF7 /* edit40.png in Resources */ = {isa = PBXBuildFile; fileRef = 18E2B580228B23C600B9EAF7 /* edit40.png */; };
 		720020E421F1326500698245 /* Icon-76.png in Resources */ = {isa = PBXBuildFile; fileRef = 720020E321F1326500698245 /* Icon-76.png */; };
 		720862FF17DD249C0024B662 /* 80-shopping-cart.png in Resources */ = {isa = PBXBuildFile; fileRef = 720862FE17DD249C0024B662 /* 80-shopping-cart.png */; };
@@ -194,6 +196,9 @@
 		186341772278756F00167AAE /* FTPopOverMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FTPopOverMenu.m; sourceTree = "<group>"; };
 		18634179227893C800167AAE /* group.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = group.png; sourceTree = "<group>"; };
 		1863417B227893D400167AAE /* list.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = list.png; sourceTree = "<group>"; };
+		1874DF0222B0E6BB006E82BB /* CustomMessagesDetailController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomMessagesDetailController.m; sourceTree = "<group>"; };
+		1874DF0322B0E6BB006E82BB /* CustomMessagesDetailController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomMessagesDetailController.h; sourceTree = "<group>"; };
+		1874DF0422B0E6BB006E82BB /* CustomMessagesDetailController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomMessagesDetailController.xib; sourceTree = "<group>"; };
 		18B1117022A2CA92000CD0C5 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		18B1117122A2CA92000CD0C5 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		18E2B580228B23C600B9EAF7 /* edit40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = edit40.png; sourceTree = "<group>"; };
@@ -763,6 +768,9 @@
 		727906E517DB63360076F0FE /* Messages */ = {
 			isa = PBXGroup;
 			children = (
+				1874DF0322B0E6BB006E82BB /* CustomMessagesDetailController.h */,
+				1874DF0222B0E6BB006E82BB /* CustomMessagesDetailController.m */,
+				1874DF0422B0E6BB006E82BB /* CustomMessagesDetailController.xib */,
 				729AAC4117DA839800CABCB0 /* CustomMessagesController.h */,
 				729AAC4217DA839800CABCB0 /* CustomMessagesController.m */,
 				729AAC4317DA839800CABCB0 /* CustomMessagesController.xib */,
@@ -939,6 +947,7 @@
 				7285A6AB177CACFA006137B8 /* concrete_wall.png in Resources */,
 				7285A6AC177CACFA006137B8 /* concrete_wall@2X.png in Resources */,
 				7285A6AF177CB0A3006137B8 /* tableViewBackground@2x.png in Resources */,
+				1874DF0622B0E6BB006E82BB /* CustomMessagesDetailController.xib in Resources */,
 				7285A6B0177CB0A3006137B8 /* tableViewBackground.png in Resources */,
 				72BFDEDF203CAEA3009A3021 /* attachment.png in Resources */,
 				7284D97E1FE481C3000350D6 /* done.png in Resources */,
@@ -1061,6 +1070,7 @@
 				728F279A1776362D00A61BC8 /* iToast.m in Sources */,
 				72FB67C5177B39E700D5E364 /* SocialNetworksViewController.m in Sources */,
 				726235F217D9358600DC0CED /* Group.m in Sources */,
+				1874DF0522B0E6BB006E82BB /* CustomMessagesDetailController.m in Sources */,
 				72D84D341BF1108A00D6B77C /* NSString+LIAEncode.m in Sources */,
 				7285347C18E3247000826581 /* JSONResponseSerializerWithData.m in Sources */,
 				72BCE56A18E20E9B00514A96 /* AFURLSessionManager.m in Sources */,

@@ -58,6 +58,8 @@
 @synthesize attachments;
 @synthesize labelAttachCount;
 @synthesize lblAsterisk,lblPremium;
+@synthesize addRemoveRecipientsView;
+@synthesize addImage, removeImage;
 //google plus sdk
 //TODO check
 static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpdnlq.apps.googleusercontent.com";
@@ -86,6 +88,8 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     self.imagesCollection.dataSource = self;
     self.imagesCollection.delegate = self;
     
+    addImage = [UIImage imageNamed:@"add"];
+    removeImage = [UIImage imageNamed:@"delete"];
     
     /*for(int i = 0; i < 3; i++) {
      UIImage *img = [UIImage imageNamed:@"attachment"];
@@ -101,7 +105,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     sendToFacebook = NO;
     sendToLinkedin = NO;
     saveMessage = NO;
-    recipientsLabel.text = @"";
+    recipientsLabel.text =  NSLocalizedString(@"no_recipients",@"no_recipients");
 
     labelOnlySocial.text = NSLocalizedString(@"no_recipients_only_social","@only social post, no recipients selected");
     
@@ -157,56 +161,20 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     //shows / hides the banner, every 30 seconds interval
     //[NSTimer scheduledTimerWithTimeInterval: 30.0 target: self
     //                                                  selector: @selector(callBannerCheck:) userInfo: nil repeats: YES];
-    
+   
+    //linkedin client here
     self._client = [self client];
     
-    
-    //check popup times counter
-    /**
-    NSInteger times;
-    if (![[NSUserDefaults standardUserDefaults] valueForKey:PROMO_SHOW_COUNTER]) {
-        times = 0;
-    }
-    else {
-        times = [[NSUserDefaults standardUserDefaults]  integerForKey:PROMO_SHOW_COUNTER ];
-    }
-    
-    if(times==0) {
-        timeToShowPromoPopup = true;//first time we open this
-        times = times +1;
-    }
-    else {
-        timeToShowPromoPopup = false;
-        
-        if(times == 5) {
-            //if we loaded 5 times than reset the counter, to show next time
-            times = 0;
-        }
-        //otherwise just increase the counter
-        else {
-           times = times +1;
-        }
-    }
-  
-    [[NSUserDefaults standardUserDefaults] setInteger:times forKey:PROMO_SHOW_COUNTER];
-    
-    */
     //to add attachments
     [self setupAttachViewTouch ];
+    [self setupAddRemoveRecipientsViewTouch];
     
     //the ads stuff
-    //BOOL purchasedAdsFree = [[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_ADS_FREE];
-    showAds = NO;//!purchasedAdsFree;
-    //if(showAds) {
-    //    [self createAdBannerView];
-    //}
-    
-    //FBSDKLoginButton *loginButton = [[FBSDKLoginButton alloc] init];
-    // Optional: Place the button in the center of your view.
-    //loginButton.center = self.view.center;
-    //[self.view addSubview:loginButton];
-    
-    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkForPrefilledMessage:) name:UIApplicationDidBecomeActiveNotification object:self];
+    BOOL purchasedPremium = [[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE];
+    if(!purchasedPremium) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(productPurchased:) name:IAPHelperProductPurchasedNotification object:nil];
+    }
+
     [super viewDidLoad];
     
  
@@ -335,6 +303,8 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
     //if we have a prefill text we use it
     [self checkForPrefilledMessage];
+    //update the buuton to add/remove
+    [self updateAddRemoveRecipients];
 }
 
 -(void) checkForPrefilledMessage{
@@ -526,6 +496,33 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     [attachImageView addGestureRecognizer:tapGesture];
     
 }
+
+
+#pragma remove or add recipients
+//TODO NEW
+-(void) setupAddRemoveRecipientsViewTouch {
+    //add or remove from main page
+    UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(addRemoveRecipientsClicked:) ];
+    singleTap.numberOfTapsRequired = 1;
+    [addRemoveRecipientsView setUserInteractionEnabled:YES];
+    [addRemoveRecipientsView addGestureRecognizer:singleTap];
+}
+
+- (void)addRemoveRecipientsClicked:(UITapGestureRecognizer *)tapGesture {
+    //TODO either add or remove
+    if(self.selectedRecipientsList.count > 0) {
+        //REMOVE
+        [self.recipientsController clearRecipients]; //will remove all
+        [self.selectedRecipientsList removeAllObjects];
+        [self updateAddRemoveRecipients];
+        recipientsLabel.text = NSLocalizedString(@"no_recipients",@"no_recipients");;
+     } else {
+          //ADD
+          //TODO NAVIGATE
+          [self.tabBarController setSelectedIndex:1];
+        }
+}
+
 - (void)didTapAttachViewWithGesture:(UITapGestureRecognizer *)tapGesture {
     
     if (![[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE] && self.attachments.count == MAX_ATTACHMENTS_WITHOUT_PREMIUM) {
@@ -627,15 +624,10 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
     [self updateAttachButton];
     
-   // if(timeToShowPromoPopup ) {
-   //     [self setupPromoViewTouch];
-        
-   //     NSTimer *myTimer = [NSTimer scheduledTimerWithTimeInterval:5.0
-     //                                                       target:self
-     //                                                     selector:@selector(showPopupView:)
-     //                                                   userInfo:nil
-     //                                                      repeats:NO];
-    //}
+    //always hide the social if the subject is showing
+    if(!subjectView.hidden) {
+       [labelOnlySocial setHidden:true];
+    }
 }
 
 //clear stuff
@@ -651,13 +643,19 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
     dispatch_async(dispatch_get_main_queue(), ^{
         
-        if(selectedRecipientsList.count==0 && settingsController.socialOptionsController.selectedServiceOptions.count>0) {
-            labelOnlySocial.hidden = NO;
+        //always hide if this is showing, cause it is on the same place
+        if(!subjectView.hidden) {
+            [labelOnlySocial setHidden:true];
+        } else {
+            
+            if(selectedRecipientsList.count==0 && settingsController.socialOptionsController.selectedServiceOptions.count>0) {
+                labelOnlySocial.hidden = NO;
+            }
+            else {
+                labelOnlySocial.hidden = YES;
+            }
         }
-        else {
-            labelOnlySocial.hidden = YES;
-        }
-        
+
     });
     
 }
@@ -896,7 +894,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
     Popup *popup = [[Popup alloc] initWithTitle:@"Easy Message"
                                        subTitle:NSLocalizedString(@"imessage_warn",nil)
-                                    cancelTitle:@"Cancel"
+                                    cancelTitle:NSLocalizedString(@"Cancel",nil)
                                    successTitle:@"Ok"
                                     cancelBlock:^{
                                         //Custom code after cancel button was pressed
@@ -966,6 +964,69 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                                           otherButtonTitles:nil];
     [alert show];
 }
+
+-(void)showUpgradeToPremiumMessage {
+    
+    Popup *popup = [[Popup alloc] initWithTitle:@"Easy Message"
+                                       subTitle:NSLocalizedString(@"premium_feature_only", nil)
+                                    cancelTitle:NSLocalizedString(@"Cancel",nil)
+                                   successTitle:@"OK"
+                                    cancelBlock:^{
+                                        //Custom code after cancel button was pressed
+                                    } successBlock:^{
+                                        //Custom code after success button was pressed
+                                        //NSLog(@"Try Buying %@...", PRODUCT_PREMIUM_UPGRADE);
+                                        [self buyProductWithidentifier:PRODUCT_PREMIUM_UPGRADE];
+                                    }];
+    
+    [popup setBackgroundColor:[self colorFromHex:0xfb922b]];
+    //https://github.com/miscavage/Popup
+    [popup setBorderColor:[UIColor blackColor]];
+    [popup setTitleColor:[UIColor whiteColor]];
+    [popup setSubTitleColor:[UIColor whiteColor]];
+    [popup setSuccessBtnColor:[self colorFromHex:0x4f6781]];
+    [popup setSuccessTitleColor:[UIColor whiteColor]];
+    [popup setCancelBtnColor:[self colorFromHex:0x4f6781]];
+    [popup setCancelTitleColor:[UIColor whiteColor]];
+    //[popup setBackgroundBlurType:PopupBackGroundBlurTypeLight];
+    [popup setRoundedCorners:YES];
+    [popup setTapBackgroundToDismiss:YES];
+    [popup setDelegate:self];
+    [popup showPopup];
+}
+
+
+//get the notification when a product is purchased
+- (void)productPurchased:(NSNotification *)notification {
+    
+    NSString * productIdentifier = notification.object;
+    if([productIdentifier isEqualToString:PRODUCT_PREMIUM_UPGRADE]) {
+        //NSLog(@"Purchased %@...",productIdentifier);
+        //unlock any stuff
+        [self updateAttachmentsLabel];
+        [self updatePremiumLabels];
+    }
+    
+}
+
+- (void) buyProductWithidentifier: (NSString *) productId/* andCompletionHandler:  (void (^)(BOOL success))completion*/ {
+    
+    [[EasyMessageIAPHelper sharedInstance] requestProductsWithCompletionHandler:^(BOOL success, NSArray *products) {
+        if (success) {
+            for(SKProduct *product in products) {
+                if([product.productIdentifier isEqualToString:productId]) {
+                    
+                    [[EasyMessageIAPHelper sharedInstance] buyProduct:product];
+                }
+                
+            }
+            
+            
+        }
+    }];
+    
+}
+
 
 //send to social networks
 -(void)sendToSocialNetworks: (NSString*) message {
@@ -2099,6 +2160,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
     [selectedRecipientsList removeAllObjects];
     [recipientsController.selectedContactsList removeAllObjects];
+    [self updateAddRemoveRecipients];
     [recipientsController.tableView reloadData];
     
     
@@ -2489,6 +2551,20 @@ void addressBookChanged(ABAddressBookRef reference,
     [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
+-(void) updateAddRemoveRecipients {
+   //[addRemoveRecipientsView setHidden:true];
+   if(self.selectedRecipientsList.count > 0) {
+        dispatch_async(dispatch_get_main_queue(), ^(){
+            addRemoveRecipientsView.image = self.removeImage;
+        });
+   } else {
+        dispatch_async(dispatch_get_main_queue(), ^(){
+             recipientsLabel.text = NSLocalizedString(@"no_recipients",@"no_recipients");
+             addRemoveRecipientsView.image = self.addImage;
+        });
+    }
+}
+
 - (void)qb_imagePickerControllerDidCancel:(QBImagePickerController *)imagePickerController
 {
     NSLog(@"Canceled.");
@@ -2608,7 +2684,8 @@ void addressBookChanged(ABAddressBookRef reference,
                setGravity:iToastGravityBottom] setDuration:2000] show];
         }
         else {
-            [self showAlertBox:NSLocalizedString(@"premium_feature_only", nil)];
+            //[self showAlertBox:NSLocalizedString(@"premium_feature_only", nil)];
+            [self showUpgradeToPremiumMessage];
             [saveMessageSwitch setOn:false];
             saveMessage = saveMessageSwitch.on ? YES : NO;
         }
@@ -2616,6 +2693,7 @@ void addressBookChanged(ABAddressBookRef reference,
         
     }
 }
+
 
 //Get data
 - (NSData *) getImageInfoData: (UIImage *)img {

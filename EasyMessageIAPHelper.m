@@ -31,6 +31,7 @@
                                       PRODUCT_PREMIUM_UPGRADE,
                                       nil];
         sharedInstance = [[self alloc] initWithProductIdentifiers:productIdentifiers];
+        
     });
     
     return sharedInstance;

@@ -485,7 +485,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     }
     
     contactsByLastNameInitial = [self loadInitialNamesDictionary];
-    NSLog(@"number of contacts in list: %lu", (unsigned long)self.contactsList.count);
+    //NSLog(@"number of contacts in list: %lu", (unsigned long)self.contactsList.count);
     
     [self checkForExistingGroups];
     
@@ -803,6 +803,18 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     [self.tabBarController setSelectedIndex:0];// popToRootViewControllerAnimated:YES];
 }
 
+-(void) clearRecipients {
+    [activityIndicator startAnimating];
+    rootViewController.recipientsLabel.text = @"";
+    [selectedContactsList removeAllObjects];
+    [activityIndicator stopAnimating];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.navigationItem.leftBarButtonItem.title = NSLocalizedString(@"select_all",@"select_all");
+        self.groupLocked = true;
+        [[self tableView] reloadData];
+    });
+}
+
 -(IBAction)selectAllContacts:(id)sender {
     
     //if we have all selected, remove selection
@@ -1075,6 +1087,9 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     if (tableView == self.searchDisplayController.searchResultsTableView) {
         return [self.searchData count];
     } else {
+        if(sortedKeys.count == 0) {
+            return 0;
+        }
         NSString *key = [sortedKeys objectAtIndex:section];
         NSMutableArray *array = (NSMutableArray *) [contactsByLastNameInitial objectForKey:key];
         return array.count;
@@ -1099,6 +1114,10 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     NSInteger section = indexPath.section;
     NSInteger row = indexPath.row;
     
+    //avoid crash if list is empty
+    if(sortedKeys.count == 0) {
+        return cell;
+    }
     
     NSString *key = [sortedKeys objectAtIndex:section];
     NSMutableArray *array = (NSMutableArray *) [contactsByLastNameInitial objectForKey:key];

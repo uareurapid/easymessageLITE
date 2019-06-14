@@ -64,7 +64,7 @@
 "twitter_post_canceled" = "Post to Twitter canceled";
 "linkedin_post_ok" = "Post to Linkedin Successful";
 "linkedin_post_canceled" = "Post to Linkedin canceled";
-"no_recipients_only_social" = "You don´t have any recipients selected. The message will be post to social networks only";
+"no_recipients_only_social" = "(*) You don´t have any recipients selected.\r\nThe message will be posted to social networks only";
 "done_button" = "Done";
 "archive_message" = "Save in archive?";
 "archive" = "Archive";
@@ -128,7 +128,7 @@
 "send_feedback" = "Send us your feedback";
 "select_group" = "Select group";
 "unlock_premium" = "Unlock premium features";
-"premium_feature_only" = "This feature is only available on the premium version";
+"premium_feature_only" = "This feature is only available on the premium version.\r\nUpgrade now?";
 "lite_only_10_recipients" = "With the LITE version there is a limit of 10 recipients";
 "lite_only_5_groups" = "With the LITE version there is a limit of 5 groups";
 "lite_only_5_contacts_per_group" = "With the LITE version there is a limit of 5 contacts per group";
@@ -148,3 +148,5 @@
 "imessage_warn" = "If you want to send a group message via SMS, you should consider disabling iMessage and MMS Messaging on your phone settings first. This will make sure that the messages are sent individually!";
 "edit" = "Edit";
 "update_contact" = "Edit contact";
+"no_recipients" = "You don´t have any recipients selected";
+"upgrade_now" = "Upgrade now?";

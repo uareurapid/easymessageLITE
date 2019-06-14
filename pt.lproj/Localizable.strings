@@ -63,7 +63,7 @@
 "twitter_post_canceled" = "Envio para o Twitter cancelado";
 "linkedin_post_ok" = "Mensagem enviada para o Linkedin";
 "linkedin_post_canceled" = "Envio para o Linkedin cancelado";
-"no_recipients_only_social" = "Não há destinatários seleccionados. A mensagem será enviada apenas para as redes sociais";
+"no_recipients_only_social" = "(*) Não há destinatários seleccionados.\r\nA mensagem será enviada apenas para as redes sociais";
 "done_button" = "Feito";
 "archive_message" = "Guardar no arquivo?";
 "archive" = "Arquivo";
@@ -127,7 +127,7 @@
 "send_feedback" = "Feedback e comentários";
 "select_group" = "Escolher grupo";
 "unlock_premium" = "Desbloquear funcionalidades premium";
-"premium_feature_only" = "Esta funcionalidade apenas está disponível na versão premium";
+"premium_feature_only" = "Esta funcionalidade apenas está disponível na versão premium.\r\nActualizar agora?";
 "lite_only_10_recipients" = "Na versão LITE o limite é de 10 destinatários";
 "lite_only_5_groups" = "Na versão LITE o limite é de 5 grupos";
 "lite_only_5_contacts_per_group" = "Na versão LITE o limite é de 5 contactos por groupo";
@@ -147,3 +147,5 @@
 "imessage_warn" = "Se quer mandar uma mesagem para um grupo via SMS, deve considerar desactivar o iMessage e as MMS no seu telefone primeiro. Isto garante que as mensagens serão enviadas individualmente!";
 "edit" = "Editar";
 "update_contact" = "Alterar contacto";
+"no_recipients" = "Não há destinatários seleccionados";
+"upgrade_now" = "Actualizar agora?";

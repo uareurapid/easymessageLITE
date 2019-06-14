@@ -69,8 +69,12 @@ UITextFieldDelegate, NSURLConnectionDelegate,SKStoreProductViewControllerDelegat
 
 @property (strong, nonatomic) IBOutlet UIImage *attachImage;
 //@property (strong, nonatomic) IBOutlet UIImage *previewImage;
+@property (weak, nonatomic) IBOutlet UIImageView *addRemoveRecipientsView;
 
 @property (strong, nonatomic) IBOutlet NSMutableArray *attachments;
+
+@property (strong, nonatomic) UIImage *addImage;
+@property (strong, nonatomic) UIImage *removeImage;
 
 //for the linkdin request
 @property NSMutableData *responseData;
@@ -98,6 +102,11 @@ void addressBookChanged(ABAddressBookRef reference,
 -(void) checkForPrefilledMessage;
 -(BOOL) checkIfShouldWarnAboutImessage;
 -(void) warnAboutImessage;
+-(void) updateAddRemoveRecipients;
+//Purchase stuff
+-(void)showUpgradeToPremiumMessage;
+- (void)productPurchased:(NSNotification *)notification;
+- (void) buyProductWithidentifier: (NSString *) productId; /*andCompletionHandler:  (void (^)(BOOL success))completion*/
 
 @property (strong, nonatomic) IBOutlet UITextField *subject;
 

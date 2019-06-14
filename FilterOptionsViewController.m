@@ -7,8 +7,8 @@
 //
 
 #import "FilterOptionsViewController.h"
-#import "PCViewController.h"
 #import "EasyMessageIAPHelper.h"
+#import "PCAppDelegate.h"
 
 @interface FilterOptionsViewController ()
 
@@ -16,7 +16,6 @@
 
 @implementation FilterOptionsViewController
 
-@synthesize previousController;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -38,9 +37,8 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
--(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil previousController: (UIViewController *) previous{
+-(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    self.previousController = previousController;
     UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle: NSLocalizedString(@"done_button", @"done_button") style:UIBarButtonItemStyleDone target:self action:@selector(goBackAfterSelection:)];
     
     doneButton.tintColor = UIColor.whiteColor;
@@ -71,7 +69,7 @@
 }
 
 -(IBAction)goBackAfterSelection:(id)sender {
-    [self.navigationController popToRootViewControllerAnimated:YES];// popToViewController:previousController animated:YES];
+    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 
@@ -177,7 +175,8 @@
             }
             else {
                 //this filtering is only for premium users
-                [self showAlertBox:NSLocalizedString(@"premium_feature_only", nil)];
+                [self showUpgradeToPremiumMessage];
+                //[self showAlertBox:NSLocalizedString(@"premium_feature_only", nil)];
             }
             
         }
@@ -188,7 +187,10 @@
             }
             else {
                 //this filtering is only for premium users
-                [self showAlertBox:NSLocalizedString(@"premium_feature_only", nil)];
+                [self showUpgradeToPremiumMessage];
+                
+                
+                //[self showAlertBox:NSLocalizedString(@"premium_feature_only", nil)];
             }
             
         }
@@ -203,6 +205,52 @@
     
 }
 
+-(void)showUpgradeToPremiumMessage {
+    
+    PCAppDelegate *delegate  = (PCAppDelegate *)[[UIApplication sharedApplication] delegate];
+    
+    Popup *popup = [[Popup alloc] initWithTitle:@"Easy Message"
+                                       subTitle:NSLocalizedString(@"premium_feature_only", nil)
+                                    cancelTitle:NSLocalizedString(@"Cancel",nil)
+                                   successTitle:@"OK"
+                                    cancelBlock:^{
+                                        //Custom code after cancel button was pressed
+                                    } successBlock:^{
+                                        //Custom code after success button was pressed
+                                        //NSLog(@"Try Buying %@...", PRODUCT_PREMIUM_UPGRADE);
+                                
+                                        //REALLY BAD CODE AHEAD BUT DOES THE JOB FOR NOW!!
+                                        UITabBarController *tabController = (UITabBarController *) delegate.window.rootViewController;
+                                        if(tabController!=nil) {
+                                             UINavigationController *mainViewController = (UINavigationController*)[tabController.viewControllers objectAtIndex:0];
+                                            if(mainViewController!=nil) {
+                                                PCViewController *pc = [mainViewController.viewControllers objectAtIndex:0];
+                                                if(pc!=nil) {
+                                                    [pc buyProductWithidentifier:PRODUCT_PREMIUM_UPGRADE];
+                                                }
+                                               
+                                            }
+                                            
+                                        }
+                                        
+                                    }];
+    
+    [popup setBackgroundColor:[delegate colorFromHex:0xfb922b]];
+    //https://github.com/miscavage/Popup
+    [popup setBorderColor:[UIColor blackColor]];
+    [popup setTitleColor:[UIColor whiteColor]];
+    [popup setSubTitleColor:[UIColor whiteColor]];
+    [popup setSuccessBtnColor:[delegate colorFromHex:0x4f6781]];
+    [popup setSuccessTitleColor:[UIColor whiteColor]];
+    [popup setCancelBtnColor:[delegate colorFromHex:0x4f6781]];
+    [popup setCancelTitleColor:[UIColor whiteColor]];
+    //[popup setBackgroundBlurType:PopupBackGroundBlurTypeLight];
+    [popup setRoundedCorners:YES];
+    [popup setTapBackgroundToDismiss:YES];
+    [popup setDelegate:self];
+    [popup showPopup];
+}
+/*
 -(void) showAlertBox:(NSString *) msg {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Easy Message"
                                                     message:msg
@@ -210,7 +258,7 @@
                                           cancelButtonTitle:@"OK"
                                           otherButtonTitles:nil];
     [alert show];
-}
+}*/
 /*
  #pragma mark - Navigation
  

@@ -47,6 +47,9 @@
 -(CNMutableContact*) searchContactOnNativeAddressBook: (Contact *) contact;
 
 -(BOOL) isNativeContact:(Contact *) contact;
+//visible api
+-(void)clearRecipients;
+
 //filtered list
 @property (strong,nonatomic) NSMutableArray *filteredContactsList;
 

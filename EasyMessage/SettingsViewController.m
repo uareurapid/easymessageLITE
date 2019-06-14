@@ -119,7 +119,7 @@
     socialOptionsController = [[SocialNetworksViewController alloc] initWithNibName:@"SocialNetworksViewController"
                                                                               bundle:nil previousController:self services:services];
 
-    filterOptionsController = [[FilterOptionsViewController alloc] initWithNibName:@"FilterOptionsViewController" bundle:nil previousController:self];
+    filterOptionsController = [[FilterOptionsViewController alloc] initWithNibName:@"FilterOptionsViewController" bundle:nil];
     
     showToast = YES;
     

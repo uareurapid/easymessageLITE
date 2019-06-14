@@ -63,6 +63,7 @@
 @class SocialNetworksViewController;
 @class FilterOptionsViewController;
 @class IAPMasterViewController;
+@class PCViewController;
 
 @interface SettingsViewController : UITableViewController<MFMailComposeViewControllerDelegate,MFMessageComposeViewControllerDelegate>
 
@@ -88,6 +89,7 @@
 @property (strong,nonatomic) SocialNetworksViewController *socialOptionsController;
 @property (strong,nonatomic) IAPMasterViewController *purchasesController;
 @property (strong,nonatomic) FilterOptionsViewController *filterOptionsController;
+
 -(void) resetSocialNetworks;
 
 @end

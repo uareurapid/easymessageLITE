@@ -62,7 +62,7 @@
 "twitter_post_canceled" = "트위터에 게시가 취소";
 "linkedin_post_ok" = "링크드 인에 보낸 메시지";
 "linkedin_post_canceled" = "링크드 인에 취소 전송";
-"no_recipients_only_social" = "어떤 수신자가 없습니다. 메시지는 소셜 네트워크로 전송됩니다";
+"no_recipients_only_social" = "(*) 어떤 수신자가 없습니다.\r\n메시지는 소셜 네트워크로 전송됩니다";
 "done_button" = "수행";
 "archive_message" = "아카이브에 저장";
 "archive"= "아카이브";
@@ -126,7 +126,7 @@
 "send_feedback" = "의견 보내기";
 "select_group" = "그룹 선택";
 "unlock_premium" = "프리미엄 기능 잠금 해제";
-"premium_feature_only" = "이 기능은 프리미엄 버전에서만 사용할 수 있습니다.";
+"premium_feature_only" = "이 기능은 프리미엄 버전에서만 사용할 수 있습니다.\r\n지금 업그레이드 하시겠습니까?";
 "lite_only_10_recipients" = "LITE 버전에는 수신자가 10 명으로 제한됩니다.";
 "lite_only_5_groups" = "LITE 버전에는 5 개의 그룹 제한이 있습니다.";
 "lite_only_5_contacts_per_group" = "LITE 버전에는 그룹당 5 개의 연락처 수 제한이 있습니다.";
@@ -146,3 +146,5 @@
 "imessage_warn" = "SMS를 통해 그룹 메시지를 보내려면 먼저 전화기 설정에서 iMessage 및 MMS 메시징을 비활성화하는 것이 좋습니다. 이렇게하면 메시지가 개별적으로 전송됩니다!";
 "edit" = "편집하다";
 "update_contact" = "연락처 편집";
+"no_recipients" = "어떤 수신자가 없습니다";
+"upgrade_now" = "지금 업그레이드 하시겠습니까?";

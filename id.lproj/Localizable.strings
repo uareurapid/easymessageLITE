@@ -10,7 +10,7 @@
 "message_label" = "Pesan:";
 "message" = "Pesan";
 "placeholder_your_message" = "Pesanmu (*)";
-"placeholder_subject" = " Subyek";
+"placeholder_subject" = "Subyek";
 "send_message" = "Mengirim pesan";
 "compose" = "Menggubah";
 "recipients" = "Penerima";
@@ -67,7 +67,7 @@
 "linkedin_post_canceled" = "Posting ke Linkedin dibatalkan";
 "instagram_post_ok" = "Posting ke Instagram Berhasil";
 "instagram_post_canceled" = "Posting ke Instagram dibatalkan";
-"no_recipients_only_social" = "Anda tidak memiliki penerima yang dipilih. Pesan akan dikirim ke jejaring sosial saja";
+"no_recipients_only_social" = "(*) Anda tidak memiliki penerima yang dipilih.\r\nPesan akan dikirim ke jejaring sosial saja";
 "done_button" = "Selesai";
 "archive_message" = "Simpan di arsip?";
 "archive" = "Arsipkan";
@@ -133,7 +133,7 @@
 "social_networks_copy_paste" = "Beberapa jejaring sosial tidak memperbolehkan posting dengan pesan yang sudah diisi sebelumnya.\r\nDalam kasus ini, pesan akan secara otomatis disalin ke clipboard dan Anda harus menempelnya sendiri";
 "message_copied_clipboard" = "Pesan telah disalin ke clipboard";
 "unlock_premium" = "Buka fitur premium";
-"premium_feature_only" = "Fitur ini hanya tersedia pada versi premium";
+"premium_feature_only" = "Fitur ini hanya tersedia pada versi premium.\r\nTingkatkan sekarang?";
 "lite_only_10_recipients" = "Dengan versi LITE ada batas 10 penerima";
 "lite_only_5_groups" = "Dengan versi LITE ada batas 5 grup";
 "lite_only_5_contacts_per_group" = "Dengan versi LITE ada batas 5 kontak per grup";
@@ -153,3 +153,5 @@
 "imessage_warn" = "Jika Anda ingin mengirim pesan grup melalui SMS, Anda harus mempertimbangkan untuk menonaktifkan iMessage dan MMS pada pengaturan ponsel Anda terlebih dahulu. Ini akan memastikan bahwa pesan dikirim secara individual.";
 "edit" = "Meredaksi";
 "update_contact" = "Ubah kontak";
+"no_recipients" = "Tidak ada penerima yang dipilih";
+"upgrade_now" = "Tingkatkan sekarang?";

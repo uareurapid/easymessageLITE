@@ -58,7 +58,7 @@
 "twitter_post_canceled" = "发布到Twitter取消";
 "linkedin_post_ok" = "发布到LinkedIn成功";
 "linkedin_post_canceled" = "发布到LinkedIn取消";
-"no_recipients_only_social" = "你没有选择任何收件人。该消息将被邮寄到社交网络";
+"no_recipients_only_social" = "(*) 你没有选择任何收件人.\r\n该消息将被邮寄到社交网络";
 "done_button" = "完成";
 "archive_message" = "保存在归档？";
 "archive" = "存档";
@@ -122,14 +122,14 @@
 "send_feedback" = "向我们发送您的反馈";
 "select_group" = "选择组";
 "unlock_premium" = "解锁高级功能";
-"premium_feature_only" = "此功能仅适用于高级版本";
+"premium_feature_only" = "此功能仅适用于高级版本.\r\n现在升级？";
 "lite_only_10_recipients" = "使用LITE版本时，最多只有10个收件人";
 "lite_only_5_groups" = "LITE版本限制为5组";
 "lite_only_5_contacts_per_group" = "使用LITE版本，每组最多只能有5个联系人";
 "lite_only_5_contacts_template_messages" = "使用LITE版本时，限制为5个模板消息";
 "lite_only_2_attachments" = "(*) 5与高级版";
 "lite_reached_max_attachments" = "请删除1张图片或升级到高级版";
-"social_networks_copy_paste" = "某些社交网络不允许包含预填充邮件的帖子。\r\n在这些情况下，邮件将自动复制到剪贴板，您必须自己粘贴它";
+"social_networks_copy_paste" = "某些社交网络不允许包含预填充邮件的帖子.\r\n在这些情况下，邮件将自动复制到剪贴板，您必须自己粘贴它";
 "message_copied_clipboard" = "邮件已复制到剪贴板";
 "show_contacts_only" = "仅显示联系人";
 "show_groups_only" = "仅显示组";
@@ -142,3 +142,5 @@
 "imessage_warn" = "如果您想通过短信发送群组短信，则应考虑先在手机设置中禁用iMessage和彩信。 这将确保消息单独发送.";
 "edit" = "编辑";
 "update_contact" = "更改联系资料";
+"no_recipients" = "没有选择收件人";
+"upgrade_now" = "现在升级？";
