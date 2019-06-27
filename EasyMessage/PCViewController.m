@@ -601,9 +601,14 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     if( (sendToFacebook || sendToTwitter || sendToLinkedin) && (selectedRecipientsList.count==0) ) {
         
         //[self.navigationItem.leftBarButtonItem setEnabled:true];
-        if(selectedRecipientsList.count==0) {
-           [subject setEnabled:false];
-           [subjectView setHidden:true];
+        //if(selectedRecipientsList.count==0) {
+        if(settingsController.selectSendOption != OPTION_ALWAYS_SEND_BOTH_ID) {
+            [subject setEnabled:false];
+            [subjectView setHidden:true];
+        } else {
+            //always send both is selected
+            [subject setEnabled:true];
+            [subjectView setHidden:false];
         }
         
     }
@@ -829,6 +834,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                     emailSentOK = NO;
                     
                     [self sendEmail:nil];//will send sms on dismiss email
+                    //need to check is there is any email on the recipients list
                 }
                 else if(settingsController.selectSendOption == OPTION_SEND_SMS_ONLY_ID) {
                     
@@ -1758,31 +1764,34 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         // Present mail view controller on screen
         [self presentViewController:mc animated:YES completion:NULL];
         
-    }
-    else if(settingsController.selectSendOption != OPTION_ALWAYS_SEND_BOTH_ID) {
-        
-        //means is OPTION_SEND_EMAIL_ONLY_ID
-        //it means it´s selected only email... and we don´t have email adresses and we´re not sending SMS next either
-        
-        //but if we have social networks, we don´t care and will post to those only
-        if(sendToFacebook || sendToTwitter || sendToLinkedin) {
+    } else {
+        //no recipients for the email
+        if(settingsController.selectSendOption != OPTION_ALWAYS_SEND_BOTH_ID) {
             
-            [self sendToSocialNetworks: body.text];
+            //means is OPTION_SEND_EMAIL_ONLY_ID
+            //it means it´s selected only email... and we don´t have email adresses and we´re not sending SMS next either
+            
+            //but if we have social networks, we don´t care and will post to those only
+            if(sendToFacebook || sendToTwitter || sendToLinkedin) {
+                
+                [self sendToSocialNetworks: body.text];
+            }
+            else {
+                
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"easymessage_send_email_title",@"EasyMessage: Send email")
+                                                                message:NSLocalizedString(@"recipients_least_one_recipient", @"select valid recipient")
+                                                               delegate:self
+                                                      cancelButtonTitle:@"OK"
+                                                      otherButtonTitles:nil];
+                
+                [alert show];
+            }
+        } else {
+                //send both is selected and i did not sent any email
+            [self sendSMS:nil];
         }
-        else {
-            
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"easymessage_send_email_title",@"EasyMessage: Send email")
-                                                            message:NSLocalizedString(@"recipients_least_one_recipient", @"select valid recipient")
-                                                           delegate:self
-                                                  cancelButtonTitle:@"OK"
-                                                  otherButtonTitles:nil];
-            
-            [alert show];
-        }
-        
-        
-        
     }
+    
     
     //#BUGFIX this way was sending SMS 2 times! here and on checkIfSendBoth
     //else {
