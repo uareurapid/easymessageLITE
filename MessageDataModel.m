@@ -10,6 +10,6 @@
 
 @implementation MessageDataModel
 
-@dynamic msg;
+@dynamic msg, isDefault, creationDate;
 
 @end

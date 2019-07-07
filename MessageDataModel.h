@@ -11,5 +11,7 @@
 @interface MessageDataModel : NSManagedObject
 
 @property (nonatomic, retain) NSString *msg;
+@property (strong,nonatomic) NSDate *creationDate;
+@property (nonatomic, retain) NSNumber *isDefault;
 
 @end

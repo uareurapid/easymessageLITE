@@ -8,23 +8,27 @@
 
 #import <UIKit/UIKit.h>
 #import "PCViewController.h"
+#import "FTPopOverMenu.h"
+#import "Message.h"
 
 #define NUM_DEFAULT_MESSAGES 11
+#define SAVED_DEFAULT_MESSAGES @"saved_default_messages"
 
 @interface CustomMessagesController : UITableViewController
 
 
 @property (strong,nonatomic) NSMutableArray * messagesList;
 @property NSInteger selectedMessageIndex;//the index of the selected message
-@property NSString *selectedMessage;//the index of the selected message
+@property (strong, nonatomic) Message *selectedMessage;//the index of the selected message
 
-//@property (strong,nonatomic) UIImage *lock;
-//@property (strong,nonatomic) UIImage *unlock;
-
-//@property (strong,nonatomic) UIView *headerView;
 
 @property (strong,nonatomic) PCViewController *rootViewController;
 -(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil rootViewController: (PCViewController *) rootViewController;
--(NSString * ) getSelectedMessage;
+-(Message * ) getSelectedMessage;
+- (void)optionsClicked:(id)sender event:(UIEvent *)event;
+-(void) editSelectedMessage;
+-(void) addRecordsFromDatabase;
 @property BOOL addNewMessage;
+@property BOOL forceReload;
 @end
+

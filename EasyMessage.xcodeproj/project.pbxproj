@@ -44,6 +44,7 @@
 		7235CC3E1F0460C30039E8A3 /* AddContactViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7235CC3D1F0460C30039E8A3 /* AddContactViewController.xib */; };
 		724CB9C21FE5EA9600998CAB /* libAppirater.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 724CB9C31FE5EA9600998CAB /* libAppirater.a */; };
 		724D9ED21F040A2A00E37659 /* PCViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 724D9ED11F040A2A00E37659 /* PCViewController.xib */; };
+		7258506822D20F950026E334 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 7258506622D20F940026E334 /* Message.m */; };
 		72611AFC1771E88B0043E508 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 72611AFA1771E88B0043E508 /* SettingsViewController.m */; };
 		72611AFD1771E88B0043E508 /* SettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 72611AFB1771E88B0043E508 /* SettingsViewController.xib */; };
 		72611B0017720F740043E508 /* Contact.m in Sources */ = {isa = PBXBuildFile; fileRef = 72611AFF17720F740043E508 /* Contact.m */; };
@@ -238,6 +239,8 @@
 		7240D96520360609007031EC /* CoreDataModel 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "CoreDataModel 2.xcdatamodel"; sourceTree = "<group>"; };
 		724CB9C31FE5EA9600998CAB /* libAppirater.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libAppirater.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		724D9ED11F040A2A00E37659 /* PCViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PCViewController.xib; sourceTree = "<group>"; };
+		7258506622D20F940026E334 /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
+		7258506722D20F940026E334 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
 		72611AF91771E88B0043E508 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SettingsViewController.h; path = EasyMessage/SettingsViewController.h; sourceTree = "<group>"; };
 		72611AFA1771E88B0043E508 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SettingsViewController.m; path = EasyMessage/SettingsViewController.m; sourceTree = "<group>"; };
 		72611AFB1771E88B0043E508 /* SettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SettingsViewController.xib; path = EasyMessage/SettingsViewController.xib; sourceTree = "<group>"; };
@@ -677,6 +680,8 @@
 				7224154B1771148800989C3B /* PCAppDelegate.m */,
 				722415531771148800989C3B /* PCViewController.h */,
 				722415541771148800989C3B /* PCViewController.m */,
+				7258506722D20F940026E334 /* Message.h */,
+				7258506622D20F940026E334 /* Message.m */,
 				722415421771148800989C3B /* Supporting Files */,
 				726235F017D9358600DC0CED /* Group.h */,
 				726235F117D9358600DC0CED /* Group.m */,
@@ -1055,6 +1060,7 @@
 				7224154C1771148800989C3B /* PCAppDelegate.m in Sources */,
 				722415551771148800989C3B /* PCViewController.m in Sources */,
 				72D84D331BF1108A00D6B77C /* LIALinkedInHttpClient.m in Sources */,
+				7258506822D20F950026E334 /* Message.m in Sources */,
 				72BCE56918E20E9B00514A96 /* AFURLResponseSerialization.m in Sources */,
 				72611AFC1771E88B0043E508 /* SettingsViewController.m in Sources */,
 				72D84D321BF1108A00D6B77C /* LIALinkedInAuthorizationViewController.m in Sources */,

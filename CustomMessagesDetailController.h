@@ -7,15 +7,23 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MessageDataModel.h"
+#import "CustomMessagesController.h"
+#import "Message.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface CustomMessagesDetailController : UIViewController
+@interface CustomMessagesDetailController : UIViewController <UITextViewDelegate>
 @property (weak, nonatomic) IBOutlet UITextView *textView;
-@property (strong, nonatomic) NSString *message;
+@property (strong, nonatomic) Message *message;
+@property (strong, nonatomic) MessageDataModel *model;
+@property (assign, nonatomic) CustomMessagesController *messagesController;
 
--(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil previousController: (UIViewController *) message:(NSString *) text;
+- (IBAction)saveClicked:(id)sender;
+
+-(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil previousController: (UIViewController *) parent message:(Message *) message;
 
 @end
 
 NS_ASSUME_NONNULL_END
+

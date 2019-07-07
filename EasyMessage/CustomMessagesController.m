@@ -10,6 +10,7 @@
 #import "EasyMessageIAPHelper.h"
 #import "MessageDataModel.h"
 #import "CoreDataUtils.h"
+#import "CustomMessagesDetailController.h"
 
 @interface CustomMessagesController ()
 
@@ -30,15 +31,6 @@
     return self;
 }
 
--(void) showAlertBox:(NSString *) msg {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Easy Message"
-                                                    message:msg
-                                                   delegate:self
-                                          cancelButtonTitle:@"OK"
-                                          otherButtonTitles:nil];
-    [alert show];
-}
-
 -(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil rootViewController: (PCViewController *) rootViewControllerArg {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil ];
     if(self) {
@@ -47,19 +39,30 @@
         
         //self.addNewMessage = YES;
         
-        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"add",@"add") style:UIBarButtonItemStyleDone target:self action:@selector(selectFinished:)];
+        //UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"add",@"add") style:UIBarButtonItemStyleDone target:self action:@selector(selectFinished:)];
+        //unlock = [UIImage imageNamed:@"Unlock32"];
+        //lock = [UIImage imageNamed:@"Lock32"];
         
-        doneButton.tintColor = UIColor.whiteColor;
+        //doneButton.tintColor = UIColor.whiteColor;
         
-        UIBarButtonItem *deleteButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Delete" style:UIBarButtonItemStyleDone target:self action:@selector(deleteMessageClicked:)];
-      
-        deleteButtonItem.tintColor = UIColor.whiteColor;
+        UIBarButtonItem *optionsButton = [[UIBarButtonItem alloc] initWithImage: [UIImage imageNamed:@"list"] style:UIBarButtonItemStyleDone target:self action:@selector(optionsClicked:event:)];
         
-        [doneButton setEnabled:YES];
-        [deleteButtonItem setEnabled:NO];
+        optionsButton.tintColor = UIColor.whiteColor;
         
-        self.navigationItem.rightBarButtonItem = doneButton;
-        self.navigationItem.leftBarButtonItem = deleteButtonItem;
+        self.navigationItem.rightBarButtonItem = optionsButton;
+        //[addToGroupButton setEnabled:NO];
+        [optionsButton setEnabled:YES];
+        
+        
+        //UIBarButtonItem *deleteButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Delete" style:UIBarButtonItemStyleDone target:self action:@selector(deleteMessageClicked:)];
+        
+        //deleteButtonItem.tintColor = UIColor.whiteColor;
+        
+        //[doneButton setEnabled:YES];
+        //[deleteButtonItem setEnabled:NO];
+        
+        //self.navigationItem.rightBarButtonItem = doneButton;
+        //self.navigationItem.leftBarButtonItem = deleteButtonItem;
         self.navigationController.toolbarHidden = NO;
         
         selectedMessageIndex = -1;
@@ -71,68 +74,7 @@
     }
     return  self;
 }
-/**
--(void)prepareCustomHeaderView {
-    
-    headerView = [[UIView alloc] initWithFrame:CGRectMake(0,0, self.tableView.frame.size.width,38)];
-    
-    
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10,0, self.tableView.frame.size.width-40,38)];
-    [label setText: NSLocalizedString(@"select_custom_message",@"select a message") ];
- 
-    [headerView addSubview:label];
-    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(label.frame.size.width + 2,0, 32,32)];
 
-    [headerView addSubview:imageView];
-    [headerView setAlpha:0.9];
-    imageView ad
-    
-    if ([[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_COMMON_MESSAGES]) {
-        imageView.image=unlock;
-    }
-    else {
-        imageView.image=lock;
-    }
-
-}
-
--(UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    
-    
-    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0,0, tableView.frame.size.width,38)];
-    
-                                                                  
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(5,0, tableView.frame.size.width-40,40)];
-    [label setText: NSLocalizedString(@"select_custom_message",@"select a message") ];
-                                                                  
-    
-    [headerView addSubview:label];
-    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(label.frame.size.width + 2,0, 32,32)];
-    
-    [headerView addSubview:imageView];
-    //[headerView setAlpha:0];
-    
-    if ([[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_COMMON_MESSAGES]) {
-        imageView.image=unlock;
-    }
-    else {
-        imageView.image=lock;
-    }
-    headerView.backgroundColor = [UIColor colorWithRed:0.0 green:0.7 blue:0.8 alpha:0.75];
-    
-    UIImageView *imageView = (UIImageView *)[headerView.subviews objectAtIndex:headerView.subviews.count -1];
-    
-    if ([[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_COMMON_MESSAGES]) {
-        
-        imageView.image=unlock;
-    }
-    else {
-        imageView.image=lock;
-    }
-    
-    return headerView;
-    
-}*/
 
 //the header height
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
@@ -141,26 +83,21 @@
 
 -(void)viewWillAppear:(BOOL)animated {
     //if ([[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_COMMON_MESSAGES]) {
-        [self.navigationItem.leftBarButtonItem setEnabled: ![self isDefaultMessageSelected] ];
-        [self.navigationItem.rightBarButtonItem setEnabled: YES];
-        [self.tableView setAllowsSelection:YES];
     
+    [self.navigationItem.leftBarButtonItem setEnabled: ![self isDefaultMessageSelected] ];
     
+    [self.navigationItem.rightBarButtonItem setEnabled: YES];
+    [self.tableView setAllowsSelection:YES];
     
     self.addNewMessage = ([self getSelectedMessageIfAny]==nil);
-    //}
-    //else {
-    //    [self.navigationItem.leftBarButtonItem setEnabled:NO];
-    //    [self.navigationItem.rightBarButtonItem setEnabled: NO];
-    //    [self.tableView setAllowsSelection:NO];
-    //}
-    [self addRecordsFromDatabase];
-    [self.navigationItem.rightBarButtonItem setEnabled:YES];
-     
-}
-
--(BOOL) isDefaultMessageSelected {
-    return (selectedMessageIndex > -1 && selectedMessage!=nil && selectedMessageIndex < NUM_DEFAULT_MESSAGES);
+    
+    if(self.forceReload) {
+        [self addRecordsFromDatabase];
+    }
+    
+    
+    //[self.navigationItem.rightBarButtonItem setEnabled:YES];
+    
 }
 
 -(IBAction)deleteMessageClicked:(id)sender {
@@ -173,13 +110,22 @@
     
 }
 
+-(BOOL) isDefaultMessageSelected {
+    
+    return (selectedMessageIndex > -1 && selectedMessage!=nil && selectedMessage.isDefault.boolValue == TRUE);
+}
 //returns the selected message
--(NSString * ) getSelectedMessageIfAny {
+-(Message * ) getSelectedMessageIfAny {
+    
+    if(messagesList.count == 0) {
+        return nil;
+    }
     if(selectedMessageIndex > -1 && selectedMessage!=nil && selectedMessageIndex < messagesList.count) {
         selectedMessage = [messagesList objectAtIndex:selectedMessageIndex];
-        return selectedMessage; // [messagesList objectAtIndex:selectedMessageIndex];
+        return selectedMessage;
     }
     return nil;
+    
 }
 
 
@@ -189,40 +135,151 @@
     selectedMessageIndex = -1;
     selectedMessage = nil;
     
-    messagesList = [[ NSMutableArray alloc]initWithObjects:NSLocalizedString(@"custom_msg_christmas",@"Merry Christmas"),
-                    NSLocalizedString(@"custom_msg_birthday",@"Happy Birthday"),
-                    NSLocalizedString(@"custom_msg_whereareyou",@"Where are you?"),
-                    NSLocalizedString(@"custom_msg_whataredoing",@"What are you doing?"),
-                    NSLocalizedString(@"custom_msg_callback",@"Call back. Please"),
-                    NSLocalizedString(@"custom_msg_busy",@"Busy now. Call later please"),
-                    NSLocalizedString(@"custom_msg_meeting",@"Sorry, i have a meeting now"),
-                    NSLocalizedString(@"custom_msg_callsoon",@"Call you soon"),
-                    NSLocalizedString(@"custom_msg_noworry",@"Don´t worry. I´m fine"),
-                    NSLocalizedString(@"custom_msg_wayhome",@"On my way home now"),
-                    NSLocalizedString(@"custom_msg_arrivesoon",@"I´ll Arrive soon"),nil];
+    self.forceReload = false;
     
-    [self addRecordsFromDatabase];
-
+    UIBarButtonItem *optionsButton = [[UIBarButtonItem alloc] initWithImage: [UIImage imageNamed:@"list"] style:UIBarButtonItemStyleDone target:self action:@selector(optionsClicked:event:)];
+    
+    optionsButton.tintColor = UIColor.whiteColor;
+    
+    self.navigationItem.rightBarButtonItem = optionsButton;
+    //[addToGroupButton setEnabled:NO];
+    [optionsButton setEnabled:YES];
+    
+    if(![self checkIfAlreadyDoneMessagesMigration]) {
+        
+        [self doMessagesMigration];
+    } else {
+        messagesList = [[NSMutableArray alloc] init];
+        [self addRecordsFromDatabase];
+    }
     // Uncomment the following line to preserve selection between presentations.
     //self.clearsSelectionOnViewWillAppear = NO;
- 
+    
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
+-(BOOL) checkIfAlreadyDoneMessagesMigration {
+    
+    //do not have this saved on core data yet, save them now
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    return [defaults objectForKey:SAVED_DEFAULT_MESSAGES]!=nil;
+    
+}
+//save them on core data
+-(BOOL) doMessagesMigration {
+    
+    //load default list from localized
+    [self loadDefaultMessagesFromLocalized];
+    
+    BOOL ok = true;
+    NSManagedObjectContext *managedObjectContext = [(PCAppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
+    
+    for(Message *message in messagesList) {
+        
+        MessageDataModel *messageModel = (MessageDataModel *)[NSEntityDescription insertNewObjectForEntityForName:@"MessageDataModel" inManagedObjectContext:managedObjectContext];
+        messageModel.msg = message.msg;
+        messageModel.isDefault = @YES;
+        messageModel.creationDate = message.creationDate;
+        
+        //BOOL OK = NO;
+        NSError *error;
+        if(![managedObjectContext save:&error]){
+            NSLog(@"Unable to save object, error is: %@",error.description);
+            ok = false;
+        }
+    }
+    
+    if(ok) {
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setObject:@"true" forKey:SAVED_DEFAULT_MESSAGES];
+        return true;
+    }
+    
+    return false;
+}
+
+-(void) loadDefaultMessagesFromLocalized {
+    
+    messagesList = [[ NSMutableArray alloc] initWithCapacity:NUM_DEFAULT_MESSAGES];
+    
+    NSDate *date = [NSDate date];
+    [messagesList addObject: [[Message alloc] initWithText:NSLocalizedString(@"custom_msg_christmas",@"Merry Christmas") defaultMessage:@YES date: date]];
+    [messagesList addObject: [[Message alloc] initWithText:NSLocalizedString(@"custom_msg_birthday",@"Happy Birthday") defaultMessage:@YES date: date]];
+    [messagesList addObject: [[Message alloc] initWithText:NSLocalizedString(@"custom_msg_whereareyou",@"Where are you?") defaultMessage:@YES date: date]];
+    [messagesList addObject: [[Message alloc] initWithText:NSLocalizedString(@"custom_msg_whataredoing",@"What are you doing?") defaultMessage:@YES date: date]];
+    [messagesList addObject: [[Message alloc] initWithText:NSLocalizedString(@"custom_msg_callback",@"Call back. Please") defaultMessage:@YES date: date]];
+    [messagesList addObject: [[Message alloc] initWithText:NSLocalizedString(@"custom_msg_busy",@"Busy now. Call later please") defaultMessage:@YES date: date]];
+    [messagesList addObject: [[Message alloc] initWithText:NSLocalizedString(@"custom_msg_meeting",@"Sorry, i have a meeting now") defaultMessage:@YES date: date]];
+    [messagesList addObject: [[Message alloc] initWithText:NSLocalizedString(@"custom_msg_callsoon",@"Call you soon") defaultMessage:@YES date: date]];
+    [messagesList addObject: [[Message alloc] initWithText:NSLocalizedString(@"custom_msg_noworry",@"Don´t worry. I´m fine") defaultMessage:@YES date: date]];
+    [messagesList addObject: [[Message alloc] initWithText:NSLocalizedString(@"custom_msg_wayhome",@"On my way home now") defaultMessage:@YES date: date]];
+    [messagesList addObject: [[Message alloc] initWithText:NSLocalizedString(@"custom_msg_arrivesoon",@"I´ll Arrive soon") defaultMessage:@YES date: date]];
+    
+    /*initWithObjects:NSLocalizedString(@"custom_msg_christmas",@"Merry Christmas"),
+     NSLocalizedString(@"custom_msg_birthday",@"Happy Birthday"),
+     NSLocalizedString(@"custom_msg_whereareyou",@"Where are you?"),
+     NSLocalizedString(@"custom_msg_whataredoing",@"What are you doing?"),
+     NSLocalizedString(@"custom_msg_callback",@"Call back. Please"),
+     NSLocalizedString(@"custom_msg_busy",@"Busy now. Call later please"),
+     NSLocalizedString(@"custom_msg_meeting",@"Sorry, i have a meeting now"),
+     NSLocalizedString(@"custom_msg_callsoon",@"Call you soon"),
+     NSLocalizedString(@"custom_msg_noworry",@"Don´t worry. I´m fine"),
+     NSLocalizedString(@"custom_msg_wayhome",@"On my way home now"),
+     NSLocalizedString(@"custom_msg_arrivesoon",@"I´ll Arrive soon"),nil];*/
+    
+    [self.tableView reloadData];
+}
+
+
+//called on viewAppear
 -(void) addRecordsFromDatabase {
     
-    NSMutableArray *databaseRecords = [CoreDataUtils fetchMessageRecordsFromDatabase];
+    //NSMutableArray *databaseRecords = [CoreDataUtils fetchMessageRecordsFromDatabase];
+    
+    //make sure we load the default ones first
+    NSMutableArray *databaseRecordsUnsorted = [CoreDataUtils fetchMessageRecordsFromDatabase];
+    NSMutableArray *databaseRecords = [[NSMutableArray alloc] initWithCapacity:databaseRecordsUnsorted.count];
+    
+    //make sure the order is the creation date
+    if(databaseRecordsUnsorted.count > 0) {
+        NSSortDescriptor *sortDescriptor;
+        sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"creationDate"
+                                                     ascending:NO];
+        [databaseRecords addObjectsFromArray: [databaseRecordsUnsorted sortedArrayUsingDescriptors:@[sortDescriptor]] ];
+    }
+    
+    if(self.forceReload) {
+        [self.messagesList removeAllObjects];
+    }
     
     BOOL add = NO;
     for(MessageDataModel *model in databaseRecords) {
-        if(![messagesList containsObject:model.msg]) {
-           [messagesList addObject:model.msg];
+        
+        Message *toAdd = [[Message alloc] initWithText:model.msg defaultMessage:model.isDefault date: model.creationDate];
+        
+        if(![messagesList containsObject:toAdd]) {
+            
+            [messagesList addObject:toAdd];
+            //NSLog(@"Adding message %@ default? %d", toAdd.msg, toAdd.isDefault.boolValue);
             add = YES;
         }
         
     }
-    if(add) {
+    
+    
+    //preserve selection
+    //after updating the list i can update on main panel too
+    Message *currentSelection = [self getSelectedMessageIfAny];
+    if(currentSelection!=nil && selectedMessageIndex != -1) {
+        [self selectionFinishWithoutNavigation];
+    }
+    
+    
+    
+    //TODO check
+    if(add || self.forceReload ) {
+        self.forceReload = false;
         [self.tableView reloadData];
     }
 }
@@ -234,7 +291,7 @@
 }
 
 -(void) deleteSelectedMessage {
-    NSString *msg = [self getSelectedMessageIfAny];
+    Message *msg = [self getSelectedMessageIfAny];
     if(msg!=nil) {
         
         [messagesList removeObject:msg];
@@ -256,25 +313,35 @@
         }
     }
 }
+
+-(void) showAlertBox:(NSString *) msg {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"EasyMessage"
+                                                    message:msg
+                                                   delegate:self
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+}
+
 -(void) createNewMessage {
     
     if(self.messagesList.count > 15 &&  ![[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
         [self showAlertBox:NSLocalizedString(@"lite_only_5_contacts_template_messages", nil)];
     }
     else {
-        //NSLocalizedString(@"message_label",@"message_label")
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"compose",@"compose") message:@"" delegate:self cancelButtonTitle:NSLocalizedString(@"cancel",@"cancel") otherButtonTitles:NSLocalizedString(@"save",@"save"),nil];
         alert.alertViewStyle = UIAlertViewStylePlainTextInput;
         
         [alert show];
     }
-   
+    
 }
 //the delegate for the new Group
+//TODO create message on new popup view
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     
     if(buttonIndex==1) { //0 - cancel, 1 - save
-      
+        
         //delete message
         if(alertView.tag == 999) {
             [self deleteSelectedMessage];
@@ -282,7 +349,7 @@
         }
         //else save message on database!
         NSString *message = [alertView textFieldAtIndex:0].text;
-        NSLog(@"message is %@",message);
+        //NSLog(@"message is %@",message);
         if(message.length==0) {
             UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"EasyMessage" message:NSLocalizedString(@"alert_message_body_empty",@"alert_message_body_empty") delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alert show];
@@ -291,18 +358,21 @@
             //check if exists already
             BOOL exists = false;
             //NSLog(@"checking if exists");
-            for(NSString *msg in messagesList) {
-                //NSLog(@"model msg: %@",msg);
-                if([msg isEqualToString:message]) {
+            
+            Message *toAdd = [[Message alloc] initWithText:message defaultMessage:@NO date: [NSDate date] ];
+            for(Message *msg in messagesList) {
+                NSLog(@"model msg: %@",msg);
+                if([msg isEqual:toAdd]) {
                     exists = true;
                 }
                 
             }
             if(!exists) {
-                //NSLog(@"not exists adding: %@",message);
+                NSLog(@"not exists adding: %@",message);
                 NSManagedObjectContext *managedObjectContext = [(PCAppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
                 MessageDataModel *messageModel = (MessageDataModel *)[NSEntityDescription insertNewObjectForEntityForName:@"MessageDataModel" inManagedObjectContext:managedObjectContext];
                 messageModel.msg = message;
+                messageModel.isDefault = @NO;
                 
                 //BOOL OK = NO;
                 NSError *error;
@@ -311,7 +381,7 @@
                 }
                 else {
                     //add to list and reload table
-                    [messagesList addObject:message];
+                    [messagesList addObject:toAdd];
                     [self.tableView reloadData];
                     //show a success toast
                     [[[[iToast makeText:NSLocalizedString(@"added", @"added")]
@@ -343,7 +413,6 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-#warning Incomplete method implementation.
     // Return the number of rows in the section.
     return messagesList.count;
 }
@@ -362,8 +431,9 @@
     // Configure the cell...
     if(row < messagesList.count) {
         
+        Message *msg = (Message *)[messagesList objectAtIndex:row];
         //paranoid check
-        cell.textLabel.text = [messagesList objectAtIndex:row];
+        cell.textLabel.text = msg.msg;
         cell.detailTextLabel.text = [NSString stringWithFormat:@"%ld",(long)row];
         
         if(row == selectedMessageIndex) {
@@ -392,39 +462,30 @@
         [self clearRootMessageText];
         //Nothing selected
         
-        [self.navigationItem.rightBarButtonItem setEnabled:YES];//no save
-        [self.navigationItem.rightBarButtonItem setTitle:NSLocalizedString(@"add",@"add") ];//no save
         self.addNewMessage = YES;
-        [self.navigationItem.leftBarButtonItem setEnabled:NO];//no delete
+        
+        //[self.navigationItem.leftBarButtonItem setEnabled:NO];//no delete
         //NOTE if the item is not purchased selection is not even possible
     }
     else {
         selectedMessageIndex = row;
         selectedMessage = [messagesList objectAtIndex:selectedMessageIndex];
-        [self.navigationItem.rightBarButtonItem setEnabled:YES];//can save
+        //[self.navigationItem.rightBarButtonItem setEnabled:YES];//can save
         self.addNewMessage = NO;
-        [self.navigationItem.rightBarButtonItem setTitle:NSLocalizedString(@"done_button", @"done_button")];//can save
         
-        [self.navigationItem.leftBarButtonItem setEnabled:YES];//can delete
-        
-        if(selectedMessageIndex <= 10) {
-           [self.navigationItem.leftBarButtonItem setEnabled:NO];//no delete of built in
-        }
-        else {
-            [self.navigationItem.leftBarButtonItem setEnabled:YES];//no delete
-        }
         //write the message on the main screen without apply
         [self selectionFinishWithoutNavigation];
     }
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if(self.addNewMessage){
-            [self.navigationItem.rightBarButtonItem setTitle:NSLocalizedString(@"add", @"add")];
-        }
-        else{
-            [self.navigationItem.rightBarButtonItem setTitle:NSLocalizedString(@"done_button", @"done_button")];
-        }
-    });
+    /*
+     dispatch_async(dispatch_get_main_queue(), ^{
+     if(self.addNewMessage){
+     [self.navigationItem.rightBarButtonItem setTitle:NSLocalizedString(@"add", @"add")];
+     }
+     else{
+     [self.navigationItem.rightBarButtonItem setTitle:NSLocalizedString(@"done_button", @"done_button")];
+     }
+     });*/
     
     
     [self.tableView reloadData];
@@ -445,10 +506,10 @@
 }
 
 - (NSString *) tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
-    if(section==0 && selectedMessageIndex!=-1) {
+    if(section==0 && selectedMessageIndex!=-1 &&  selectedMessageIndex < messagesList.count) {
         
-        return [NSString stringWithFormat: @"%@ '%@'",NSLocalizedString(@"selected_message",@"Selected message"),
-                [messagesList objectAtIndex:selectedMessageIndex]];
+        Message *msg = (Message *)[messagesList objectAtIndex:selectedMessageIndex];
+        return [NSString stringWithFormat: @"%@ '%@'",NSLocalizedString(@"selected_message",@"Selected message"), msg.msg];
     }
     return @"";
 }
@@ -462,7 +523,7 @@
     }
     else {
         if(selectedMessageIndex!=-1 && selectedMessage!=nil) {
-            self.rootViewController.body.text = selectedMessage;
+            self.rootViewController.body.text = selectedMessage.msg;
         }
         
         [self.tabBarController setSelectedIndex:0];
@@ -479,8 +540,118 @@
 
 -(void) selectionFinishWithoutNavigation{
     if(selectedMessageIndex!=-1 && selectedMessage!=nil) {
-       self.rootViewController.body.text = selectedMessage;
+        self.rootViewController.body.text = selectedMessage.msg;
+    }
+}
+
+- (void)optionsClicked:(id)sender event:(UIEvent *)event{
+    [self showMenu:sender withEvent: event];
+}
+
+-(void) editSelectedMessage {
+    
+    
+    CustomMessagesDetailController *detailViewController = [[CustomMessagesDetailController alloc] initWithNibName:@"CustomMessagesDetailController" bundle:nil previousController:self message: self.selectedMessage];
+    
+    //search and set the model
+    NSMutableArray *databaseRecords = [CoreDataUtils fetchMessageRecordsFromDatabase];
+    
+    for(MessageDataModel *model in databaseRecords) {
+        NSLog(@"COMPARE MODEL msg: %@ selected msg: %@, model isDefault? %d selected isDefault? %d", model.msg, selectedMessage.msg, model.isDefault.boolValue, selectedMessage.isDefault.boolValue );
+        if([model.msg isEqualToString:self.selectedMessage.msg] && (model.isDefault.boolValue == self.selectedMessage.isDefault.boolValue) ) {
+            detailViewController.model = model;
+            break;
+        }
+    }
+    
+    self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
+    // Pass the selected object to the new view controller.
+    [self.navigationController pushViewController:detailViewController animated:YES];
+}
+
+
+- (void) showMenu:(id)sender withEvent: (UIEvent *)event
+{
+    
+    FTPopOverMenuConfiguration *configuration = [FTPopOverMenuConfiguration defaultConfiguration];
+    configuration.textColor = [UIColor blackColor];
+    configuration.backgroundColor = [UIColor whiteColor];
+    configuration.menuWidth = 200;
+    
+    PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
+    configuration.separatorColor = [delegate colorFromHex:0xfb922b];
+    
+    Message *selected = [self getSelectedMessageIfAny];
+    //has selection
+    if(selected!=nil) {
+        
+        if( [self isDefaultMessageSelected]) {
+            //OPTIONS:
+            // Edit
+            // Add
+            [FTPopOverMenu showFromEvent:event withMenuArray:@[NSLocalizedString(@"edit", nil), NSLocalizedString(@"add",@"add")]
+                              imageArray:@[@"edit40", @"add"]
+                           configuration:configuration
+                               doneBlock:^(NSInteger selectedIndex) {
+                                   NSLog(@"selected %ld", (long)selectedIndex);
+                                   if(selectedIndex == 0) {
+                                       //todo edit
+                                       [self editSelectedMessage];
+                                       
+                                   } else {
+                                       //add
+                                       [self createNewMessage];
+                                       //no delete
+                                   }
+                                   
+                               } dismissBlock:^{
+                                   
+                               }];
+        } else {
+            //OPTIONS:
+            // Edit
+            // Delete
+            // Add
+            //mageArray:@[@"edit40",@"delete"]
+            [FTPopOverMenu showFromEvent:event withMenuArray:@[NSLocalizedString(@"edit", nil),NSLocalizedString(@"delete", nil), NSLocalizedString(@"add",@"add")]
+                              imageArray:@[@"edit40",@"delete",@"add"]
+                           configuration:configuration
+                               doneBlock:^(NSInteger selectedIndex) {
+                                   NSLog(@"selected %ld", (long)selectedIndex);
+                                   if(selectedIndex == 0) {
+                                       //todo edit
+                                       [self editSelectedMessage];
+                                   } else if(selectedIndex == 1) {
+                                       //delete
+                                       [self deleteMessageClicked:nil];
+                                   }
+                                   else {
+                                       [self createNewMessage];
+                                   }
+                               } dismissBlock:^{
+                                   
+                               }];
+        }
+        
+        
+    } else {
+        
+        //no selection
+        //OPTIONS:
+        //Add
+        [FTPopOverMenu showFromEvent:event withMenuArray:@[NSLocalizedString(@"add",@"add")]
+                          imageArray:@[@"add"]
+                       configuration:configuration
+                           doneBlock:^(NSInteger selectedIndex) {
+                               NSLog(@"selected %ld", (long)selectedIndex);
+                               if(selectedIndex == 0) {
+                                   [self createNewMessage];
+                               }
+                           } dismissBlock:^{
+                               
+                           }];
     }
 }
 
 @end
+

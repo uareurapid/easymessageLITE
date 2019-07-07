@@ -2207,12 +2207,18 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
     
     NSManagedObjectContext *managedObjectContext = [(PCAppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
-  
+    
     
     NSString *msg = body.text;
     //get all the records and see if we have already this one
+    //MessageDataModel
     NSMutableArray *allRecords = [CoreDataUtils fetchMessageRecordsFromDatabase];
-    [allRecords addObjectsFromArray:customMessagesController.messagesList];
+    
+    //Message
+    NSMutableArray *fromList = [[NSMutableArray alloc] init];
+    [fromList addObjectsFromArray:customMessagesController.messagesList];
+    
+    //TODO this should be more efficient but anyway
     
     BOOL exists = NO;
     for(MessageDataModel *model in allRecords) {
@@ -2221,14 +2227,30 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             break;
         }
     }
+    //only check the other one if not exists
+    if(!exists) {
+        //now the other one
+        for(Message *message in fromList) {
+            if([message.msg isEqualToString:msg]) {
+                exists=YES;
+                break;
+            }
+        }
+    }
+    
+    
     if(!exists) {
         MessageDataModel *message = (MessageDataModel *)[NSEntityDescription insertNewObjectForEntityForName:@"MessageDataModel" inManagedObjectContext:managedObjectContext];
         message.msg = body.text;
-
+        message.isDefault = @NO;
+        message.creationDate = [NSDate date];
+        
         //BOOL OK = NO;
         NSError *error;
         if(![managedObjectContext save:&error]){
             NSLog(@"Unable to save object, error is: %@",error.description);
+        } else {
+            [customMessagesController addRecordsFromDatabase];
         }
     }
     
@@ -2237,7 +2259,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     //    [[[[iToast makeText:NSLocalizedString(@"group_created",@"group_created")]
     //       setGravity:iToastGravityBottom] setDuration:2000] show];
     //}
-   
+    
     
 }
 

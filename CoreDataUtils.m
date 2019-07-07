@@ -330,7 +330,7 @@
 }
 
 //delete message
-+(BOOL) deleteMessageDataModelByMsg: (NSString *) msg {
++(BOOL) deleteMessageDataModelByMsg: (Message *) msg {
     
     BOOL deleted = NO;
     @try {
@@ -343,7 +343,7 @@
         NSFetchRequest *request = [[NSFetchRequest alloc] init];
         [request setEntity:entity];
         
-        NSPredicate *predicateID = [NSPredicate predicateWithFormat:@"msg == %@",msg];
+        NSPredicate *predicateID = [NSPredicate predicateWithFormat:@"msg == %@",msg.msg];
         [request setPredicate:predicateID];
         
         NSError *error;
