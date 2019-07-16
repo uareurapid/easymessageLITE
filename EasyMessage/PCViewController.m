@@ -1741,28 +1741,60 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
     if(toRecipents.count>0) {
         
-        MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
-        mc.mailComposeDelegate = self;
-        [mc setSubject:emailTitle];
-        [mc setMessageBody:messageBody isHTML:NO];
-        [mc setBccRecipients:toRecipents];
-        
-        //Get all the image info
-        if(self.attachments.count > 0) {
+        //avoid crash, cannot send email
+        if (![MFMailComposeViewController canSendMail]) {
+            NSLog(@"Mail services are not available.");
             
-            for(int i = 0; i < self.attachments.count; i++) {
-                //"image/jpeg" png
-                NSArray *data = [self.attachments objectAtIndex:i];
-                UIImage *img = [data objectAtIndex:0]; //[self.attachments objectAtIndex:i];
-                self.imageName = [data objectAtIndex:1];
-                NSData *imageData =  [self getImageInfoData: img];
-                BOOL isPNG = [self isImagePNG];
-                NSString *name = [NSString stringWithFormat:@"pic_%d.%@",i,isPNG ? @"png" : @"jpg"];
-                [mc addAttachmentData:imageData mimeType: isPNG ? @"image/png" : @"image/jpeg" fileName:name];//imageName
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"easymessage_send_email_title", @"EasyMessage: Send Email")
+                                                            message:NSLocalizedString(@"no_email_device_settings",nil)
+                                                           delegate:self
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil];
+            
+            [alert show];
+            
+            //i do have recipients for the email but i cannot send it due to settings
+            if(settingsController.selectSendOption != OPTION_ALWAYS_SEND_BOTH_ID) {
+                
+                if(sendToFacebook || sendToTwitter || sendToLinkedin) {
+                    
+                    [self sendToSocialNetworks: body.text];
+                }
+                //TODO message saying that will port to social media only??
+                
+            } else {
+                //send both is selected and i did not sent any email due to settings
+                [self sendSMS:nil];
             }
+            
+            
+        } else {
+            //send the email normally
+            MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
+            mc.mailComposeDelegate = self;
+            [mc setSubject:emailTitle];
+            [mc setMessageBody:messageBody isHTML:NO];
+            [mc setBccRecipients:toRecipents];
+            
+            //Get all the image info
+            if(self.attachments.count > 0) {
+                
+                for(int i = 0; i < self.attachments.count; i++) {
+                    //"image/jpeg" png
+                    NSArray *data = [self.attachments objectAtIndex:i];
+                    UIImage *img = [data objectAtIndex:0]; //[self.attachments objectAtIndex:i];
+                    self.imageName = [data objectAtIndex:1];
+                    NSData *imageData =  [self getImageInfoData: img];
+                    BOOL isPNG = [self isImagePNG];
+                    NSString *name = [NSString stringWithFormat:@"pic_%d.%@",i,isPNG ? @"png" : @"jpg"];
+                    [mc addAttachmentData:imageData mimeType: isPNG ? @"image/png" : @"image/jpeg" fileName:name];//imageName
+                }
+            }
+            // Present mail view controller on screen
+            [self presentViewController:mc animated:YES completion:NULL];
         }
-        // Present mail view controller on screen
-        [self presentViewController:mc animated:YES completion:NULL];
+        
+        
         
     } else {
         //no recipients for the email

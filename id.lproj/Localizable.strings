@@ -58,6 +58,7 @@
 "easymessage_send_email_title" = "Easy Message: Mengirim email";
 "easymessage_send_sms_title" = "Easy Message: Kirim SMS";
 "no_sms_device_settings" = "Tidak mungkin mengirim SMS, harap periksa pengaturan perangkat Anda!";
+"no_email_device_settings" = "Tidak mungkin mengirim email, silakan periksa pengaturan perangkat Anda!";
 "address_book_changed_msg" = "Buku alamat Anda telah berubah! Menyegarkan data ...";
 "facebook_post_ok" = "Posting ke Facebook Berhasil";
 "twitter_post_ok" = "Posting ke Twitter Berhasil";

@@ -51,6 +51,7 @@
 "easymessage_send_email_title" = "EasyMessage：发送电子邮件";
 "easymessage_send_sms_title" = "EasyMessage：发送短信";
 "no_sms_device_settings" = "这是不可能的，发送短信，请检查您的设备设置！";
+"no_email_device_settings" = "无法发送电子邮件，请检查您的设备设置！";
 "address_book_changed_msg" = "你的地址簿中已经改变了！刷新数据...";
 "facebook_post_ok" = "发布到Facebook成功";
 "twitter_post_ok" = "发布到Twitter成功";

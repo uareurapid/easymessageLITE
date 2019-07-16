@@ -56,6 +56,7 @@
 "easymessage_send_email_title" = "EasyMessage: Enviar email";
 "easymessage_send_sms_title" = "EasyMessage: Enviar SMS";
 "no_sms_device_settings" = "Não é possível enviar SMS, por favor verifique as definições do aparelho!";
+"no_email_device_settings" = "Não é possível enviar o Email, por favor verifique as definições do aparelho!";
 "address_book_changed_msg" = "A sua lista de contactos sofreu alterações! A actualizar...";
 "facebook_post_ok" = "Mensagem enviada para o Facebook";
 "twitter_post_ok" = "Mensagem enviada para o Twitter";
@@ -108,7 +109,7 @@
 //"contact_phone" = "Phone"
 "contact_email" = "Email";
 "contact_last_name" = "Apelido";
-"contact_fields_required" = "Nome e telfone e ou email são obrigatórios!";
+"contact_fields_required" = "Nome e telefone e ou email são obrigatórios!";
 "invalid_email" = "Email inválido!";
 "attach_image" = "Adicionar uma imagem?";
 "app_name" = "EasyMessage";

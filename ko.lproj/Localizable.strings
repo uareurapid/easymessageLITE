@@ -55,6 +55,7 @@
 "easymessage_send_email_title" = "EasyMessage : 이메일 보내기";
 "easymessage_send_sms_title" = "EasyMessage : 보내기 SMS";
 "no_sms_device_settings" = "그것은 SMS를 보낼 수 없습니다, 장치 설정을 확인하십시오!";
+"no_email_device_settings" = "전자 메일을 보낼 수 없습니다. 장치 설정을 확인하십시오!";
 "address_book_changed_msg" = "주소록이 변경되었습니다! 데이터 새로 고침 ...";
 "facebook_post_ok" = "페이스 북 사점에 게시";
 "twitter_post_ok" = "트위터 사점에 게시";

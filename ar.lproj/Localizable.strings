@@ -54,6 +54,7 @@
 "easymessage_send_email_title" = "EasyMessage: إرسال بريد إلكتروني";
 "easymessage_send_sms_title" = "EasyMessage: إرسال الرسائل القصيرة";
 "no_sms_device_settings" = "انها ليست ممكنة لإرسال SMS، الرجاء التحقق من إعدادات جهازك!";
+"no_email_device_settings" = "ليس من الممكن إرسال البريد الإلكتروني ، يرجى التحقق من إعدادات جهازك!";
 "address_book_changed_msg" = "دفتر العناوين الخاص بك قد تغير! تحديث البيانات ...";
 "facebook_post_ok" = "أضف إلى الفيسبوك سوسسفول";
 "twitter_post_ok" = "أضف إلى تويتر سوسسفول";

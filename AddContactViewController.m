@@ -22,7 +22,7 @@
 
 @implementation AddContactViewController
 
-@synthesize editMode, contact, contactModel;
+@synthesize editMode, contact, contactModel, scrollView;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -49,6 +49,11 @@
     [self.labelPhone setText: [NSString stringWithFormat:@"%@:",NSLocalizedString(@"phone_label",@"phone_label")] ];
     [self.labelName setText: [NSString stringWithFormat:@"%@:(*)",NSLocalizedString(@"contact_name",@"contact_name")] ];
     [self.labelLastname setText: [NSString stringWithFormat:@"%@:",NSLocalizedString(@"contact_last_name",@"contact_last_name")] ];
+    
+    [scrollView flashScrollIndicators];
+    [scrollView setContentSize: CGSizeMake(0, self.view.frame.size.height)];
+    [self.scrollView setContentOffset: CGPointMake(0, self.scrollView.contentOffset.y)];
+    self.scrollView.directionalLockEnabled = YES;
     
 }
 - (void)viewWillAppear:(BOOL)animated {

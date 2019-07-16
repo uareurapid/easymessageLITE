@@ -719,16 +719,30 @@
     NSMutableArray *toRecipents = [[NSMutableArray alloc] initWithObjects:@"info@pcdreams-software.com", nil];
     
     
-    
     if(toRecipents.count>0) {
         
-        MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
-        mc.mailComposeDelegate = self;
-        [mc setSubject:emailTitle];
-        [mc setMessageBody:messageBody isHTML:NO];
-        [mc setToRecipients:toRecipents];
-        // Present mail view controller on screen
-        [self presentViewController:mc animated:YES completion:NULL];
+        //avoid crash, cannot send email
+        if (![MFMailComposeViewController canSendMail]) {
+            NSLog(@"Mail services are not available.");
+            
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"easymessage_send_email_title", @"EasyMessage: Send Email")
+                                                            message:NSLocalizedString(@"no_email_device_settings",nil)
+                                                           delegate:self
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil];
+            [alert show];
+            
+        } else {
+            MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
+            mc.mailComposeDelegate = self;
+            [mc setSubject:emailTitle];
+            [mc setMessageBody:messageBody isHTML:NO];
+            [mc setToRecipients:toRecipents];
+            // Present mail view controller on screen
+            [self presentViewController:mc animated:YES completion:NULL];
+            
+        }
+        
     }
 }
 

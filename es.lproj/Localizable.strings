@@ -51,6 +51,7 @@
 "easymessage_send_email_title" = "EasyMessage: Enviar correo electrónico";
 "easymessage_send_sms_title" = "EasyMessage: Enviar SMS";
 "no_sms_device_settings" = "No es posible enviar el SMS, verifica la configuración del dispositivo, por favor!";
+"no_email_device_settings" = "No es posible enviar el Email, verifica la configuración del dispositivo, por favor!";
 "address_book_changed_msg" = "Su libreta de direcciones ha cambiado! Actualizando datos ...";
 "facebook_post_ok" = "Mensaje enviado a Facebook";
 "twitter_post_ok" = "Mensaje enviado a Twitter";

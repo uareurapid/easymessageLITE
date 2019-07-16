@@ -20,6 +20,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *btnCancel;
 @property (weak, nonatomic) IBOutlet UILabel *labelLastname;
 @property (weak, nonatomic) IBOutlet UILabel *labelName;
+@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+
 - (IBAction)btnCancelClicked:(id)sender;
 - (IBAction)btnCreateContactClicked:(id)sender;
 -(void) updateExistingContact;
