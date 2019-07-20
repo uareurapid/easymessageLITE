@@ -22,6 +22,8 @@
 
 @interface PCAppDelegate : UIResponder <UIApplicationDelegate, UNUserNotificationCenterDelegate>
 
+-(void) scheduleNotification: (NSString *) type nameOfContact: name month: (NSInteger) month day: (NSInteger) day fireDelayInSeconds: (NSTimeInterval) delay;
+
 @property (strong, nonatomic) UIWindow *window;
 
 @property (strong, nonatomic) PCViewController *viewController;

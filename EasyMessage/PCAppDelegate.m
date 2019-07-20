@@ -215,6 +215,71 @@
     }
 }
 
+//duplicated in PCViewController
+-(void) scheduleNotification: (NSString *) type nameOfContact: name month: (NSInteger) month day: (NSInteger) day fireDelayInSeconds: (NSTimeInterval) delay{
+    //Get all previous notifications..
+    //NSLog(@"scheduled notifications: %@", [[UIApplication sharedApplication] scheduledLocalNotifications]);
+    
+    NSArray *notifications = [[UIApplication sharedApplication] scheduledLocalNotifications];
+    
+    NSString *possibleAlarmId = [NSString stringWithFormat: @"%@", [NSString stringWithFormat:@"%@%ld%ld",name,(long)day,(long)month]];
+    for(UILocalNotification *notification in notifications ) {
+        
+        
+        NSString *alarmID = [notification.userInfo valueForKey:@"alarmID"];
+        if(alarmID !=nil && [alarmID isEqualToString: possibleAlarmId]) {
+            NSLog(@"already scheduled this notification: %@ ,skip it...", alarmID);
+            return;
+        }
+    }
+    //otherwise continue
+    
+    NSDate *fireDate = [NSDate date];
+    fireDate = [fireDate dateByAddingTimeInterval: delay]; //60 seconds or 24 hours
+    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    
+    [calendar setTimeZone:[NSTimeZone localTimeZone]];
+    NSDateComponents *components = [calendar components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit|NSHourCalendarUnit|NSMinuteCalendarUnit|NSSecondCalendarUnit|NSTimeZoneCalendarUnit fromDate: fireDate];
+    
+    
+    NSDate *SetAlarmAt = [calendar dateFromComponents:components];
+    
+    
+    UILocalNotification *localNotification = [[UILocalNotification alloc] init];
+    
+    localNotification.fireDate = SetAlarmAt;
+    
+    //if more than one we do not add the name, but if only 1 then it is more personalized msg!!!
+    //TODO translate this str
+    
+    if([type isEqualToString:@"birthday"]) {
+        
+        NSLog(@"birthday notification fire date: %@ ",[SetAlarmAt description]);
+        
+        //aniversary_of
+        NSString *message = [NSString stringWithFormat: NSLocalizedString(@"aniversary_of", @"aniversary_of"), name];
+        localNotification.alertBody = message;// [NSString stringWithFormat:@"Its the Aniversary of %@", name];
+        
+        localNotification.alertAction = [NSString stringWithFormat:@"My test for Weekly alarm"];
+        
+        //add to user defaults to avoid schedule it again
+        NSString *alarmID = [NSString stringWithFormat: @"%@", [NSString stringWithFormat:@"%@%ld%ld",name,(long)day,(long)month]];
+        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+        [userDefaults setValue:alarmID forKey:@"alarmID"];
+        
+        localNotification.userInfo = @{
+                                       @"alarmID":alarmID,//,
+                                       @"Type":type,
+                                       @"day" : [NSString stringWithFormat:@"%ld", (long)day ],
+                                       @"month" : [NSString stringWithFormat:@"%ld", (long)month ],
+                                       @"name" : name
+                                       };
+        localNotification.repeatInterval=0; //[NSCalendar currentCalendar];
+    }//else do other cases on other releases
+    
+    [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
+}
+
 /**
  TO add a facebook login button
  // Add this to the header of your file, e.g. in ViewController.m

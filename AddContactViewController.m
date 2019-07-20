@@ -178,6 +178,13 @@
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         [defaults setBool:true forKey:@"force_import"];
         
+        //the date picker is enabled?
+        if(self.datePicker.enabled) {
+            PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
+            NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:birthday];
+            //always set this, not just if is tomorrow or the next day
+            [delegate scheduleNotification: @"birthday" nameOfContact: contact.name month: components.month day: components.day fireDelayInSeconds:60];
+        }
         
         [self dismissViewControllerAnimated:YES completion:nil];
         
@@ -269,6 +276,13 @@
                     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
                     [defaults setBool:true forKey:@"force_import"];
                     
+                    //the date picker is enabled?
+                    if(self.datePicker.enabled) {
+                        PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
+                        NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:birthday];
+                        //always set this, not just if is tomorrow or the next day
+                        [delegate scheduleNotification: @"birthday" nameOfContact: contact.name month: components.month day: components.day fireDelayInSeconds:60];
+                    }
                     
                     [self dismissViewControllerAnimated:YES completion:nil];
                     
