@@ -10,7 +10,7 @@
 
 @implementation Group
 
-@synthesize contactsList;
+@synthesize contactsList,isNative;
 
 -(id) init {
     self = [super init];
@@ -53,5 +53,8 @@
     return NO;
 }
 
+-(BOOL)isNativeGroup {
+    return self.isNative;
+}
 
 @end

@@ -149,3 +149,4 @@
 "update_contact" = "연락처 편집";
 "no_recipients" = "어떤 수신자가 없습니다";
 "upgrade_now" = "지금 업그레이드 하시겠습니까?";
+"native_groups_support" = "iCloud 그룹에 연락처 추가는 지원되지 않습니다.";

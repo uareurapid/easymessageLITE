@@ -1193,6 +1193,12 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                 
                 [self loadContactsFromCoreDataOnly];
                 
+                //load native groups, from icloud
+                NSMutableArray *groupsFromICloud = [self loadGroups:addressBook];
+                if(groupsFromICloud!=nil && groupsFromICloud.count > 0) {
+                    [recipientsController.contactsList addObjectsFromArray:groupsFromICloud];
+                }
+                
                 //load also the groups
                 NSMutableArray *groupsFromDB = [self fetchGroupRecords];
                 [recipientsController.contactsList addObjectsFromArray:groupsFromDB];
@@ -1245,6 +1251,12 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         NSLog(@"Skipped %ld duplicated contacts",(long)duplicates);
         
         [self loadContactsFromCoreDataOnly];
+        
+        //load native groups, from icloud
+        NSMutableArray *groupsFromICloud = [self loadGroups:addressBook];
+        if(groupsFromICloud!=nil && groupsFromICloud.count > 0) {
+            [recipientsController.contactsList addObjectsFromArray:groupsFromICloud];
+        }
         
         //load also the groups
         NSMutableArray *groupsFromDB = [self fetchGroupRecords];
@@ -1310,6 +1322,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         
         Group *group = [[Group alloc] init];
         group.name = model.name;
+        group.isNative = false;
         
         for(ContactDataModel *contact in model.contacts) {
             
@@ -1465,38 +1478,82 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         ABRecordRef groupItem = CFArrayGetValueAtIndex(groups, idx);
         
         NSString *groupName = (__bridge_transfer NSString*)ABRecordCopyCompositeName(groupItem);
-        NSLog(@"Loaded group named %@",groupName);
+        //NSLog(@"Loaded icloud group named %@",groupName);
         
         //create the group object
         Group *group = [[Group alloc] init];
-        group.email=@"mail@mail.com";
+        group.email=@"";
         group.name = groupName;
         group.lastName = groupName;
         group.person = nil;
         
+        group.isNative = true;
+        
+        //always add
+        if(![groupsArray containsObject:group]) {
+            [groupsArray addObject:group];
+        }
         
         CFArrayRef members = ABGroupCopyArrayOfAllMembers(groupItem);
         if(members) {
             NSUInteger count = CFArrayGetCount(members);
             
-            //if(count>0) {
-                //only add if has contacts
-                //add the group to the array
-                [groupsArray addObject:group];
-            //}
-            
             for(NSUInteger idx=0; idx<count; ++idx) {
+                
+                //create the contact
+                Contact *c = [[Contact alloc] init];
+                
                 ABRecordRef person = CFArrayGetValueAtIndex(members, idx);
-                NSString *name = (__bridge NSString*)ABRecordCopyCompositeName(person);
-                NSLog(@"group person: %@",name);
-                // your code
-            }
+                //get the name
+                NSString *name = (__bridge NSString*)ABRecordCopyValue(person, kABPersonFirstNameProperty);
+                //no name? get the composite one
+                if(name == nil) {
+                    name = (__bridge NSString*)ABRecordCopyCompositeName(person);
+                }
+                NSString *lastName =  (__bridge NSString*)ABRecordCopyValue(person, kABPersonLastNameProperty);
+                
+                if(name!=nil) {
+                    c.name = name;
+                }
+                if(lastName!=nil) {
+                    c.lastName = lastName;
+                }
+                
+                //load phone and email
+                NSString *phone;
+                ABMultiValueRef phoneMulti = ABRecordCopyValue(person, kABPersonPhoneProperty);
+                int countPhones = ABMultiValueGetCount(phoneMulti);
+                if(countPhones>0) {
+                    phone = [self getPreferredPhone: phoneMulti forLabel:kABPersonPhoneMobileLabel count: countPhones];
+                    if(phone!=nil) {
+                        c.phone = phone;
+                    }
+                }
+                //get email
+                NSString *email;
+                ABMultiValueRef multi = ABRecordCopyValue(person, kABPersonEmailProperty);
+                int count = ABMultiValueGetCount(multi);
+                //do we have more than 1?
+                if(count > 0) {
+                    email = [self getPreferredEmail: multi forLabel:kABHomeLabel count: count];
+                    if(email!=nil) {
+                        c.email = email;
+                    }
+                }
+                
+                //check for blanks (only phone number for instance, no name
+                if(c.name == nil || [[c.name stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] == 0) {
+                    c.name = (phone!= nil ? phone : email);
+                }
+                
+                //NSLog(@"added person  %@ to the icloud group %@",name, groupName);
+                [group.contactsList addObject:c];
+                
+            }// end for
             CFRelease(members);
-        }
-        else {
-            NSLog(@"No members in this group");
-        }
-    }
+        }// end if members
+        
+    }//end for
     
     return groupsArray;
 }
@@ -1620,11 +1677,6 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             }
             
             
-            //ABMultiValueRef nameMulti = ABRecordCopyValue(person, kABPersonCompositeNameFormatLastNameFirst);
-            //NSString *name = (__bridge NSString*)ABRecordCopyCompositeName(person);
-            //NSString *lastName =  (__bridge NSString*)ABRecordCopyValue(person, kABPersonLastNameProperty);
-            
-            
             //i must have some sort of contact info
             if(phone!=nil || email!=nil) {
                 
@@ -1633,6 +1685,11 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                 }
                 if(lastName!=nil) {
                     contact.lastName = lastName;
+                }
+                
+                //check for blanks (only phone number for instance, no name
+                if(contact.name == nil || [[contact.name stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] == 0) {
+                    contact.name = (phone!= nil ? phone : email);
                 }
                 
                 //try to get the photo if available

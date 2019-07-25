@@ -28,15 +28,16 @@
 -(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil contacts: (NSMutableArray *) contacts
    selectedOnes: (NSMutableArray *) selectedRecipients rootViewController: (PCViewController*) viewController;
 -(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil rootViewController: (PCViewController*) viewController;
--(void) addContactToGroup: (NSString *) groupName contact: (Contact *) contact;
+-(void) addContactToGroup: (NSString *) groupName contact: (Contact *) contact isSingleInsert: (BOOL) single;
 -(void) removeContactFromGroup: (NSString *) groupName contact: (Contact *) contact;
 @property (strong,nonatomic) AddContactViewController *addNewContactController;
 -(BOOL) isContactModel: (ContactDataModel *) model sameAsContact: (Contact *)contact;
 -(UIImage*) drawText:(NSString*) text inImage:(UIImage*) image atPoint:(CGPoint) point;
 -(NSString *) getInitialsFromContact: (NSString *) firstString andLastString: (NSString *) lastString;
 -(void) createFilteredList: (NSString *) filterOption;
+-(BOOL) onlyHasNativeiCloudGroups;
 -(IBAction)refreshPhonebook:(id)sender;
-
+-(void) addMultipleContactsToGroup: (NSString *) groupName;
 -(void) deleteGroup:(Group *)group;
 -(void) deleteContact:(Contact *)contact;
 

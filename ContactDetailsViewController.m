@@ -12,14 +12,12 @@
 #import "PCAppDelegate.h"
 #import "AddContactViewController.h"
 @interface ContactDetailsViewController ()
-{
- Contact *contact;
-}
+
 @end
 
 @implementation ContactDetailsViewController
 
-@synthesize contactModel;
+@synthesize contactModel, contact;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -82,7 +80,10 @@
 }
 
 -(BOOL) isNativeContact {
-    return (contactModel!= nil && [contactModel isKindOfClass:CNMutableContact.class] ) || (contact!=nil && [contact isNativeContact ]);
+    if( (contact!=nil && [contact isNativeContact ] ) || ( contactModel!= nil && [contactModel isKindOfClass:CNMutableContact.class] ) ) {
+        return true;
+    }
+    return false;
 }
 
 - (void)optionsClicked:(id)sender event:(UIEvent *)event{
@@ -133,8 +134,13 @@
     
     if([self isNativeContact]) {
         
-        CNContactViewController *controller = [CNContactViewController viewControllerForContact:(CNMutableContact *) self.contactModel];
-        [controller setAllowsEditing:true];
+        CNMutableContact* contact = (CNMutableContact *) self.contactModel;
+        
+        //avoid show empty contact
+        CNContactViewController *controller = [CNContactViewController viewControllerForContact:contact];
+        controller.allowsEditing = true;
+        controller.allowsActions = true;
+        //controller.displayedPropertyKeys = keysToFetch;
         
         controller.delegate = self;
         
