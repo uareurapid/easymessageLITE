@@ -9,10 +9,12 @@
 #import <UIKit/UIKit.h>
 #import "Contact.h"
 #import <ContactsUI/ContactsUI.h>
+#import <MessageUI/MessageUI.h>
+#import "Popup.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ContactDetailsViewController : UITableViewController <CNContactViewControllerDelegate>
+@interface ContactDetailsViewController : UITableViewController <CNContactViewControllerDelegate, MFMailComposeViewControllerDelegate, PopupDelegate>
 
 @property (strong, nonatomic) NSObject *contactModel;
 @property (strong, nonatomic) Contact *contact;

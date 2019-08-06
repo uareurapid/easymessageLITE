@@ -146,3 +146,6 @@
 "no_recipients" = "没有选择收件人";
 "upgrade_now" = "现在升级？";
 "native_groups_support" = "不支持向iCloud组添加联系人";
+"call_phone" = "呼叫";
+"facetime_warning" = "'Facetime'仅在设备上安装并启用它时才有效";
+

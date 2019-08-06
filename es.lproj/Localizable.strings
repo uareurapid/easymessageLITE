@@ -146,3 +146,5 @@
 "no_recipients" = "Usted no tiene ningún destinatario";
 "upgrade_now" = "¿Actualizar ahora?";
 "native_groups_support" = "No se admite la adición de contactos a grupos de iCloud";
+"call_phone" = "Llamar";
+"facetime_warning" = "'Facetime' solo funcionará si ambos lo tienen instalado y habilitado en el dispositivo";
