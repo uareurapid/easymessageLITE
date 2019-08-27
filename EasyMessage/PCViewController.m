@@ -1064,7 +1064,16 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 -(void) authorizeAndSendToLinkedin: (NSString *) message {
     NSString * token = [self accessToken];
     if(token!=nil && [self validToken]) {
-        [self sendToLinkedin:message withToken:token];
+        
+        if([self linkedinID]!=nil) {
+           [self sendToLinkedin:message withToken:token];
+        } else {
+            //send afterwards
+            [self requestMeWithToken:token andMessage: message];
+            //[self sendToLinkedin:message withToken:token];
+        }
+        
+        
     }
     else {
         //either is nill or invalid
@@ -1114,7 +1123,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     //auxiliar list to check for duplicates (might slow down stuff)
     for(Contact *c in models) {
         c.isNative = false;
-        if(![cleanList containsObject:c]) {
+        if(![cleanList containsObject:c] && c!=nil ) {
             [cleanList addObject:c];
         }
         else {
@@ -1124,10 +1133,15 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
     NSLog(@"readed %ld contacts from core data models, but will only add %ld",(unsigned long)models.count, cleanList.count);
     
-    [recipientsController.contactsList addObjectsFromArray:cleanList];
+    if(cleanList!=nil && cleanList.count > 0) {
+        [recipientsController.contactsList addObjectsFromArray:cleanList];
+    }
     
     [recipientsController.selectedContactsList removeAllObjects];
-    [recipientsController.selectedContactsList addObjectsFromArray:selectedRecipientsList];
+    
+    if(selectedRecipientsList!=nil && selectedRecipientsList.count > 0) {
+      [recipientsController.selectedContactsList addObjectsFromArray:selectedRecipientsList];
+    }
     
     NSLog(@"Skipped %ld duplicated contacts",(long)duplicates);
 }
@@ -1142,7 +1156,9 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         [self loadContactsFromCoreDataOnly];
         //load also the groups
         NSMutableArray *groupsFromDB = [self fetchGroupRecords];
-        [recipientsController.contactsList addObjectsFromArray:groupsFromDB];
+        if(groupsFromDB!=nil && groupsFromDB.count>0) {
+            [recipientsController.contactsList addObjectsFromArray:groupsFromDB];
+        }
         
         [recipientsController.groupsList removeAllObjects];
         [recipientsController.groupsNamesArray removeAllObjects];
@@ -1177,7 +1193,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                 //auxiliar list to check for duplicates (might slow down stuff)
                 for(Contact *c in contacts) {
                     c.isNative = true;
-                    if(![cleanList containsObject:c]) {
+                    if(![cleanList containsObject:c] && c!=nil) { //not necessary but anyway.. since i´m here do it all
                         [cleanList addObject:c];
                     }
                     else {
@@ -1189,7 +1205,9 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                 
                 NSLog(@"Skipped %ld duplicated contacts",(long)duplicates);
                 [recipientsController.contactsList removeAllObjects];
-                [recipientsController.contactsList addObjectsFromArray:cleanList];
+                if(cleanList!=nil && cleanList.count > 0) {
+                   [recipientsController.contactsList addObjectsFromArray:cleanList];
+                }
                 
                 [self loadContactsFromCoreDataOnly];
                 
@@ -1201,7 +1219,10 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                 
                 //load also the groups
                 NSMutableArray *groupsFromDB = [self fetchGroupRecords];
-                [recipientsController.contactsList addObjectsFromArray:groupsFromDB];
+                
+                if(groupsFromDB!=nil && groupsFromDB.count > 0) {
+                  [recipientsController.contactsList addObjectsFromArray:groupsFromDB];
+                }
                 
                 [recipientsController.groupsList removeAllObjects];
                 [recipientsController.groupsNamesArray removeAllObjects];
@@ -1235,7 +1256,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         //auxiliar list to check for duplicates (might slow down stuff)
         for(Contact *c in contacts) {
             c.isNative = true;
-            if(![cleanList containsObject:c]) {
+            if(![cleanList containsObject:c] && c!=nil) {
                 [cleanList addObject:c];
             }
             else {
@@ -1244,7 +1265,10 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         }
         
         [recipientsController.contactsList removeAllObjects];
-        [recipientsController.contactsList addObjectsFromArray:cleanList];
+        
+        if(cleanList!=nil && cleanList.count > 0) {
+           [recipientsController.contactsList addObjectsFromArray:cleanList];
+        }
         
         NSLog(@"readed %ld contacts from local address book, but will only add %ld",(unsigned long)contacts.count, cleanList.count);
         
@@ -1260,7 +1284,10 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         
         //load also the groups
         NSMutableArray *groupsFromDB = [self fetchGroupRecords];
-        [recipientsController.contactsList addObjectsFromArray:groupsFromDB];
+        
+        if(groupsFromDB!=nil && groupsFromDB.count > 0) {
+          [recipientsController.contactsList addObjectsFromArray:groupsFromDB];
+        }
         
         [recipientsController.groupsList removeAllObjects];
         [recipientsController.groupsNamesArray removeAllObjects];
@@ -1298,7 +1325,9 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             [self loadContactsFromCoreDataOnly];
             //load also the groups
             NSMutableArray *groupsFromDB = [self fetchGroupRecords];
-            [recipientsController.contactsList addObjectsFromArray:groupsFromDB];
+            if(groupsFromDB!=nil && groupsFromDB.count > 0) {
+              [recipientsController.contactsList addObjectsFromArray:groupsFromDB];
+            }
             
             [recipientsController refreshPhonebook:nil];
         }
@@ -1332,11 +1361,13 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             c.email = contact.email;
             c.lastName = contact.lastname;
             
-            [group.contactsList addObject:c];
+            if(c!=nil) {
+              [group.contactsList addObject:c];
+            }
             
         }
         //avoid duplicates
-        if(![records containsObject:group]) {
+        if(![records containsObject:group] && group!=nil) {
            [records addObject:group];
         }
         
@@ -1451,7 +1482,10 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                 }
                 
                 NSLog(@"adding this contact: %@",c.description);
-                [records addObject:c];
+                if(c!=nil) {
+                  [records addObject:c];
+                }
+                
             }
             
             
@@ -1476,6 +1510,8 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         NSLog(@"Num groups is %ld",numGroups);
         for(CFIndex idx=0; idx<numGroups; ++idx) {
             
+          @try {
+            
             ABRecordRef groupItem = CFArrayGetValueAtIndex(groups, idx);
             
             NSString *groupName = (__bridge_transfer NSString*)ABRecordCopyCompositeName(groupItem);
@@ -1491,7 +1527,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             group.isNative = true;
             
             //always add
-            if(![groupsArray containsObject:group]) {
+            if(![groupsArray containsObject:group] && group!=nil) {
                 [groupsArray addObject:group];
             }
             
@@ -1548,14 +1584,23 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                     }
                     
                     //NSLog(@"added person  %@ to the icloud group %@",name, groupName);
-                    [group.contactsList addObject:c];
+                    if(c!=nil) {
+                        [group.contactsList addObject:c];
+                    }
+                   
                     
                 }// end for
                 CFRelease(members);
             }// end if members
+              
+          }@catch(NSException *error) {
+             
+          }@finally {
+              ;//do nothing
+           }
             
         }//end for
-    }
+    }//end if groups
     
     
     return groupsArray;
@@ -1583,153 +1628,164 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
     //need to have permission first, otherwise it can crash
     if(ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusAuthorized) {
-    
-       //*****
+        
+        //*****
         //CFRetain(addressBook);
         NSArray *arrayOfPeople = (__bridge NSArray*)ABAddressBookCopyArrayOfAllPeople(addressBook);
+        //make sure we have some people
+        if(arrayOfPeople == nil || arrayOfPeople.count == 0) {
+            return contacts;
+        }
         
         for(int i = 0; i < arrayOfPeople.count; i++) {
             
             Contact *contact = [[Contact alloc] init];
-            ABRecordRef person = (__bridge ABRecordRef)[arrayOfPeople objectAtIndex:i];
             
-            //get the first name
-            
-            NSString *name = (__bridge NSString*)ABRecordCopyValue(person, kABPersonFirstNameProperty);
-            if(name == nil) {
-                name = (__bridge NSString*)ABRecordCopyCompositeName(person);
-            }
-            //NSString *name = (__bridge NSString*)ABRecordCopyCompositeName(person);
-            NSString *lastName =  (__bridge NSString*)ABRecordCopyValue(person, kABPersonLastNameProperty);
-            
-            NSDate *data = (__bridge NSDate *)ABRecordCopyValue(person, kABPersonBirthdayProperty);
-            if(data!=nil) {
-                //NSDateFormatter *f = [[NSDateFormatter alloc]init];
-                //[f setDateFormat:@"MMMM dd,yyyy"]
-                contact.birthday = data;
+            @try {
                 
-                NSDateComponents *componentsContact = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:data];
-                //we have a birthday today
-                if(components.day == componentsContact.day && components.month == componentsContact.month) {
-                    //TODO also send the email or other field... ate the end we need to prefill the message and pre-select the recipient
-                    //so we need to clearly identify it
-                    
-                    
-                    [self scheduleNotification: @"birthday" nameOfContact: name month: components.month day: components.day fireDelayInSeconds:60];
-                    
+                
+                ABRecordRef person = (__bridge ABRecordRef)[arrayOfPeople objectAtIndex:i];
+                
+                //get the first name
+                NSString *name = (__bridge NSString*)ABRecordCopyValue(person, kABPersonFirstNameProperty);
+                if(name == nil) {
+                    name = (__bridge NSString*)ABRecordCopyCompositeName(person);
                 }
-                //we have a birthday tomorrow
-                else if(componentsTomorrow.day == componentsContact.day && componentsTomorrow.month == componentsContact.month) {
+                NSString *lastName =  (__bridge NSString*)ABRecordCopyValue(person, kABPersonLastNameProperty);
+                //NSLog(@"LOADED NAME %@ AND LAST NAME %@",name,lastName);
+                NSDate *data = (__bridge NSDate *)ABRecordCopyValue(person, kABPersonBirthdayProperty);
+                if(data!=nil) {
+                    //NSDateFormatter *f = [[NSDateFormatter alloc]init];
+                    //[f setDateFormat:@"MMMM dd,yyyy"]
+                    contact.birthday = data;
                     
-                    //TODO also send the email or other field... ate the end we need to prefill the message and pre-select the recipient
-                    //so we need to clearly identify it
-                    
-                    
-                    [self scheduleNotification: @"birthday" nameOfContact: name month: componentsTomorrow.month day: componentsTomorrow.day fireDelayInSeconds:(24*60*60)];
-                    
-                }
-                
-            }
-            //save the reference
-            contact.person=person;
-            contact.isNative = true;
-            
-            NSString *email;
-            
-            //NSString *theName = (__bridge NSString*)ABRecordCopyCompositeName(person);
-            
-            
-            ABMultiValueRef multi = ABRecordCopyValue(person, kABPersonEmailProperty);
-            
-#pragma GET EMAIL ADDRESS
-            
-            
-            int count = ABMultiValueGetCount(multi);
-            
-            //do we have more than 1?
-            if(count > 0) {
-                email = [self getPreferredEmail: multi forLabel:kABHomeLabel count: count];
-            }
-            //else, we don´t have email
-            
-            //add it if we have it
-            if(email!=nil) {
-                contact.email = email;
-            }
-            
-            
-#pragma GET PHONE NUMBER
-            
-            NSString *phone;
-            
-            ABMultiValueRef phoneMulti = ABRecordCopyValue(person, kABPersonPhoneProperty);
-            int countPhones = ABMultiValueGetCount(phoneMulti);
-            
-            if(countPhones>0) {
-                phone = [self getPreferredPhone: phoneMulti forLabel:kABPersonPhoneMobileLabel count: countPhones];
-                
-            }
-            
-            //NSLog(@"READED %@", name);
-            //NSLog(@"ANDREIA PHONE %@  count: %d", phone, countPhones);
-            
-            
-            //add the phone number
-            if(phone!=nil) {
-                contact.phone = phone;
-            }
-            
-            
-            //i must have some sort of contact info
-            if(phone!=nil || email!=nil) {
-                
-                if(name!=nil) {
-                    contact.name = name;
-                }
-                if(lastName!=nil) {
-                    contact.lastName = lastName;
-                }
-                
-                //check for blanks (only phone number for instance, no name
-                if(contact.name == nil || [[contact.name stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] == 0) {
-                    contact.name = (phone!= nil ? phone : email);
-                }
-                
-                //try to get the photo if available
-                @try {
-                    NSData  *imgData = (__bridge NSData *)ABPersonCopyImageData(person);
-                    if(imgData!=nil) {
-                        UIImage  *img = [UIImage imageWithData:imgData];
-                        contact.photo = img;
+                    NSDateComponents *componentsContact = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:data];
+                    //we have a birthday today
+                    if(components.day == componentsContact.day && components.month == componentsContact.month) {
+                        //TODO also send the email or other field... ate the end we need to prefill the message and pre-select the recipient
+                        //so we need to clearly identify it
+                        
+                        [self scheduleNotification: @"birthday" nameOfContact: name month: components.month day: components.day fireDelayInSeconds:60];
+                        
                     }
-                    //else {
-                    //    UIImage  *img = [UIImage imageNamed:@"user"];
-                    //    contact.photo = img;
-                    //}
+                    //we have a birthday tomorrow
+                    else if(componentsTomorrow.day == componentsContact.day && componentsTomorrow.month == componentsContact.month) {
+                        
+                        //TODO also send the email or other field... ate the end we need to prefill the message and pre-select the recipient
+                        //so we need to clearly identify it
+                        
+                        [self scheduleNotification: @"birthday" nameOfContact: name month: componentsTomorrow.month day: componentsTomorrow.day fireDelayInSeconds:(24*60*60)];
+                        
+                    }
                     
                 }
-                @catch (NSException *exception) {
-                    NSLog(@"Unable to get contact photo, %@",[exception description]);
+                //save the reference
+                contact.person=person;
+                contact.isNative = true;
+                
+                NSString *email;
+                
+                //NSString *theName = (__bridge NSString*)ABRecordCopyCompositeName(person);
+                
+                
+                ABMultiValueRef multi = ABRecordCopyValue(person, kABPersonEmailProperty);
+                
+#pragma GET EMAIL ADDRESS
+                
+                
+                int count = ABMultiValueGetCount(multi);
+                
+                //do we have more than 1?
+                if(count > 0) {
+                    email = [self getPreferredEmail: multi forLabel:kABHomeLabel count: count];
                 }
-                @finally {
-                    ;
+                //else, we don´t have email
+                
+                //add it if we have it
+                if(email!=nil) {
+                    contact.email = email;
                 }
                 
-                [contacts addObject:contact];
                 
+#pragma GET PHONE NUMBER
+                
+                NSString *phone;
+                
+                ABMultiValueRef phoneMulti = ABRecordCopyValue(person, kABPersonPhoneProperty);
+                int countPhones = ABMultiValueGetCount(phoneMulti);
+                
+                if(countPhones>0) {
+                    phone = [self getPreferredPhone: phoneMulti forLabel:kABPersonPhoneMobileLabel count: countPhones];
+                    
+                }
+                
+                //NSLog(@"READED %@", name);
+                //NSLog(@"ANDREIA PHONE %@  count: %d", phone, countPhones);
+                
+                
+                //add the phone number
+                if(phone!=nil) {
+                    contact.phone = phone;
+                }
+                
+                //i must have some sort of contact info
+                if(phone!=nil || email!=nil) {
+                    
+                    if(name!=nil) {
+                        contact.name = name;
+                    }
+                    if(lastName!=nil) {
+                        contact.lastName = lastName;
+                    }
+                    
+                    //check for blanks (only phone number for instance, no name
+                    if(contact.name == nil || [[contact.name stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] == 0) {
+                        contact.name = (phone!= nil ? phone : email);
+                    }
+                    
+                    //try to get the photo if available
+                    @try {
+                        NSData  *imgData = (__bridge NSData *)ABPersonCopyImageData(person);
+                        if(imgData!=nil) {
+                            UIImage  *img = [UIImage imageWithData:imgData];
+                            contact.photo = img;
+                        }
+                        //else {
+                        //    UIImage  *img = [UIImage imageNamed:@"user"];
+                        //    contact.photo = img;
+                        //}
+                        
+                    }
+                    @catch (NSException *exception) {
+                        NSLog(@"Unable to get contact photo, %@",[exception description]);
+                    }
+                    @finally {
+                        ;//do nothing here
+                    }
+                    
+                    
+                }
+                
+            }// end try
+            @catch (NSException *exception) {
+                NSLog(@"Unable to get contact info, %@",[exception description]);
             }
-            
+            @finally {
+                
+                if(contact!=nil) {
+                    [contacts addObject:contact];
+                }
+            }
             
         }//end for loop
-
-       //****
-    //CFRelease(addressBook);
-    }
+        
+        
+    } //end if
     
     NSLog(@"DONE IMPORT");
     
     
-   return contacts;
+    return contacts;
     
     
 }
@@ -2113,63 +2169,84 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 -(void) sendToLinkedin: (NSString* ) message withToken: (NSString*) token {
     
         
-        //https://developer.linkedin.com/docs/share-on-linkedin
+    //https://developer.linkedin.com/docs/share-on-linkedin
         
-        NSMutableString *str = [[NSMutableString alloc] init];
+    NSMutableString *str = [[NSMutableString alloc] init];
         
-        [str appendString:@"https://api.linkedin.com/v1/people/~/shares?oauth2_access_token="];
-        [str appendString: token];
-        NSString *postURL = [NSString stringWithString:str];
+    [str appendString:@"https://api.linkedin.com/v2/shares?oauth2_access_token="];
+    [str appendString: token];
+    NSString *postURL = [NSString stringWithString:str];
         
-        //get the status message
-        NSString *title = (subject.text!=nil && subject.text.length>0) ? subject.text : message;
+    //get the status message
+    NSString *title = (subject.text!=nil && subject.text.length>0) ? subject.text : message;
 
+    /***
+     {
+     "content": {
+         "contentEntities": [
+         {
+            "entityLocation": "https://www.example.com/content.html",
+            "thumbnails": [
+                {
+                    "resolvedUrl": "https://www.example.com/image.jpg"
+                }
+            ]
+         }
+         ],
+         "title": "Test Share with Content"
+     },
+         "distribution": {
+         "linkedInDistributionTarget": {}
+         },
+         "owner": "urn:li:person:324_kGGaLE",
+         "subject": "Test Share Subject",
+         "text": {
+         "text": "Test Share!"
+         }
+     }
+     https://artisansweb.net/share-post-on-linkedin-using-linkedin-api-and-php/
+     **/
     
-        NSMutableString *thePost = [[NSMutableString alloc] init];
-        [thePost appendString:@"<share>"];
-        [thePost appendString: [NSString stringWithFormat: @"<comment>%@</comment>",message] ];
-        [thePost appendString:@"<content>"];
-        [thePost appendString: [NSString stringWithFormat: @"<title>%@</title>",title] ];
-        [thePost appendString: [NSString stringWithFormat: @"<description>%@</description>",message] ];
-        [thePost appendString:@"<submitted-url>https://itunes.apple.com/app/id1448046358?mt=8</submitted-url>"];
-        [thePost appendString:@"<submitted-image-url>https://is1-ssl.mzstatic.com/image/thumb/Purple/v4/ff/f7/ce/fff7ce0f-933f-6448-46d1-5945fef9783e/Icon-76@2x.png.png/75x9999bb.png</submitted-image-url>"];
-        [thePost appendString:@"</content>"];
-        [thePost appendString:@"<visibility>"];
-        [thePost appendString:@"<code>anyone</code>"];
-        [thePost appendString:@"</visibility>"];
-        [thePost appendString:@"</share>"];
+    @try {
         
-        
-        // Create the request.
-        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:postURL] cachePolicy:NSURLCacheStorageNotAllowed timeoutInterval:20.0];
-        // Specify that it will be a POST request
-        [request setHTTPMethod: @"POST"];
-        //with xml body
-        [request setValue:@"application/xml; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-        
-        NSData *requestBodyData = [thePost dataUsingEncoding:NSUTF8StringEncoding];
-        [request setHTTPBody:requestBodyData];
-        
-        // Create url connection and fire request
-        NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self];
-        
-        
-        /**
-         <?xml version="1.0" encoding="UTF-8"?>
-         <share>
-         <comment>Check out the LinkedIn Share API!</comment>
-         <content>
-         <title>LinkedIn Developers Documentation On Using the Share API</title>
-         <description>Leverage the Share API to maximize engagement on user-generated content on LinkedIn</description>
-         <submitted-url>https://developer.linkedin.com/documents/share-api</submitted-url>
-         <submitted-image-url>http://m3.licdn.com/media/p/3/000/124/1a6/089a29a.png</submitted-image-url>
-         </content>
-         <visibility>
-         <code>anyone</code>
-         </visibility>
-         </share>
-         */
+    NSDictionary *resolvedUrl = [NSDictionary dictionaryWithObjectsAndKeys: @"https://is1-ssl.mzstatic.com/image/thumb/Purple/v4/ff/f7/ce/fff7ce0f-933f-6448-46d1-5945fef9783e/Icon-76@2x.png.png/75x9999bb.png",@"resolvedUrl", nil];
+    
+    NSArray *thumbnailslArray = [[ NSArray alloc] initWithObjects:resolvedUrl, nil];
+    
+    NSDictionary *thumbnails =  [NSDictionary dictionaryWithObjectsAndKeys:@"https://itunes.apple.com/app/id1448046358?mt=8", @"entityLocation", thumbnailslArray, @"thumbnails", nil];
+    
+    NSArray *contentEntitiesArray = [[ NSArray alloc] initWithObjects:thumbnails, nil];
+    
+   
+    NSDictionary *textContainer =  [NSDictionary dictionaryWithObjectsAndKeys:message, @"text", nil];
+    
+    NSDictionary *content =  [NSDictionary dictionaryWithObjectsAndKeys:contentEntitiesArray, @"contentEntities", title, @"title", nil];
+    
+    NSDictionary *postData  = [NSDictionary dictionaryWithObjectsAndKeys:content,@"content",[self linkedinID], @"owner", textContainer,@"text", nil];
+    
+    NSError *error;
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:postData options:NSJSONWritingPrettyPrinted error:&error];
+    
+    NSString* JSONBody = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
 
+    // Create the request.
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:postURL] cachePolicy:NSURLCacheStorageNotAllowed timeoutInterval:20.0];
+    // Specify that it will be a POST request
+    [request setHTTPMethod: @"POST"];
+    //with json body
+    [request setValue:@"application/json; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+        
+    NSData *requestBodyData = [JSONBody dataUsingEncoding:NSUTF8StringEncoding];
+    [request setHTTPBody:requestBodyData];
+
+        
+    // Create url connection and fire request
+    [[NSURLConnection alloc] initWithRequest:request delegate:self];
+        
+    }
+    @catch(NSException *err) {
+        NSLog(@"Error: %@", err.description);
+    }
     
 }
 
@@ -2308,7 +2385,9 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
     //Message
     NSMutableArray *fromList = [[NSMutableArray alloc] init];
-    [fromList addObjectsFromArray:customMessagesController.messagesList];
+    if(customMessagesController.messagesList!=nil && customMessagesController.messagesList.count > 0) {
+      [fromList addObjectsFromArray:customMessagesController.messagesList];
+    }
     
     //TODO this should be more efficient but anyway
     
@@ -2928,11 +3007,14 @@ void addressBookChanged(ABAddressBookRef reference,
         [self.client getAccessToken:code success:^(NSDictionary *accessTokenData) {
             NSString *accessToken = [accessTokenData objectForKey:@"access_token"];
             
-            //[self requestMeWithToken:accessToken];
+            if([self linkedinID]!=nil) {
+                [self sendToLinkedin:message withToken:accessToken];
+            } else {
+                //will send after
+                [self requestMeWithToken:accessToken andMessage: message];
+            }
             
-            [self sendToLinkedin:message withToken:accessToken];
-            
-        }                   failure:^(NSError *error) {
+        }   failure:^(NSError *error) {
             
             
             NSLog(@"Quering accessToken failed %@", error);
@@ -2945,9 +3027,22 @@ void addressBookChanged(ABAddressBookRef reference,
 }
 
 //get personal info from linkedin
-- (void)requestMeWithToken:(NSString *)accessToken {
+- (void)requestMeWithToken:(NSString *)accessToken andMessage: (NSString *) message {
 
-    [self.client GET:[NSString stringWithFormat:@"https://api.linkedin.com/v1/people/~?oauth2_access_token=%@&format=json", accessToken] parameters:nil success:^(AFHTTPRequestOperation *operation, NSDictionary *result) {
+    [self.client GET:[NSString stringWithFormat:@"https://api.linkedin.com/v2/me?oauth2_access_token=%@", accessToken] parameters:nil success:^(AFHTTPRequestOperation *operation, NSDictionary *result) {
+        //{"localizedLastName":"Cristo","lastName":{"localized":{"en_US":"Cristo"},"preferredLocale":{"country":"US","language":"en"}},"firstName":{"localized":{"en_US":"Paulo"},"preferredLocale":{"country":"US","language":"en"}},"profilePicture":{"displayImage":"urn:li:digitalmediaAsset:C4E03AQH6BPC1_3Oqqw"},"id":"OQw3s_FY10","localizedFirstName":"Paulo"}
+        
+        NSString *identifier = [result objectForKey:@"id"];
+        if(identifier!=nil) {
+            
+            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+            [defaults setObject:[NSString stringWithFormat:@"urn:li:person:%@", identifier] forKey:LINKEDIN_ME_KEY];
+            //"owner": "urn:li:person:324_kGGaLE",
+            
+            [self sendToLinkedin:message withToken:accessToken];
+        }
+        
+        
         NSLog(@"current user %@", result);
     }        failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"failed to fetch current user %@", error);
@@ -2959,7 +3054,7 @@ void addressBookChanged(ABAddressBookRef reference,
                                                                                     clientId:@"77un3d1vtdhswr"
                                                                                 clientSecret:@"HiZlQkFkdvbxVfMh"
                                                                                        state:@"DCEEFWF45453sdffef424"
-                                                                               grantedAccess:@[@"r_basicprofile",@"w_share"]]; //@"w_messages"
+                                                                               grantedAccess:@[@"r_liteprofile",@"w_member_social"]]; //@"w_messages" w_member_social
     return [LIALinkedInHttpClient clientForApplication:application presentingViewController:nil];
 }
 
@@ -2968,6 +3063,13 @@ void addressBookChanged(ABAddressBookRef reference,
     return token;
     
 }
+
+- (NSString *)linkedinID {
+    NSString *meId = [[NSUserDefaults standardUserDefaults] objectForKey:LINKEDIN_ME_KEY];
+    return meId;
+}
+
+
 
 //check if the token is valid
 - (BOOL)validToken {
@@ -3138,18 +3240,28 @@ void addressBookChanged(ABAddressBookRef reference,
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
     // The request is complete and data has been received
     // You can parse the stuff in your instance variable now
-    NSString *responseString = [[NSString alloc] initWithData:_responseData encoding:NSUTF8StringEncoding];
+    //NSString *responseString = [[NSString alloc] initWithData:_responseData encoding:NSUTF8StringEncoding];
     
+    NSError *jsonError;
     NSString *msg;
-    if([responseString rangeOfString:@"<update-key>"].location!=NSNotFound) {
-        //post ok
-        msg = NSLocalizedString(@"linkedin_post_ok", @"linkedin_post_ok");
-    }
-    else {
+    
+    @try {
+        NSDictionary *json = [NSJSONSerialization JSONObjectWithData:_responseData
+                                                             options:NSJSONReadingMutableContainers
+                                                               error:&jsonError];
+        if([json objectForKey:@"id"]!=nil) {
+            //post ok
+            msg = NSLocalizedString(@"linkedin_post_ok", @"linkedin_post_ok");
+        }else {
+            //error
+            msg = NSLocalizedString(@"linkedin_post_canceled", @"linkedin_post_canceled");
+        }
+        
+    }@catch(NSException *err) {
         //error
         msg = NSLocalizedString(@"linkedin_post_canceled", @"linkedin_post_canceled");
     }
-    
+  
     [[[[iToast makeText:msg]
            setGravity:iToastGravityBottom] setDuration:1000] show];
     

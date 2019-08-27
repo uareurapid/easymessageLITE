@@ -43,6 +43,8 @@
 #define MAX_ATTACHMENTS 5
 #define MAX_ATTACHMENTS_WITHOUT_PREMIUM 1
 
+#define LINKEDIN_ME_KEY   @"linkedin_me"
+
 @interface PCViewController : UIViewController <MFMailComposeViewControllerDelegate,MFMessageComposeViewControllerDelegate,UIImagePickerControllerDelegate,UITextViewDelegate,UITextFieldDelegate, FBSDKSharingDelegate,UICollectionViewDataSource,UICollectionViewDelegate,
 UITextFieldDelegate, NSURLConnectionDelegate,SKStoreProductViewControllerDelegate,QBImagePickerControllerDelegate, PopupDelegate>
 @property (weak, nonatomic) IBOutlet UIScrollView *attachmentsScrollview;

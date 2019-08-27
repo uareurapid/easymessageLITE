@@ -870,7 +870,6 @@
 				722415361771148800989C3B /* Resources */,
 				72E2253F1FD5FC160076C813 /* Embed Frameworks */,
 				480B3C744C950EA9059557F2 /* [CP] Copy Pods Resources */,
-				C0CB5F2F573B1322211661F9 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1049,32 +1048,18 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-EasyMessage/Pods-EasyMessage-resources.sh",
-				$PODS_CONFIGURATION_BUILD_DIR/Appirater/Appirater.bundle,
-				$PODS_CONFIGURATION_BUILD_DIR/QBImagePickerController/QBImagePicker.bundle,
+				"${PODS_ROOT}/Target Support Files/Pods-EasyMessage/Pods-EasyMessage-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/Appirater/Appirater.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/QBImagePickerController/QBImagePicker.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Appirater.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/QBImagePicker.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-EasyMessage/Pods-EasyMessage-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C0CB5F2F573B1322211661F9 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-EasyMessage/Pods-EasyMessage-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-EasyMessage/Pods-EasyMessage-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
