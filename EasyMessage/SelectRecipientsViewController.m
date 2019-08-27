@@ -145,15 +145,6 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     }];
 }
 
--(void) showAlertBox:(NSString *) msg {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Easy Message"
-                                                    message:msg
-                                                   delegate:self
-                                          cancelButtonTitle:@"OK"
-                                          otherButtonTitles:nil];
-    [alert show];
-}
-
 //THIS IS THE METHOD THAT IS CALLED FROM APPDELEGATE
 -(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil rootViewController: (PCViewController*) viewController{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -1720,10 +1711,41 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
            
    return false;
 }
-//TODO PC fetch the group model, the contact model and chage on CORE DATA + reflect changes on local lists
--(void) addContactToGroup: (NSString *) groupName contact: (Contact *) contact {
+
+//do i only have native groups on the list of groups?
+-(BOOL) onlyHasNativeiCloudGroups {
+    //remove any native groups from the list
+    NSUInteger num = groupsList.count;
+    NSUInteger countNative = 0;
+    for(Group *group in groupsList) {
+        if(group.name!=nil && group.isNative) {
+            countNative++;
+        }
+    }
+    return countNative > 0 && countNative == num;
+}
+
+-(void) refreshAfterContactToGroupAssignment {
+    //if just added a group i clear the selection
+    [selectedContactsList removeAllObjects];
+    //refresh the view
+    [self refreshPhonebook:nil];
+    //will also add to the list of groups
+}
+
+//add multiple contacts to a group
+-(void) addMultipleContactsToGroup: (NSString *) groupName {
     
-    //NSLog(@"addContactToGroup..... %@ : %@", groupName, contact.name);
+    for(int i = 0; i < self.selectedContactsList.count; i++) {
+        Contact *c = [self.selectedContactsList objectAtIndex:i];
+        [self addContactToGroup: groupName contact:c isSingleInsert:false];
+    }
+    //clears the list and refreshes the phone book
+    [self refreshAfterContactToGroupAssignment];
+}
+
+//TODO PC fetch the group model, the contact model and chage on CORE DATA + reflect changes on local lists
+-(void) addContactToGroup: (NSString *) groupName contact: (Contact *) contact isSingleInsert: (BOOL) single {
     
     NSManagedObjectContext *managedObjectContext = [(PCAppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
@@ -1758,7 +1780,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
                         }
                     }
                 }
-                
+                //Adding a group here, so we will add all the contacts inside that group instead
                 if(group != nil && [contact isKindOfClass:Group.class]) {
                     //TODO above
                     //NSLog(@"The other model to add to group %@ is another group named %@",groupName,contact.name);
@@ -1781,12 +1803,15 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
                                 //NSLog(@"SKIP ADDING contacts from %@ on group %@", theOtherModel.name,groupName);
                             }
                             
-                           
+                            
                         }
+                    }
+                    if(single) {
+                        [self refreshAfterContactToGroupAssignment];
                     }
                     return;
                 }
-
+                
                 //------------------
                 // get all the contacts by this name and find the best match
                 NSMutableArray *array = [CoreDataUtils fetchAllContactsDataModelByName: contact.name];
@@ -1826,25 +1851,43 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
                     //DUPLICATE ON CORE DATA and hide it from the list if already exists
                     if(contactModel !=nil) {
                         [self performContactToGroupAssignment:managedObjectContext contactModel: contactModel groupModel:groupModel groupName:groupName contact:contact];
+                        if(single) {
+                            [self refreshAfterContactToGroupAssignment];
+                        }
                         //------------------
                     }//else NSLog(@"IS NULLLLLL MAYBE IS NATIVE");
                     else {
                         // native contact? ok insert it anyway
                         ContactDataModel *contactModel = [self prepareModelFromContact: managedObjectContext :contact];
                         [self performContactToGroupAssignment:managedObjectContext contactModel:(ContactDataModel *)contactModel groupModel:groupModel groupName:groupName contact:contact];
+                        if(single) {
+                            [self refreshAfterContactToGroupAssignment];
+                        }
                     }
                 }
                 else {
                     //no contacts on core data? insert a new one then
                     ContactDataModel *contactModel = [self prepareModelFromContact: managedObjectContext :contact];
                     [self performContactToGroupAssignment:managedObjectContext contactModel:(ContactDataModel *)contactModel groupModel:groupModel groupName:groupName contact:contact];
+                    if(single) {
+                        [self refreshAfterContactToGroupAssignment];
+                    }
                 }
                 
             }
         }
-            
+        
     }
     
+}
+
+-(void) showAlertBox:(NSString *) msg {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Easy Message"
+                                                    message:msg
+                                                   delegate:self
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
 }
 
 -(Contact *) getContactFromContactModel:(ContactDataModel *) model {
@@ -1856,12 +1899,12 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     return c;
 }
 
--(void) performContactToGroupAssignment: (NSManagedObjectContext *) managedObjectContext contactModel: (ContactDataModel *)contactModel groupModel: (GroupDataModel *) groupModel groupName:(NSString *) groupName contact: (Contact *) contact {
+-(BOOL) performContactToGroupAssignment: (NSManagedObjectContext *) managedObjectContext contactModel: (ContactDataModel *)contactModel groupModel: (GroupDataModel *) groupModel groupName:(NSString *) groupName contact: (Contact *) contact {
     
     
     if(groupModel.contacts.count >= 5 &&  ![[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
         [self showAlertBox:NSLocalizedString(@"lite_only_5_contacts_per_group", nil)];
-        return;
+        return false;
     }
     
     NSLog(@"GOT CONTACT MATCH %@ ",contactModel.name);
@@ -1885,13 +1928,8 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         OK = YES;
         [[[[iToast makeText:NSLocalizedString(@"added",@"added")]
            setGravity:iToastGravityBottom] setDuration:2000] show];
-    }
-    
-    if(OK) {
         
-        //if just added a group i clear the selection
-        [selectedContactsList removeAllObjects];
-        
+        //WAS OK
         for(Contact *cont in contactsList) {
             if([contact isKindOfClass:Group.class] && [cont.name isEqualToString: groupName]) {
                 Group *gr = (Group *) contact;
@@ -1903,32 +1941,43 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
                 [group.contactsList addObject:contact];
             }
         }
-        //refresh the view
-        [self refreshPhonebook:nil];
-        //will also add to the list of groups
-        return;
     }
+    
+    return OK;
 }
 
 //adds a contact to an existing group
 -(void) addContactsToExistingGroup:(id)sender {
     NSMutableArray *options = [[NSMutableArray alloc] init];
     [options addObjectsFromArray:self.groupsNamesArray];
-    Contact *c = [self.selectedContactsList objectAtIndex:0];
-    if([c isKindOfClass:Group.class]) {
-        //need to hide this name
-        NSLog(@"hide group %@ from options ", c.name);
-        [options removeObject:c.name];
+    
+    for(int i = 0; i < self.selectedContactsList.count; i++) {
+        Contact *c = [self.selectedContactsList objectAtIndex:i];
+        if([c isKindOfClass:Group.class]) {
+            //need to hide this name
+            NSLog(@"hide group %@ from options ", c.name);
+            [options removeObject:c.name];
+        }
     }
+    
     //if no options do not show it, otherwise it might crash on "done" with nothing selected
     //ex: index 0 beyond bounds for empty array'
     //TODO refactor this, cause now i can have more then 1 contact selected
-    if(options.count > 0) {
+    //at least 1 group and not all native
+    BOOL onlyNativeOnes = [self onlyHasNativeiCloudGroups];
+    if(options.count > 0 && !onlyNativeOnes) {
         [PickerView showPickerWithOptions:options sender:sender title:NSLocalizedString(@"select_group", @"select_group") selectionBlock:^(NSString *selectedOption) {
-            //TODO
-            Contact *c = [self.selectedContactsList objectAtIndex:0];
-            [self addContactToGroup: selectedOption contact:c];
+            //was only adding the first one
+            if(self.selectedContactsList.count > 1) {
+                [self addMultipleContactsToGroup:selectedOption];
+            } else if(selectedContactsList.count == 1) {
+                //just add 1
+                Contact *c = [self.selectedContactsList objectAtIndex:0];
+                [self addContactToGroup: selectedOption contact:c isSingleInsert:true];
+            }
         }];
+    } else if( options.count > 0 && onlyNativeOnes) {
+        [self showAlertBox:NSLocalizedString(@"native_groups_support", nil)];
     }
     
     
@@ -2078,6 +2127,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
  * Delete the contact from the actual device address book
  */
 //https://www.oreilly.com/library/view/ios-9-swift/9781491936689/ch04.html
+//TODO PC check this search method
 -(void)searchAndDeleteContactInContactsList: (Contact *)contact {
     CNAuthorizationStatus status = [CNContactStore authorizationStatusForEntityType:CNEntityTypeContacts];
     if( status == CNAuthorizationStatusDenied || status == CNAuthorizationStatusRestricted)
@@ -2091,7 +2141,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         CNContactStore *contactStore = [[CNContactStore alloc] init];
         //Select the contact you want to import the key attribute  ( https://developer.apple.com/library/watchos/documentation/Contacts/Reference/CNContact_Class/index.html#//apple_ref/doc/constant_group/Metadata_Keys )
         
-        NSArray *keys = [[NSArray alloc]initWithObjects:CNContactIdentifierKey, CNContactEmailAddressesKey, CNContactBirthdayKey, CNContactImageDataKey, CNContactPhoneNumbersKey, CNContactViewController.descriptorForRequiredKeys, nil];
+        NSArray *keys = [[NSArray alloc]initWithObjects:CNContactIdentifierKey, CNContactGivenNameKey, CNContactFamilyNameKey, CNContactEmailAddressesKey, CNContactBirthdayKey, CNContactImageDataAvailableKey, CNContactImageDataKey, CNContactPhoneNumbersKey, CNContactViewController.descriptorForRequiredKeys, nil];
         
         // Create a request object
         CNContactFetchRequest *request = [[CNContactFetchRequest alloc] initWithKeysToFetch:keys];
@@ -2183,7 +2233,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         CNContactStore *contactStore = [[CNContactStore alloc] init];
         //Select the contact you want to import the key attribute  ( https://developer.apple.com/library/watchos/documentation/Contacts/Reference/CNContact_Class/index.html#//apple_ref/doc/constant_group/Metadata_Keys )
         
-        NSArray *keys = [[NSArray alloc]initWithObjects:CNContactIdentifierKey, CNContactEmailAddressesKey, CNContactBirthdayKey, CNContactImageDataKey, CNContactPhoneNumbersKey, CNContactViewController.descriptorForRequiredKeys, nil];
+        NSArray *keys = [[NSArray alloc]initWithObjects:CNContactIdentifierKey, CNContactGivenNameKey, CNContactFamilyNameKey, CNContactEmailAddressesKey, CNContactBirthdayKey, CNContactImageDataAvailableKey, CNContactImageDataKey, CNContactPhoneNumbersKey, CNContactViewController.descriptorForRequiredKeys, nil];
         
         // Create a request object
         CNContactFetchRequest *request = [[CNContactFetchRequest alloc] initWithKeysToFetch:keys];
@@ -2192,38 +2242,64 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         if(contact.name!=nil || contact.lastName!=nil) {
             request.predicate = [CNContact predicateForContactsMatchingName: ( contact.name!=nil ? contact.name : contact.lastName) ];
         }
-        else if(contact.email!=nil) {
-            if (@available(iOS 11.0, *)) {
-                request.predicate = [CNContact predicateForContactsMatchingEmailAddress:contact.email];
-            } else {
-                
-                return nil;
-            }
-        } else if(contact.phone!=nil) {
-            if (@available(iOS 11.0, *)) {
-                CNPhoneNumber *num = [[CNPhoneNumber alloc] initWithStringValue:contact.phone];
-                request.predicate = [CNContact predicateForContactsMatchingPhoneNumber: num];
-            } else {
-                // Fallback on earlier versions
-                return nil;
-            }
-        } else {
-            return nil;
-        }
-        
         
         //it might delete more than 1
         NSError* fetchError = nil;
         NSArray *contacts = [contactStore unifiedContactsMatchingPredicate:request.predicate keysToFetch:keys error:&fetchError];
         
-        //we just grab the first one
+        //we just grab the first one matching this name
         if(contacts.count > 0) {
             CNMutableContact* copyOfContact = (CNMutableContact *)[[contacts objectAtIndex:0] mutableCopy] ;
+            //NSLog(@"FIND BY NAME");
             return copyOfContact;
+        } else {
+            //nothing returned, try find by phone number
+            if(contact.phone!=nil) {
+                if (@available(iOS 11.0, *)) {
+                    CNPhoneNumber *num = [[CNPhoneNumber alloc] initWithStringValue:contact.phone];
+                    request.predicate = [CNContact predicateForContactsMatchingPhoneNumber: num];
+                    contacts = [contactStore unifiedContactsMatchingPredicate:request.predicate keysToFetch:keys error:&fetchError];
+                    
+                    if(contacts.count > 0) {
+                        CNMutableContact* copyOfContact = (CNMutableContact *)[[contacts objectAtIndex:0] mutableCopy] ;
+                        //NSLog(@"FIND BY PHONE");
+                        return copyOfContact;
+                    } else {
+                        //nothing returned for phone, try email
+                        if(contact.email!=nil) {
+                            if (@available(iOS 11.0, *)) {
+                                request.predicate = [CNContact predicateForContactsMatchingEmailAddress:contact.email];
+                                contacts = [contactStore unifiedContactsMatchingPredicate:request.predicate keysToFetch:keys error:&fetchError];
+                                
+                                if(contacts.count > 0) {
+                                    //NSLog(@"FIND BY EMAIL");
+                                    CNMutableContact* copyOfContact = (CNMutableContact *)[[contacts objectAtIndex:0] mutableCopy] ;
+                                    return copyOfContact;
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                
+                //no phone, maybe email?
+                //nothing returned
+                if(contact.email!=nil) {
+                    if (@available(iOS 11.0, *)) {
+                        request.predicate = [CNContact predicateForContactsMatchingEmailAddress:contact.email];
+                        contacts = [contactStore unifiedContactsMatchingPredicate:request.predicate keysToFetch:keys error:&fetchError];
+                        if(contacts.count > 0) {
+                            //NSLog(@"FIND BY EMAIL 2");
+                            CNMutableContact* copyOfContact = (CNMutableContact *)[[contacts objectAtIndex:0] mutableCopy] ;
+                            return copyOfContact;
+                        }
+                    }
+                }
+            }
         }
         
     }
-    
+    NSLog(@"RETURN NILL");
     return nil;
 }
 
@@ -2265,6 +2341,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         
         Group *group = [[Group alloc]init];
         group.name = name;
+        group.isNative = false;
         
         for(Contact *selected in selectedContactsList) {
             

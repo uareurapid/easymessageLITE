@@ -145,3 +145,4 @@
 "update_contact" = "Modifier contact";
 "no_recipients" = "Vous n'avez pas de destinataires";
 "upgrade_now" = "Mettre à jour maintenant?";
+"native_groups_support" = "L'ajout de contacts aux groupes iCloud n'est pas pris en charge.";

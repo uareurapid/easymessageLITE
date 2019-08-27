@@ -13,4 +13,6 @@
 -(id) initWithContacts: (NSArray * ) contacts;
 
 @property (strong,nonatomic) NSMutableArray *contactsList;
+@property (assign,nonatomic) BOOL isNative;
+-(BOOL)isNativeGroup;
 @end

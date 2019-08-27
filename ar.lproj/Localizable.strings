@@ -148,3 +148,4 @@
 "update_contact" = "تحرير الاتصال";
 "no_recipients" = "لم يتم تحديد مستلمين";
 "upgrade_now" = "تحديث الآن؟";
+"native_groups_support" = "إضافة جهات اتصال إلى مجموعات iCloud غير مدعومة";

@@ -11,19 +11,18 @@
 
 @interface GroupDetailsViewController ()
 
-{
-    Group *group;
-}
-
 @end
 
 @implementation GroupDetailsViewController
+
+@synthesize group;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:style];
     if (self) {
         // Custom initialization
+        //TODO check the assign
         group = [[Group alloc] init];
     }
     return self;
@@ -34,10 +33,13 @@
     if(self) {
         group = groupToShow;
         self.title = group.name;
-        UIBarButtonItem *deteleGroupButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"delete",@"delete")
-                                                                             style:UIBarButtonItemStyleDone target:self action:@selector(deleteGroupClicked:)];
-        deteleGroupButton.tintColor = UIColor.whiteColor;
-        self.navigationItem.rightBarButtonItem = deteleGroupButton;
+        //cannot delete native groups
+        if(!group.isNative) {
+            UIBarButtonItem *deteleGroupButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"delete",@"delete")
+                                                                                  style:UIBarButtonItemStyleDone target:self action:@selector(deleteGroupClicked:)];
+            deteleGroupButton.tintColor = UIColor.whiteColor;
+            self.navigationItem.rightBarButtonItem = deteleGroupButton;
+        }
         self.navigationItem.backBarButtonItem.tintColor = UIColor.whiteColor;
     }
     return self;

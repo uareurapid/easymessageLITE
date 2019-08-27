@@ -150,3 +150,4 @@
 "update_contact" = "Изменить контакт";
 "no_recipients" = "Получатели не выбраны";
 "upgrade_now" = "Обнови сейчас?";
+"native_groups_support" = "Добавление контактов в группы iCloud не поддерживается";
