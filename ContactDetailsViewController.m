@@ -11,6 +11,10 @@
 #import <Contacts/Contacts.h>
 #import "PCAppDelegate.h"
 #import "AddContactViewController.h"
+#import "NBPhoneNumber.h"
+#import "NBPhoneNumberUtil.h"
+#import "iToast.h"
+
 @interface ContactDetailsViewController ()
 
 @end
@@ -109,24 +113,285 @@
     PCAppDelegate *delegate = (PCAppDelegate *) [[UIApplication sharedApplication] delegate];
     configuration.separatorColor = [delegate colorFromHex:0xfb922b];
     
-    //no selection
-    [FTPopOverMenu showFromEvent:event withMenuArray:@[NSLocalizedString(@"edit",@"edit"),NSLocalizedString(@"delete",@"delete")]
-                      imageArray:@[@"edit40",@"delete"]
+    BOOL canDoPhoneCall = contact!= nil && [self isValidPhone:contact.phone];
+    BOOL canSendEmail = contact!=nil && [self isValidEmail:contact.email];
+    BOOL canDoFaceTime = (canSendEmail || canDoPhoneCall) && [[UIApplication sharedApplication] canOpenURL: [NSURL URLWithString: @"facetime://"]];
+    
+    NSArray* options = [self getMenuArray:canDoFaceTime call:canDoPhoneCall email:canSendEmail];
+    
+    NSArray* images = [self getImagesArray:canDoFaceTime call:canDoPhoneCall email:canSendEmail];
+    
+    //no selection @[NSLocalizedString(@"edit",@"edit"),NSLocalizedString(@"delete",@"delete"),@"facetime",@"call", @"email"]
+    [FTPopOverMenu showFromEvent:event withMenuArray:options
+                      imageArray:images
                    configuration:configuration
                        doneBlock:^(NSInteger selectedIndex) {
-                           NSLog(@"selected %ld", (long)selectedIndex);
+                           //NSLog(@"selected %ld", (long)selectedIndex);
                            if(selectedIndex == 0) {
                                //edit
-                               //TODO
+                               //TODO if native contact show native interface otherwise the controller in edit mode
                                [self showAddContactController];
                            }
-                           else {
+                           else if(selectedIndex == 1){
                                //delete
                                [self deleteContactClicked: sender];
+                           } else if(selectedIndex == 2){
+                               
+                               if(canDoFaceTime) {
+                                   //facetime
+                                   NSString *str = [NSString stringWithFormat:@"facetime://%@", canDoPhoneCall ? contact.phone :  contact.email];
+                                   [self warnAboutFacetimeOrShow:str];
+                               } else if(canDoPhoneCall) {
+                                   //NSLog(@"do call selected");
+                                   NSString *phoneToCall = [[contact.phone mutableCopy] stringByReplacingOccurrencesOfString:@" " withString:@""];
+                                   [self makePhoneCall:phoneToCall];
+                               } else if(canSendEmail) {
+                                   //NSLog(@"send email selected");
+                                   [self sendEmail:contact.email];
+                               }
+                               
+                           } else if(selectedIndex == 3){
+                               
+                               //facetime will be at position 2
+                               if(canDoFaceTime) {
+                                   
+                                   //either call or mail
+                                   if(canDoPhoneCall) {
+                                       //NSLog(@"do call selected");
+                                       NSString *phoneToCall = [[contact.phone mutableCopy] stringByReplacingOccurrencesOfString:@" " withString:@""];
+                                       [self makePhoneCall:phoneToCall];
+                                   } else if(canSendEmail) {
+                                       //NSLog(@"send email selected");
+                                       [self sendEmail:contact.email];
+                                   }
+                                   
+                               } else if(canSendEmail) {
+                                   
+                                   //NSLog(@"send email selected");
+                                   [self sendEmail:contact.email];
+                               }
+                               
+                           }
+                           else if(selectedIndex == 4){ //means i have the 5 options, last one is email
+                               //NSLog(@"send email selected");
+                               [self sendEmail:contact.email];
                            }
                        } dismissBlock:^{
                            
                        }];
+}
+
+-(NSArray *) getMenuArray: (BOOL) canDoFaceTime call: (BOOL) canDoPhoneCall email: (BOOL) canSendEmail {
+    
+    NSMutableArray *options = [[NSMutableArray alloc] init];
+    
+    [options addObject:NSLocalizedString(@"edit",@"edit")];
+    [options addObject:NSLocalizedString(@"delete",@"delete")];
+    
+    if(canDoFaceTime) {
+        [options addObject:@"Facetime"];
+    }
+    
+    if(canDoPhoneCall) {
+        [options addObject:NSLocalizedString(@"call_phone", @"Call")];
+    }
+    
+    if(canSendEmail) {
+        [options addObject:NSLocalizedString(@"contact_email", @"Email")];
+    }
+    
+    return options;
+}
+
+-(NSArray *) getImagesArray: (BOOL) canDoFaceTime call: (BOOL) canDoPhoneCall email: (BOOL) canSendEmail {
+    NSMutableArray *options = [[NSMutableArray alloc] init];
+    
+    [options addObject:@"edit40"];
+    [options addObject:@"delete"];
+    
+    if(canDoFaceTime) {
+        [options addObject:@"facetime"];
+    }
+    
+    if(canDoPhoneCall) {
+        [options addObject:@"call"];
+    }
+    
+    if(canSendEmail) {
+        [options addObject:@"email40"];
+    }
+    
+    return options;
+}
+
+//validate a phone number
+- (BOOL)isValidPhone:(NSString *)phoneNumber
+{
+    if(phoneNumber == nil) {
+        return false;
+    }
+    
+    NSString *phoneToCheck = [[phoneNumber mutableCopy] stringByReplacingOccurrencesOfString:@" " withString:@""];
+    
+    @try {
+        
+        //https://github.com/iziz/libPhoneNumber-iOS
+        NBPhoneNumberUtil *phoneUtil = [[NBPhoneNumberUtil alloc] init];
+        NSError *anError = nil;
+        NBPhoneNumber *theNumber = [phoneUtil parse:phoneToCheck defaultRegion:@"AT" error:&anError];
+        
+        BOOL valid = false;
+        
+        //firt check using iOS port from libphonenumber (Google's phone number handling library)
+        if (anError == nil) {
+            valid = [phoneUtil isValidNumber:theNumber];
+        }
+        
+        if(!valid) {
+            //second check using regex
+            NSString *phoneRegex = @"^((\\+)|(00))[0-9]{6,14}$";
+            NSPredicate *phoneTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", phoneRegex];
+            valid =  [phoneTest evaluateWithObject:phoneToCheck];
+        }
+        
+        if(valid) {
+            return true;
+        } else {
+            //final check, just make sure it is a number
+            
+            NSNumberFormatter *nf = [[NSNumberFormatter alloc] init];
+            BOOL isDecimal = [nf numberFromString:phoneToCheck] != nil;
+            return isDecimal;
+            
+        }
+        
+    }@catch(NSException *) {
+        return false;
+    }
+    
+    
+}
+//validate email address
+-(BOOL) isValidEmail:(NSString *)email
+{
+    if(email == nil) {
+        return false;
+    }
+    BOOL stricterFilter = NO; // Discussion http://blog.logichigh.com/2010/09/02/validating-an-e-mail-address/
+    NSString *stricterFilterString = @"^[A-Z0-9a-z\\._%+-]+@([A-Za-z0-9-]+\\.)+[A-Za-z]{2,4}$";
+    NSString *laxString = @"^.+@([A-Za-z0-9-]+\\.)+[A-Za-z]{2}[A-Za-z]*$";
+    NSString *emailRegex = stricterFilter ? stricterFilterString : laxString;
+    NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegex];
+    return [emailTest evaluateWithObject:email];
+}
+
+-(void) makePhoneCall: (NSString *) numberToCall {
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"tel://%@", numberToCall ]]];
+}
+
+-(void) sendEmail: (NSString*) address {
+    
+    if (![MFMailComposeViewController canSendMail]) {
+        NSLog(@"Mail services are not available.");
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"easymessage_send_email_title", @"EasyMessage: Send Email")
+                                                        message:NSLocalizedString(@"no_email_device_settings",nil)
+                                                       delegate:self
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        
+        [alert show];
+    } else {
+        //send the email normally
+        MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
+        mc.mailComposeDelegate = self;
+        [mc setSubject:@"Easy Message"];
+        [mc setMessageBody:@"Easy Message" isHTML:NO];
+        [mc setToRecipients:@[address]];
+        
+        // Present mail view controller on screen
+        [self presentViewController:mc animated:YES completion:NULL];
+    }
+}
+
+//delegate for the email controller
+- (void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
+{
+    NSString *msg;
+    switch (result)
+    
+    {
+        case MFMailComposeResultCancelled:
+            msg = NSLocalizedString(@"message_mail_canceled",@"Mail cancelled");
+            break;
+        case MFMailComposeResultSaved:
+            msg = NSLocalizedString(@"message_mail_saved",@"Mail saved");
+            break;
+        case MFMailComposeResultSent:
+            msg = NSLocalizedString(@"message_mail_sent",@"Mail sent");
+            break;
+        case MFMailComposeResultFailed:
+            msg = [NSString stringWithFormat:NSLocalizedString(@"message_mail_sent_failure_%@", @"Mail sent failure"),[error localizedDescription]];
+            break;
+        default:
+            break;
+    }
+    if(msg!=nil) {
+        [[[[iToast makeText:msg]
+           setGravity:iToastGravityBottom] setDuration:2000] show];
+    }
+    
+    // Close the Mail Interface
+    [self dismissViewControllerAnimated:YES completion:nil];
+    
+    
+}
+
+//shows a message about Facetime call
+-(void) warnAboutFacetimeOrShow: (NSString *) facetimeURL{
+    
+    //only warn once!
+    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    if([defaults objectForKey:@"warnAboutFacetime"] == nil) {
+        
+        PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
+        
+        Popup *popup = [[Popup alloc] initWithTitle:@"Easy Message"
+                                           subTitle:NSLocalizedString(@"facetime_warning",nil)
+                                        cancelTitle:NSLocalizedString(@"Cancel",nil)
+                                       successTitle:@"Ok"
+                                        cancelBlock:^{
+                                            //Custom code after cancel button was pressed
+                                            [defaults setObject:@"warnAboutFacetime" forKey:@"warnAboutFacetime"];
+                                            
+                                        } successBlock:^{
+                                            //Custom code after success button was pressed
+                                            [defaults setObject:@"warnAboutFacetime" forKey:@"warnAboutFacetime"];
+                                            [[UIApplication sharedApplication] openURL: [NSURL URLWithString: facetimeURL]];
+                                        }];
+        
+        [popup setBackgroundColor:[delegate colorFromHex:0xfb922b]];
+        //https://github.com/miscavage/Popup
+        [popup setBorderColor:[UIColor blackColor]];
+        [popup setTitleColor:[UIColor whiteColor]];
+        [popup setSubTitleColor:[UIColor whiteColor]];
+        
+        [popup setSuccessBtnColor:[delegate colorFromHex:0x4f6781]];
+        [popup setSuccessTitleColor:[UIColor whiteColor]];
+        [popup setCancelBtnColor:[delegate colorFromHex:0x4f6781]];
+        [popup setCancelTitleColor:[UIColor whiteColor]];
+        //[popup setBackgroundBlurType:PopupBackGroundBlurTypeLight];
+        [popup setRoundedCorners:YES];
+        [popup setTapBackgroundToDismiss:YES];
+        [popup setDelegate:self];
+        [popup showPopup];
+        //do not warn me again
+        
+    } else {
+        //just show
+        [[UIApplication sharedApplication] openURL: [NSURL URLWithString: facetimeURL]];
+    }
+    
 }
 
 //edit contact

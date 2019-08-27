@@ -151,3 +151,5 @@
 "no_recipients" = "Não há destinatários seleccionados";
 "upgrade_now" = "Actualizar agora?";
 "native_groups_support" = "Não é suportada a inserção de contactos em grupos iCloud";
+"call_phone" = "Ligar";
+"facetime_warning" = "Chamadas através do 'Facetime' só funcionarão se ambos o tiverem instalado e activo no aparelho";

@@ -157,3 +157,5 @@
 "no_recipients" = "Tidak ada penerima yang dipilih";
 "upgrade_now" = "Tingkatkan sekarang?";
 "native_groups_support" = "Menambahkan kontak ke grup iCloud tidak didukung";
+"call_phone" = "Panggilan";
+"facetime_warning" = "'Facetime' hanya akan berfungsi jika keduanya diinstal dan diaktifkan pada perangkat";

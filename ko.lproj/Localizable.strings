@@ -150,3 +150,5 @@
 "no_recipients" = "어떤 수신자가 없습니다";
 "upgrade_now" = "지금 업그레이드 하시겠습니까?";
 "native_groups_support" = "iCloud 그룹에 연락처 추가는 지원되지 않습니다.";
+"call_phone" = "칭하다";
+"facetime_warning" = "'Facetime'은 둘 다 장치에 설치되어 있고 장치에서 활성화 된 경우에만 작동합니다.";

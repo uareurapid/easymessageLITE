@@ -42,6 +42,10 @@
 		72241561177114DC00989C3B /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7224155F177114DC00989C3B /* AddressBookUI.framework */; };
 		722E29472035C63B00431CF3 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 722E29462035C63A00431CF3 /* UserNotifications.framework */; };
 		7235CC3E1F0460C30039E8A3 /* AddContactViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7235CC3D1F0460C30039E8A3 /* AddContactViewController.xib */; };
+		724A596522F8E26100D0FF72 /* facetime.png in Resources */ = {isa = PBXBuildFile; fileRef = 724A596222F8E26000D0FF72 /* facetime.png */; };
+		724A596622F8E26100D0FF72 /* call.png in Resources */ = {isa = PBXBuildFile; fileRef = 724A596322F8E26100D0FF72 /* call.png */; };
+		724A596722F8E26100D0FF72 /* email40.png in Resources */ = {isa = PBXBuildFile; fileRef = 724A596422F8E26100D0FF72 /* email40.png */; };
+		724A596922F8E32800D0FF72 /* liblibPhoneNumber-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 724A596822F8E32800D0FF72 /* liblibPhoneNumber-iOS.a */; };
 		724CB9C21FE5EA9600998CAB /* libAppirater.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 724CB9C31FE5EA9600998CAB /* libAppirater.a */; };
 		724D9ED21F040A2A00E37659 /* PCViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 724D9ED11F040A2A00E37659 /* PCViewController.xib */; };
 		7258506822D20F950026E334 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 7258506622D20F940026E334 /* Message.m */; };
@@ -237,6 +241,10 @@
 		722E29462035C63A00431CF3 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		7235CC3D1F0460C30039E8A3 /* AddContactViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddContactViewController.xib; sourceTree = "<group>"; };
 		7240D96520360609007031EC /* CoreDataModel 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "CoreDataModel 2.xcdatamodel"; sourceTree = "<group>"; };
+		724A596222F8E26000D0FF72 /* facetime.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = facetime.png; sourceTree = "<group>"; };
+		724A596322F8E26100D0FF72 /* call.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = call.png; sourceTree = "<group>"; };
+		724A596422F8E26100D0FF72 /* email40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = email40.png; sourceTree = "<group>"; };
+		724A596822F8E32800D0FF72 /* liblibPhoneNumber-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "liblibPhoneNumber-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		724CB9C31FE5EA9600998CAB /* libAppirater.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libAppirater.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		724D9ED11F040A2A00E37659 /* PCViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PCViewController.xib; sourceTree = "<group>"; };
 		7258506622D20F940026E334 /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
@@ -433,6 +441,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				724A596922F8E32800D0FF72 /* liblibPhoneNumber-iOS.a in Frameworks */,
 				184847C22289DD0B00C9940C /* ContactsUI.framework in Frameworks */,
 				184847C32289DD0B00C9940C /* Contacts.framework in Frameworks */,
 				72E2759B221DCAE100DD13F0 /* Batch.framework in Frameworks */,
@@ -587,6 +596,7 @@
 		7224153A1771148800989C3B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				724A596822F8E32800D0FF72 /* liblibPhoneNumber-iOS.a */,
 				184847C12289DD0B00C9940C /* Contacts.framework */,
 				184847C02289DD0B00C9940C /* ContactsUI.framework */,
 				72E2759A221DCAE100DD13F0 /* Batch.framework */,
@@ -654,6 +664,9 @@
 				7285348618E34FA600826581 /* close48.png */,
 				7285A6B1177CB6F2006137B8 /* forbidden.png */,
 				7284D97D1FE481C3000350D6 /* done.png */,
+				724A596322F8E26100D0FF72 /* call.png */,
+				724A596422F8E26100D0FF72 /* email40.png */,
+				724A596222F8E26000D0FF72 /* facetime.png */,
 				18E2B580228B23C600B9EAF7 /* edit40.png */,
 				7284D9711FE47E64000350D6 /* select_all.png */,
 				7284D96F1FE47E1D000350D6 /* add_contact.png */,
@@ -857,6 +870,7 @@
 				722415361771148800989C3B /* Resources */,
 				72E2253F1FD5FC160076C813 /* Embed Frameworks */,
 				480B3C744C950EA9059557F2 /* [CP] Copy Pods Resources */,
+				C0CB5F2F573B1322211661F9 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -974,13 +988,16 @@
 				72B843B917A8764E00067A73 /* Packed-48.png in Resources */,
 				72B843BB17A8776F00067A73 /* emblem_package.png in Resources */,
 				72B843BF17A87DB300067A73 /* Default@2x.png in Resources */,
+				724A596622F8E26100D0FF72 /* call.png in Resources */,
 				728993D221CC13ED0040E84C /* icon60.png in Resources */,
 				7284D97A1FE47FEE000350D6 /* share.png in Resources */,
 				72963F6717A9793600519FDC /* About-me-icon.png in Resources */,
 				72963F6B17A9825E00519FDC /* Forward.png in Resources */,
+				724A596522F8E26100D0FF72 /* facetime.png in Resources */,
 				7263E07017C435160065E538 /* mail-2.png in Resources */,
 				721512F21BEE84AA00F003D4 /* EasyMessage-Info.plist in Resources */,
 				72682BFD17C5184400A3318F /* world.png in Resources */,
+				724A596722F8E26100D0FF72 /* email40.png in Resources */,
 				72682C0017C519DD00A3318F /* world3.png in Resources */,
 				72682C0117C519DD00A3318F /* world2.png in Resources */,
 				729AAC4517DA839800CABCB0 /* CustomMessagesController.xib in Resources */,
@@ -1032,18 +1049,32 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-EasyMessage/Pods-EasyMessage-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/Appirater/Appirater.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/QBImagePickerController/QBImagePicker.bundle",
+				"${SRCROOT}/Pods/Target Support Files/Pods-EasyMessage/Pods-EasyMessage-resources.sh",
+				$PODS_CONFIGURATION_BUILD_DIR/Appirater/Appirater.bundle,
+				$PODS_CONFIGURATION_BUILD_DIR/QBImagePickerController/QBImagePicker.bundle,
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Appirater.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/QBImagePicker.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-EasyMessage/Pods-EasyMessage-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-EasyMessage/Pods-EasyMessage-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C0CB5F2F573B1322211661F9 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-EasyMessage/Pods-EasyMessage-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
