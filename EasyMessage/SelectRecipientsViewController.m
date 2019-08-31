@@ -480,9 +480,9 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     
     [self checkForExistingGroups];
     
-    dispatch_async(dispatch_get_main_queue(), ^(){
+    //dispatch_async(dispatch_get_main_queue(), ^(){
         [self.tableView reloadData];
-    });
+    //});
     
 }
 
@@ -1078,7 +1078,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     if (tableView == self.searchDisplayController.searchResultsTableView) {
         return [self.searchData count];
     } else {
-        if(sortedKeys.count == 0) {
+        if(sortedKeys.count == 0 || section >= sortedKeys.count) {
             return 0;
         }
         NSString *key = [sortedKeys objectAtIndex:section];
@@ -1106,7 +1106,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     NSInteger row = indexPath.row;
     
     //avoid crash if list is empty
-    if(sortedKeys.count == 0) {
+    if(sortedKeys.count == 0 || section >= sortedKeys.count) {
         return cell;
     }
     
@@ -1633,42 +1633,62 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     //NSPredicate *predicate = [NSPredicate predicateWithFormat:@"title == %@", @"Some Title"];
     //[request setPredicate:predicate];
     
+    if(error!=nil) {
+        NSLog(@"Error: %@", error.description);
+        return;
+    }
+    
     for(Group *group in groupsList) {
-        if([group.name isEqualToString:groupName]) {
+        if([group.name isEqualToString:groupName] && !group.isNative) {
+            //do not remove from native icloud groups
             [group.contactsList removeObject:contact];
         }
     }
     
-    if(results.count > 0) {
-            //
+    if(results.count > 0 && contact!=nil) {
+        //
         GroupDataModel *groupModel = [results objectAtIndex:0];
-            //OK found the group (just get the first anyway
-                
-                for( ContactDataModel *cModel in groupModel.contacts) {
-                    //contact already exists on group
-                    if([self isContactModel:cModel sameAsContact:contact]) {
-                            
-                        [groupModel.contacts removeObject:cModel];
-                        [cModel removeGroupObject:groupModel];
-                            
-                        BOOL OK = NO;
-                        NSError *error;
-                            
-                        if(![managedObjectContext save:&error]){
-                                NSLog(@"Unable to save object, error is: %@",error.description);
-                                //This is a serious error saying the record
-                                //could not be saved. Advise the user to
-                                //try again or restart the application.
-                        }
-                        else {
-                            OK = YES;
-                            [[[[iToast makeText:NSLocalizedString(@"removed",@"removed")]
-                                setGravity:iToastGravityBottom] setDuration:2000] show];
-                            }
-                            [self refreshPhonebook:nil];
-                        }
+        //OK found the group (just get the first anyway
+        
+        if(groupModel!=nil && groupModel.contacts!=nil) {
+            
+            ContactDataModel *cModelToRemove = nil;
+            
+            for( ContactDataModel *cModel in groupModel.contacts) {
+                //contact already exists on group
+                if( cModel!=nil &&  [self isContactModel:cModel sameAsContact:contact]) {
+                    
+                    cModelToRemove = cModel;
+                    break; //break the loop cause i cannot remove while iterating it
                 }
-        }
+            }
+            
+            if(cModelToRemove!=nil) {
+                //only remove it now, outside for loop
+                [groupModel.contacts removeObject:cModelToRemove];
+                [cModelToRemove removeGroupObject:groupModel];
+                
+                BOOL OK = NO;
+                NSError *error;
+                
+                if(![managedObjectContext save:&error]){
+                    NSLog(@"Unable to save object, error is: %@",error.description);
+                    //This is a serious error saying the record
+                    //could not be saved. Advise the user to
+                    //try again or restart the application.
+                }
+                else {
+                    OK = YES;
+                    [[[[iToast makeText:NSLocalizedString(@"removed",@"removed")]
+                       setGravity:iToastGravityBottom] setDuration:2000] show];
+                }
+                [self refreshPhonebook:nil];
+            }
+            
+        }//end groupModel!=nil
+        
+        
+    }//end results.count > 0 && contact!=nil
     
 
 }

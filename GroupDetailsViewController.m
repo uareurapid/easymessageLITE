@@ -221,25 +221,57 @@
         if(alertView.tag == -1) {
             
             // OK delete group
-            [ (SelectRecipientsViewController *)self.root deleteGroup:group];
+            if(group!=nil) {
+                
+                if(!group.isNative) {
+                    [ (SelectRecipientsViewController *)self.root deleteGroup:group];
+                    [self.navigationController popToRootViewControllerAnimated:YES];
+                } else {
+                    NSLog(@"Cannot change native iCloud group");
+                    [self showAlertBox:NSLocalizedString(@"native_groups_remove_support", nil)];
+                }
+                
+            }
             
-            [self.navigationController popToRootViewControllerAnimated:YES];
+            
         }
         else if(alertView.tag > -1 && alertView.tag < group.contactsList.count) {
-            
             //remove a contact from a group instead
-            Contact *toRemove = [group.contactsList objectAtIndex:alertView.tag];
-            [group.contactsList removeObjectAtIndex:alertView.tag];
-            [ (SelectRecipientsViewController *)self.root removeContactFromGroup: group.name contact: toRemove];
-            //TODO show removed from group message!!
-            [self.tableView reloadData];
+            
+            if(group!=nil) {
+                
+                if(!group.isNative && group.contactsList!=nil && (alertView.tag < group.contactsList.count) ) {
+                    
+                    Contact *toRemove = [group.contactsList objectAtIndex:alertView.tag];
+                    if(toRemove!=nil) {
+                        [group.contactsList removeObjectAtIndex:alertView.tag];
+                        [ (SelectRecipientsViewController *)self.root removeContactFromGroup: group.name contact: toRemove];
+                        //TODO show removed from group message!!
+                        [self.tableView reloadData];
+                    }
+                    
+                } else {
+                    NSLog(@"Cannot change native iCloud group");
+                    [self showAlertBox:NSLocalizedString(@"native_groups_remove_support", nil)];
+                }
+            }
+            
         }
         
-       
+        
     }
     else {
         [self.navigationController popToRootViewControllerAnimated:YES];
     }
+}
+
+-(void) showAlertBox:(NSString *) msg {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Easy Message"
+                                                    message:msg
+                                                   delegate:self
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
 }
     
 /*

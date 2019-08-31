@@ -66,8 +66,8 @@
 "linkedin_post_canceled" = "Post to Linkedin canceled";
 "no_recipients_only_social" = "(*) You don´t have any recipients selected.\r\nThe message will be posted to social networks only";
 "done_button" = "Done";
-"archive_message" = "Save in archive?";
-"archive" = "Archive";
+"archive_message" = "Save as template?";
+"archive" = "Templates";
 "available_products" = "Available Products";
 "restore" = "Restore";
 "buy" = "Buy";
@@ -115,7 +115,7 @@
 "app_name" = "EasyMessage";
 "aniversary_of" = "It´s %@ anniversary!";
 "add" = "New";
-"save_archive_explain" = "Message will be archived for later reuse";
+"save_archive_explain" = "Message will be saved for later reuse";
 "add_to_group" = "Add to group";
 "confirm_delete" = "Are you sure?";
 "order_by_lastname" = "Order by last name";
@@ -153,3 +153,4 @@
 "native_groups_support" = "Adding contacts to iCloud groups is not supported";
 "call_phone" = "Call";
 "facetime_warning" = "'Facetime' calls will only work if both have it installed and enabled on the device";
+"native_groups_remove_support" = "Removing contacts from iCloud groups is not supported";

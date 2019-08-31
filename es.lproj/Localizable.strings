@@ -148,3 +148,4 @@
 "native_groups_support" = "No se admite la adición de contactos a grupos de iCloud";
 "call_phone" = "Llamar";
 "facetime_warning" = "'Facetime' solo funcionará si ambos lo tienen instalado y habilitado en el dispositivo";
+"native_groups_remove_support" = "No se admite la eliminación de contactos de grupos de iCloud";

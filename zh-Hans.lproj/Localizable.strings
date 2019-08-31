@@ -148,4 +148,4 @@
 "native_groups_support" = "不支持向iCloud组添加联系人";
 "call_phone" = "呼叫";
 "facetime_warning" = "'Facetime'仅在设备上安装并启用它时才有效";
-
+"native_groups_remove_support" = "不支持从iCloud组中删除联系人";

@@ -148,3 +148,4 @@
 "native_groups_support" = "L'ajout de contacts aux groupes iCloud n'est pas pris en charge.";
 "call_phone" = "Appeler";
 "facetime_warning" = "'Facetime' ne fonctionnera que si les deux l'ont installé et activé sur l'appareil";
+"native_groups_remove_support" = "La suppression des contacts des groupes iCloud n'est pas prise en charge.";

@@ -151,3 +151,4 @@
 "native_groups_support" = "إضافة جهات اتصال إلى مجموعات iCloud غير مدعومة";
 "call_phone" = "مكالمة";
 "facetime_warning" = "لن يعمل 'Facetime' إلا إذا تم تثبيته وتمكينه على الجهاز";
+"native_groups_remove_support" = "لا يتم دعم إزالة جهات الاتصال من مجموعات iCloud";
