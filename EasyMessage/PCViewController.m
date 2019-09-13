@@ -687,7 +687,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 -(void) checkIfShowClearButton:(UITextField *)textField  {
     
     BOOL isEnabled = [self.navigationItem.rightBarButtonItem isEnabled];
-    NSInteger lengthBody = textField.text.length;
+    NSInteger lengthBody = (textField.text == nil) ? 0 : textField.text.length;
     
     if(lengthBody>=1 && !isEnabled) {
         [self.navigationItem.rightBarButtonItem setEnabled:YES];
