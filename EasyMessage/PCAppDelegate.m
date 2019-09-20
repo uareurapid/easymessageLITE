@@ -129,14 +129,6 @@
     return YES;
 }
 
-- (UIColor *)colorFromHex:(unsigned long)hex
-{
-    return [UIColor colorWithRed:((float)((hex & 0xFF0000) >> 16))/255.0
-                           green:((float)((hex & 0xFF00) >> 8))/255.0
-                            blue:((float)(hex & 0xFF))/255.0
-                           alpha:1.0];
-}
-
 - (void)registerForRemoteNotifications {
     if(SYSTEM_VERSION_GRATERTHAN_OR_EQUALTO(@"10.0")){
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
@@ -434,6 +426,27 @@
     
     // Add any custom logic here.
     return handled || handledFB;
+}
+
+- (UIColor *)colorFromHex:(unsigned long)hex
+{
+    return [UIColor colorWithRed:((float)((hex & 0xFF0000) >> 16))/255.0
+                           green:((float)((hex & 0xFF00) >> 8))/255.0
+                            blue:((float)(hex & 0xFF))/255.0
+                           alpha:1.0];
+}
+
+//[delegate colorFromHex:0x1c1c1e];
+-(UIColor *) defaultTableColor: (BOOL) isDarkMode {
+    //return [UIColor systemGray6Color];
+    if(isDarkMode) {
+        return [UIColor colorWithRed:28/255.0f green:28/255.0f blue:30/255.0f alpha:1.0f];//default color
+    }
+    return [UIColor colorWithRed:242/255.0f green:242/255.0f blue:247/255.0f alpha:1.0f];
+    
+    //light - [UIColor colorWithRed:242/255.0f green:242/255.0f blue:247/255.0f alpha:1.0f];
+    //dark [UIColor colorWithRed:28/255.0f green:28/255.0f blue:30/255.0f alpha:1.0f];
+    //https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/color/#system-colors
 }
 
 @end

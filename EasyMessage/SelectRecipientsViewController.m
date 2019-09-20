@@ -921,6 +921,15 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         [defaults setObject:OPTION_ORDER_BY_LASTNAME_KEY forKey:SETTINGS_PREF_ORDER_BY_KEY];
     }
     
+    if([self isDarkModeEnabled]) {
+        self.tabBarController.tabBar.backgroundColor = [UIColor blackColor]; //[self colorFromHexString:@"#1c1c1e"];//1c1c1e
+        self.tableView.backgroundColor = [UIColor blackColor];
+    } else {
+        PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
+        self.tabBarController.tabBar.backgroundColor =  [delegate colorFromHex:0xfb922b]; //normal premium color
+        self.tableView.backgroundColor = [delegate defaultTableColor: false];
+    }
+    
     initialSelectedContacts = selectedContactsList.count;
     groupLocked = false;
     
@@ -1127,7 +1136,14 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     }
     
-    //cell.imageView.image=[UIImage imageNamed:@"24-gift"];
+    PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
+    
+    if([self isDarkModeEnabled]) {
+        
+        cell.contentView.backgroundColor = [delegate defaultTableColor: true ];//1c1c1e
+    } else {
+        cell.contentView.backgroundColor  = [delegate defaultTableColor: false ];
+    }
     
     NSInteger section = indexPath.section;
     NSInteger row = indexPath.row;
@@ -1286,6 +1302,12 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     }
     
     
+    if([self isDarkModeEnabled]) {
+        
+        cell.accessoryView.backgroundColor = [delegate defaultTableColor: true ];// [delegate colorFromHex:0x1c1c1e];
+    } else {
+        cell.accessoryView.backgroundColor  = [delegate defaultTableColor: false ];
+    }
     
     
     return cell;
@@ -1376,6 +1398,36 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 }
 
 #pragma mark - Table view delegate
+
+- (UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    
+    UITableViewHeaderFooterView *header;
+    NSInteger height = 32;
+    if(self.searchController!=nil && self.searchController.active) {
+        height =  44;
+    }
+    else if(section == 0)
+    {
+        height = UITableViewAutomaticDimension ;
+    }
+    
+    header = [[UITableViewHeaderFooterView alloc] initWithFrame: CGRectMake(0, 0, self.tableView.frame.size.width, height)];
+    
+    header.contentView.backgroundColor = self.tableView.backgroundColor;
+    
+    return header;
+}
+
+- (UIView *) tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
+    
+    UITableViewHeaderFooterView *footer = [[UITableViewHeaderFooterView alloc] initWithFrame: CGRectMake(0, 0, self.tableView.frame.size.width, UITableViewAutomaticDimension)];
+    
+    footer.contentView.backgroundColor  = self.tableView.backgroundColor;
+    
+    return footer;
+}
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -2551,6 +2603,15 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 
 - (void)searchBar:(UISearchBar *)searchBar selectedScopeButtonIndexDidChange:(NSInteger)selectedScope{
     [self updateSearchResultsForSearchController:self.searchController];
+}
+
+-(BOOL) isDarkModeEnabled {
+    if (@available(iOS 12.0, *)) {
+        return self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark;
+    } else {
+        // Fallback on earlier versions
+        return NO;
+    }
 }
 
 @end

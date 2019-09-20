@@ -398,25 +398,19 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
 }
 
--(void) notifsAfter10 {
+-(void) scheduleNotificationAfterV10: (NSString *) message {
     //https://stackoverflow.com/questions/39941778/how-to-schedule-a-local-notification-in-ios-10-objective-c
     NSDate *now = [NSDate date];
     
     // NSLog(@"NSDate--before:%@",now);
     
-    now = [now dateByAddingTimeInterval:60];
+    NSDate *futureDate = [now dateByAddingTimeInterval:60*60*24*3]; // 3 days later
     
-    NSLog(@"NSDate:%@",now);
-    
-    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     
     [calendar setTimeZone:[NSTimeZone localTimeZone]];
     
-    NSDateComponents *components = [calendar components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit|NSHourCalendarUnit|NSMinuteCalendarUnit|NSSecondCalendarUnit|NSTimeZoneCalendarUnit fromDate:now];
-    
-    NSDate *todaySehri = [calendar dateFromComponents:components]; //unused
-    
-    
+    NSDateComponents *components = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay|NSCalendarUnitHour|NSCalendarUnitMinute|NSCalendarUnitSecond|NSCalendarUnitTimeZone fromDate:futureDate];
     
     UNMutableNotificationContent *objNotificationContent = [[UNMutableNotificationContent alloc] init];
     objNotificationContent.title = [NSString localizedUserNotificationStringForKey:@"Notification!" arguments:nil];
@@ -590,6 +584,31 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
     if (@available(iOS 11.0, *)) {
         self.sendButton.accessibilityIgnoresInvertColors = true;
+    }
+    
+    PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
+    
+    if([self isDarkModeEnabled]) {
+        self.tabBarController.tabBar.backgroundColor = [UIColor blackColor]; //[self colorFromHexString:@"#1c1c1e"];//1c1c1e
+        self.view.backgroundColor =  [delegate defaultTableColor:true];
+        self.labelAttach.textColor = [UIColor whiteColor];
+        self.labelSaveArchive.textColor = [UIColor whiteColor];
+        self.labelMessage.textColor = [UIColor whiteColor];
+        self.labelSubject.textColor = [UIColor whiteColor];
+        self.subjectView.backgroundColor = [delegate defaultTableColor:true];
+        self.imagesCollection.backgroundColor = [delegate defaultTableColor:true];
+        self.body.backgroundColor = [delegate defaultTableColor:true]; //[delegate colorFromHex:0x1c1c1e];
+    } else {
+        
+        self.tabBarController.tabBar.backgroundColor =  [delegate colorFromHex:0x4f6781]; //normal premium color
+        self.view.backgroundColor = [UIColor whiteColor];//[UIColor whiteColor];
+        self.labelAttach.textColor = [UIColor blackColor];
+        self.labelSaveArchive.textColor = [UIColor blackColor];
+        self.labelMessage.textColor = [UIColor blackColor];
+        self.labelSubject.textColor = [UIColor blackColor];
+        self.subjectView.backgroundColor = [UIColor whiteColor];//[UIColor whiteColor];
+        self.imagesCollection.backgroundColor = [UIColor whiteColor];// [UIColor whiteColor];
+        self.body.backgroundColor = [UIColor whiteColor];//[UIColor whiteColor];
     }
     
     [self showHideSocialOnlyLabel];
@@ -3526,6 +3545,15 @@ void addressBookChanged(ABAddressBookRef reference,
     else {
         //reset now
         [self resetSocialNetworks:NO];
+    }
+}
+
+-(BOOL) isDarkModeEnabled {
+    if (@available(iOS 12.0, *)) {
+        return self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark;
+    } else {
+        // Fallback on earlier versions
+        return NO;
     }
 }
 
