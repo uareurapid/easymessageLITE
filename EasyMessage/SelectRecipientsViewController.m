@@ -196,23 +196,26 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         self.tabBarItem.image = [UIImage imageNamed:@"phone-book"];
         self.title =  NSLocalizedString(@"recipients",nil);
         
-        // Change the position according to your requirements
-        //self.searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 70, 320, 44)];
+        self.searchController = [[UISearchController alloc]initWithSearchResultsController:nil];
         
-        self.searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 320, 44)];
-        /*the search bar widht must be > 1, the height must be at least 44
-         (the real size of the search bar)*/
+        self.searchController.searchBar.scopeButtonTitles = [[NSArray alloc]initWithObjects:NSLocalizedString(@"contact_name",nil), NSLocalizedString(@"contact_email",nil), NSLocalizedString(@"phone_label",nil), nil];
+        self.searchController.searchBar.delegate = self;
+        self.searchController.searchResultsUpdater = self;
+        [self.searchController.searchBar sizeToFit];
         
-        self.searchDisplayController = [[UISearchDisplayController alloc] initWithSearchBar:self.searchBar contentsController:self];
+        self.searchController.dimsBackgroundDuringPresentation = NO;
+        self.definesPresentationContext = YES;
+        
         /*contents controller is the UITableViewController, this let you to reuse
          the same TableViewController Delegate method used for the main table.*/
         
-        self.searchDisplayController.delegate = self;
-        self.searchDisplayController.searchResultsDataSource = self;
-        self.searchDisplayController.searchResultsDelegate = self;
+        //deprecated self.searchDisplayController.delegate = self;
+        //deprecated self.searchDisplayController.searchResultsDataSource = self;
+        //deprecated self.searchDisplayController.searchResultsDelegate = self;
         //set the delegate = self. Previously declared in ViewController.h
         
-        self.tableView.tableHeaderView = self.searchBar; //this line add the searchBar
+        //deprecated self.tableView.tableHeaderView = self.searchBar; //this line add the searchBar
+        self.tableView.tableHeaderView = self.searchController.searchBar;
         
         self.searchData = [[NSMutableArray alloc] init];
         self.searchDataSelection = [[NSMutableArray alloc] init];
@@ -260,25 +263,29 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done"
                                                                        style:UIBarButtonItemStyleDone target:self action:@selector(goBackAfterSelection:)];
         self.navigationItem.rightBarButtonItem = doneButton;
-        self.title = @"Recipients";
+        self.title =  NSLocalizedString(@"recipients",nil);
       
      
-        self.searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 320, 44)];
-        /*the search bar widht must be > 1, the height must be at least 44
-         (the real size of the search bar)*/
+        self.searchController = [[UISearchController alloc]initWithSearchResultsController:nil];
         
-        self.searchDisplayController = [[UISearchDisplayController alloc] initWithSearchBar:self.searchBar contentsController:self];
-        /*contents controller is the UITableViewController, this let you to reuse
-         the same TableViewController Delegate method used for the main table.*/
+        self.searchController.searchBar.scopeButtonTitles = [[NSArray alloc]initWithObjects:NSLocalizedString(@"contact_name",nil), NSLocalizedString(@"contact_email",nil), NSLocalizedString(@"phone_label",nil), nil];
         
-        self.searchDisplayController.delegate = self;
-        self.searchDisplayController.searchResultsDataSource = self;
-        self.searchDisplayController.searchResultsDelegate = self;
+        self.searchController.searchBar.delegate = self;
+        self.searchController.searchResultsUpdater = self;
+        [self.searchController.searchBar sizeToFit];
+        
+        self.searchController.dimsBackgroundDuringPresentation = NO;
+        self.definesPresentationContext = YES;
+        
+        //deprecated self.searchDisplayController.delegate = self;
+        //deprecated self.searchDisplayController.searchResultsDataSource = self;
+        //deprecated self.searchDisplayController.searchResultsDelegate = self;
         //set the delegate = self. Previously declared in ViewController.h
         self.searchData = [[NSMutableArray alloc] init];
         self.searchDataSelection = [[NSMutableArray alloc] init];
         
-        self.tableView.tableHeaderView = self.searchBar; //this line add the searchBar
+        //deprecated self.tableView.tableHeaderView = self.searchBar; //this line add the searchBar
+        self.tableView.tableHeaderView = self.searchController.searchBar;
         
         self.reload = false;
         
@@ -298,24 +305,28 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done"
                                                                        style:UIBarButtonItemStyleDone target:self action:@selector(goBackAfterSelection:)];
         self.navigationItem.rightBarButtonItem = doneButton;
-        self.title = @"Recipients";
+        self.title =  NSLocalizedString(@"recipients",nil);
         
         self.searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 320, 44)];
         /*the search bar widht must be > 1, the height must be at least 44
          (the real size of the search bar)*/
         
-        self.searchDisplayController = [[UISearchDisplayController alloc] initWithSearchBar:self.searchBar contentsController:self];
-        /*contents controller is the UITableViewController, this let you to reuse
-         the same TableViewController Delegate method used for the main table.*/
+        self.searchController = [[UISearchController alloc]initWithSearchResultsController:nil];
         
-        self.searchDisplayController.delegate = self;
-        self.searchDisplayController.searchResultsDataSource = self;
-        self.searchDisplayController.searchResultsDelegate = self;
-        //set the delegate = self. Previously declared in ViewController.h
+        self.searchController.searchBar.scopeButtonTitles = [[NSArray alloc]initWithObjects:NSLocalizedString(@"contact_name",nil), NSLocalizedString(@"contact_email",nil), NSLocalizedString(@"phone_label",nil), nil];
+        
+        self.searchController.searchBar.delegate = self;
+        self.searchController.searchResultsUpdater = self;
+        [self.searchController.searchBar sizeToFit];
+        
+        self.searchController.dimsBackgroundDuringPresentation = NO;
+        self.definesPresentationContext = YES;
+        
         self.searchDataSelection = [[NSMutableArray alloc] init];
         self.searchData = [[NSMutableArray alloc] init];
         
-        self.tableView.tableHeaderView = self.searchBar; //this line add the searchBar
+        //deprecated self.tableView.tableHeaderView = self.searchBar; //this line add the searchBar
+        self.tableView.tableHeaderView = self.searchController.searchBar; //this line add the searchBar
         
         self.reload = false;
         
@@ -390,35 +401,60 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
      added in the "searchData" array. shortly, I recreated the structure of the
      original array "originalData". */
     
-    for(Contact *contact in contactsList) //take the n group (eg. group1, group2, group3)
-        //in the original data
-    {
-        //NSMutableArray *newGroup = [[NSMutableArray alloc] init];
-        NSString *name = contact.name;
-        NSString *lastname = contact.lastName;
-        if(name!=nil || lastname!=nil) {
-
-            if(name!=nil) {
-                NSRange range = [name rangeOfString:searchText
-                                            options:NSCaseInsensitiveSearch];
+    if(searchText ==nil || searchText.length == 0)  {
+        //nothing typed add them all
+        [self.searchData addObjectsFromArray:contactsList];
+    } else {
+        
+        for(Contact *contact in contactsList) //take the n group (eg. group1, group2, group3)
+            //in the original data
+        {
+            //NSMutableArray *newGroup = [[NSMutableArray alloc] init];
+            NSString *name = contact.name;
+            NSString *lastname = contact.lastName;
+            NSString *email = contact.email;
+            NSString *phone = contact.phone;
+            
+            //name search
+            if( (name!=nil || lastname!=nil) && [scope isEqualToString:@"name"]) {
+                
+                if(name!=nil) {
+                    NSRange range = [name rangeOfString:searchText
+                                                options:NSCaseInsensitiveSearch];
+                    if (range.length > 0) { //if the substring match
+                        [self.searchData addObject:contact]; //add the element
+                    }
+                }
+                else if(lastname!=nil) {
+                    NSRange range = [lastname rangeOfString:searchText
+                                                    options:NSCaseInsensitiveSearch];
+                    if (range.length > 0) { //if the substring match
+                        [self.searchData addObject:contact]; //add the element
+                    }
+                }
+                
+                //email search
+            }else if([scope isEqualToString:@"email"] && email!=nil) {
+                
+                NSRange range = [email rangeOfString:searchText options:NSCaseInsensitiveSearch];
                 if (range.length > 0) { //if the substring match
                     [self.searchData addObject:contact]; //add the element
                 }
-            }
-            else if(lastname!=nil) {
-                NSRange range = [lastname rangeOfString:searchText
-                                            options:NSCaseInsensitiveSearch];
+                
+                //phone search
+            }else if([scope isEqualToString:@"phone"] && phone!=nil) {
+                NSRange range = [phone rangeOfString:searchText options:NSCaseInsensitiveSearch];
                 if (range.length > 0) { //if the substring match
                     [self.searchData addObject:contact]; //add the element
                 }
             }
             
         }
-        
     }
-   // [self.searchDisplayController.searchResultsTableView reloadData];
+    
+    // [self.searchDisplayController.searchResultsTableView reloadData];
 }
-
+/*
 - (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString
 {
  
@@ -429,7 +465,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 
     
     return YES;
-}
+}*/
 
 /*-(BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchScope:(NSInteger)searchOption {
     // Tells the table data source to reload when scope bar selection changes
@@ -636,7 +672,8 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 //}
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
-    UITextField *searchField = [searchBar valueForKey:@"_searchField"];
+    
+    /*UITextField *searchField = [searchBar valueForKey:@"_searchField"];
     
     if(searchField.text.length>3) {
         //try to find a match
@@ -647,7 +684,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
                 return;
             }
         }
-    }
+    }*/
         
 }
 
@@ -710,8 +747,16 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 }
 
 -(void) checkIfNavigateToSection: (UISearchBar *) searchBar {
-    UITextField *searchField = [searchBar valueForKey:@"_searchField"];
-    NSString *contactFullName = searchField.text;
+    NSString *contactFullName;
+    //cannot use KVC valueForKey on native apis , from IOS 13
+    if (@available(iOS 13.0, *)) {
+        contactFullName = searchBar.text;
+    } else {
+        UITextField *searchField = [searchBar valueForKey:@"_searchField"];
+        contactFullName = searchField.text;
+    }
+    
+    
     NSInteger section = -1;
     NSInteger row = -1;
     
@@ -765,16 +810,12 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     }//end if
     
     
-   // [theTable reloadData];
+    // [theTable reloadData];
     if(row>-1 && section>-1) {
         NSLog(@"will scroll to section %ld and row %ld",(long)section,(long)row);
-       NSIndexPath *scrollToPath = [NSIndexPath indexPathForRow:row inSection:section];
-       [self.tableView scrollToRowAtIndexPath:scrollToPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
+        NSIndexPath *scrollToPath = [NSIndexPath indexPathForRow:row inSection:section];
+        [self.tableView scrollToRowAtIndexPath:scrollToPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
     }
-    
-    
-    
-    
     
 }
 
@@ -795,10 +836,10 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 }
 
 -(void) clearRecipients {
-    [activityIndicator startAnimating];
+    //[activityIndicator startAnimating];
     rootViewController.recipientsLabel.text = @"";
     [selectedContactsList removeAllObjects];
-    [activityIndicator stopAnimating];
+    //[activityIndicator stopAnimating];
     dispatch_async(dispatch_get_main_queue(), ^{
         self.navigationItem.leftBarButtonItem.title = NSLocalizedString(@"select_all",@"select_all");
         self.groupLocked = true;
@@ -811,12 +852,12 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     //if we have all selected, remove selection
     if(selectedContactsList.count > 0) {
         
-        [activityIndicator startAnimating];
+        //[activityIndicator startAnimating];
         
         rootViewController.recipientsLabel.text = @"";
         [selectedContactsList removeAllObjects];
         
-        [activityIndicator stopAnimating];
+        //[activityIndicator stopAnimating];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             
@@ -827,39 +868,25 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
             //self.navigationItem.rightBarButtonItem.title = NSLocalizedString(@"new_contact", @"new_contact");
             //self.navigationItem.rightBarButtonItem.title = NSLocalizedString(@"new_contact",@"new_contact");
             
-            self.groupLocked = true;
-
-            
         });
+        
+        self.groupLocked = true;
         
     }
     else {
         
-        [activityIndicator startAnimating];
+        //[activityIndicator startAnimating];
         
-        for (NSInteger s = 0; s < self.tableView.numberOfSections; s++) {
-            for (NSInteger r = 0; r < [self.tableView numberOfRowsInSection:s]; r++) {
-                
-                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:r inSection:s];
-                
-                
-                NSInteger section = indexPath.section;
-                //NSInteger row = indexPath.row;
-                
-                
-                NSString *key = [sortedKeys objectAtIndex:section];
-                
-                NSMutableArray *array = (NSMutableArray *) [contactsByLastNameInitial objectForKey:key];
-                for(Contact *contact in array) {
-                    if(![selectedContactsList containsObject:contact]) {
-                        [selectedContactsList addObject:contact];
-                    }
-                }
-                
+        [selectedContactsList removeAllObjects];
+        
+        for(Contact *contact in contactsList) {
+            if(contact!=nil) {
+                [selectedContactsList addObject:contact];
             }
+            
         }
         
-        [activityIndicator stopAnimating];
+        //[activityIndicator stopAnimating];
         
         NSString *msg = [NSString stringWithFormat: NSLocalizedString(@"selected_%@_recipients", @"num of recipients"),@(selectedContactsList.count)];
         [[[[iToast makeText:msg]
@@ -871,9 +898,9 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
             //title = NSLocalizedString(@"unselect_all", @"remover selecção");
             //can add them to the group
             //self.navigationItem.rightBarButtonItem.title = NSLocalizedString(@"create_group", @"create_group");
-            self.groupLocked = false;
+            
         });
-        
+        self.groupLocked = false;
         
     }
         
@@ -1060,7 +1087,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 {
 #warning Potentially incomplete method implementation.
     
-    if (tableView == self.searchDisplayController.searchResultsTableView) {
+    if (self.searchController!=nil && self.searchController.active) {
         return 1;
     }
     
@@ -1075,8 +1102,8 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     //int count = contactsByLastNameInitial.count;
     
     // Check to see whether the normal table or search results table is being displayed and return the count from the appropriate array
-    if (tableView == self.searchDisplayController.searchResultsTableView) {
-        return [self.searchData count];
+    if (self.searchController!=nil && self.searchController.active) {
+        return self.searchData.count;
     } else {
         if(sortedKeys.count == 0 || section >= sortedKeys.count) {
             return 0;
@@ -1106,22 +1133,28 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     NSInteger row = indexPath.row;
     
     //avoid crash if list is empty
-    if(sortedKeys.count == 0 || section >= sortedKeys.count) {
+    if( (sortedKeys.count == 0 || section >= sortedKeys.count) && (self.searchController!=nil && self.searchController.active) ) {//because of
         return cell;
     }
     
-    NSString *key = [sortedKeys objectAtIndex:section];
-    NSMutableArray *array = (NSMutableArray *) [contactsByLastNameInitial objectForKey:key];
+    NSString *key = nil;
+    NSMutableArray *array = nil;
     
     BOOL isGroup = NO;
     
     
     Contact *contact;
     // Check to see whether the normal table or search results table is being displayed and set the Candy object from the appropriate array
-    if (tableView == self.searchDisplayController.searchResultsTableView) {
-        contact = [self.searchData objectAtIndex:indexPath.row];
+    
+    //deprecated if (tableView == self.searchDisplayController.searchResultsTableView) {
+    
+    if (self.searchController!=nil && self.searchController.active && row < self.searchData.count) {
+        
+        contact = [self.searchData objectAtIndex:row];
         
     } else {
+        key = [sortedKeys objectAtIndex:section];
+        array = [contactsByLastNameInitial objectForKey:key];
         contact = [array objectAtIndex:row];
     }
     
@@ -1287,7 +1320,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     NSInteger section = indexPath.section;
     Contact *contact = nil;
     //it was crashing before
-    if (self.searchDisplayController.active) {
+    if (self.searchController!=nil && self.searchController.active) {
         
         contact = [self.searchData objectAtIndex:indexPath.row];
     }
@@ -1360,11 +1393,10 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     Contact *contact;
     
     /***************************/
-    if (self.searchDisplayController.active) {
+    if (self.searchController!=nil && self.searchController.active) {
         
         //self.searchBar.showsCancelButton = false;
         //self.searchBar.showsSearchResultsButton = true;
-        NSIndexPath *indexPath = [self.searchDisplayController.searchResultsTableView indexPathForSelectedRow];
         contact = [self.searchData objectAtIndex:indexPath.row];
         
         //Contact *contactOnRealTable;
@@ -1427,7 +1459,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
             
             
             
-            [self.searchDisplayController setActive:false];
+            [self.searchController setActive:false];
             
             
         }
@@ -1540,7 +1572,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 -(NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     
     
-    if(tableView==self.searchDisplayController.searchResultsTableView) {
+    if(self.searchController!=nil && self.searchController.active) {
         return @"";
     }
    
@@ -1552,8 +1584,8 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     
-    if(tableView==self.searchDisplayController.searchResultsTableView)
-        return 0;
+    if(self.searchController!=nil && self.searchController.active)
+        return 44;
     
     if(section == 0)
     {
@@ -2490,6 +2522,35 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     contactModel.lastname = contact.lastName;
     
     return contactModel;
+}
+
+#pragma search data delegates
+-(void)updateSearchResultsForSearchController:(UISearchController *)searchController{
+    NSString *searchString = self.searchController.searchBar.text;
+    
+    //if(searchString !=nil && searchString.length > 0) {
+    NSInteger scope = self.searchController.searchBar.selectedScopeButtonIndex;
+    
+    if(scope == 0){
+        //name
+        [self filterContentForSearchText:searchString scope:@"name"];
+    } else if(scope == 1) {
+        //email
+        [self filterContentForSearchText:searchString scope:@"email"];
+    }
+    else {
+        //phone
+        [self filterContentForSearchText:searchString scope:@"phone"];
+    }
+    
+    //}
+    
+    [self.tableView reloadData];
+    
+}
+
+- (void)searchBar:(UISearchBar *)searchBar selectedScopeButtonIndexDidChange:(NSInteger)selectedScope{
+    [self updateSearchResultsForSearchController:self.searchController];
 }
 
 @end

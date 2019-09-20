@@ -824,23 +824,46 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             //show the warning and exit!
             if( (settingsController.selectSendOption == OPTION_SEND_SMS_ONLY_ID || settingsController.selectSendOption == OPTION_ALWAYS_SEND_BOTH_ID) ) {
                 
-                if([self checkIfShouldWarnAboutImessage]) {
-                  [self warnAboutImessage];
-                }
-                
-                //proceeed normally only after dismiss the popup
-                if(settingsController.selectSendOption == OPTION_ALWAYS_SEND_BOTH_ID || settingsController.selectSendOption == OPTION_SEND_EMAIL_ONLY_ID) {
+                if([self checkIfShouldWarnAboutImessage]){
+                    [self warnAboutImessage: ^(BOOL completion) {
+                        if(completion) {
+                            //do it anyway
+                            
+                            //proceeed normally only after dismiss the popup
+                            if(settingsController.selectSendOption == OPTION_ALWAYS_SEND_BOTH_ID || settingsController.selectSendOption == OPTION_SEND_EMAIL_ONLY_ID) {
+                                
+                                emailSentOK = NO;
+                                
+                                [self sendEmail:nil];//will send sms on dismiss email
+                            }
+                            else if(settingsController.selectSendOption == OPTION_SEND_SMS_ONLY_ID) {
+                                
+                                smsSentOK = NO;
+                                [self sendSMS:nil];
+                            }
+                            
+                            
+                        } else {
+                            //cancel
+                            return; //do nothing
+                        }
+                    }];
+                } else {
                     
-                    emailSentOK = NO;
-                    
-                    [self sendEmail:nil];//will send sms on dismiss email
-                    //need to check is there is any email on the recipients list
+                    //proceeed normally, no need to popup
+                    if(settingsController.selectSendOption == OPTION_ALWAYS_SEND_BOTH_ID || settingsController.selectSendOption == OPTION_SEND_EMAIL_ONLY_ID) {
+                        
+                        emailSentOK = NO;
+                        
+                        [self sendEmail:nil];//will send sms on dismiss email
+                    }
+                    else if(settingsController.selectSendOption == OPTION_SEND_SMS_ONLY_ID) {
+                        
+                        smsSentOK = NO;
+                        [self sendSMS:nil];
+                    }
                 }
-                else if(settingsController.selectSendOption == OPTION_SEND_SMS_ONLY_ID) {
                     
-                    smsSentOK = NO;
-                    [self sendSMS:nil];
-                }
             } else {
                 //proceed normally
                 if(settingsController.selectSendOption == OPTION_ALWAYS_SEND_BOTH_ID || settingsController.selectSendOption == OPTION_SEND_EMAIL_ONLY_ID) {
@@ -896,7 +919,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 }
 
 //shows a message to disable iMessage
--(void) warnAboutImessage {
+-(void) warnAboutImessage: (void (^)(BOOL finished))completion{
     
     Popup *popup = [[Popup alloc] initWithTitle:@"Easy Message"
                                        subTitle:NSLocalizedString(@"imessage_warn",nil)
@@ -904,10 +927,10 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                                    successTitle:@"Ok"
                                     cancelBlock:^{
                                         //Custom code after cancel button was pressed
-                                        NSLog(@"nok");
+                                        completion(false);
                                     } successBlock:^{
                                         //Custom code after success button was pressed
-                                        NSLog(@"ok");
+                                        completion(true);
                                     }];
     
     [popup setBackgroundColor:[self colorFromHex:0xfb922b]];

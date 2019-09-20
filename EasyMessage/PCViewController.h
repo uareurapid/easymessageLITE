@@ -103,7 +103,7 @@ void addressBookChanged(ABAddressBookRef reference,
 -(void)setupAddressBook;
 -(void) checkForPrefilledMessage;
 -(BOOL) checkIfShouldWarnAboutImessage;
--(void) warnAboutImessage;
+-(void) warnAboutImessage: (void (^)(BOOL finished))completion;
 -(void) updateAddRemoveRecipients;
 //Purchase stuff
 -(void)showUpgradeToPremiumMessage;

@@ -712,7 +712,7 @@
 
 - (IBAction)sendEmail:(id)sender {
     // Email Subject
-    NSString *emailTitle = @"Questions Or Suggestions";
+    NSString *emailTitle = @"Questions Or Suggestions (L)";
     // Email Content
     NSString *messageBody = @"";
     // To address

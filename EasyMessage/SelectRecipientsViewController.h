@@ -21,7 +21,7 @@
 
 
 
-@interface SelectRecipientsViewController : UITableViewController <UISearchBarDelegate,UISearchDisplayDelegate, UIPickerViewDataSource,UIPickerViewDelegate>
+@interface SelectRecipientsViewController : UITableViewController <UISearchBarDelegate,UISearchResultsUpdating, UIPickerViewDataSource,UIPickerViewDelegate>
 
 -(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil contacts: (NSMutableArray *) contacts;
 -(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil contacts: (NSMutableArray *) contacts rootViewController: (PCViewController*) viewController;
@@ -73,7 +73,7 @@
 
 @property (strong,nonatomic) UIActivityIndicatorView *activityIndicator;
 @property (strong,nonatomic) UISearchBar *searchBar;
-@property (strong,nonatomic) UISearchDisplayController *searchDisplayController;
+@property (strong,nonatomic) UISearchController *searchController;
 
 
 //will hold a list of contacts per each letter
