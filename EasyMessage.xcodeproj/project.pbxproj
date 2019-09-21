@@ -10,6 +10,8 @@
 		181330322285E5AF00939671 /* Popup.m in Sources */ = {isa = PBXBuildFile; fileRef = 181330312285E5AF00939671 /* Popup.m */; };
 		184847C22289DD0B00C9940C /* ContactsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 184847C02289DD0B00C9940C /* ContactsUI.framework */; };
 		184847C32289DD0B00C9940C /* Contacts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 184847C12289DD0B00C9940C /* Contacts.framework */; };
+		1859674C233540A80014CA7F /* unfav30.png in Resources */ = {isa = PBXBuildFile; fileRef = 1859674A233540A70014CA7F /* unfav30.png */; };
+		1859674D233540A80014CA7F /* fav30.png in Resources */ = {isa = PBXBuildFile; fileRef = 1859674B233540A70014CA7F /* fav30.png */; };
 		186341782278756F00167AAE /* FTPopOverMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 186341772278756F00167AAE /* FTPopOverMenu.m */; };
 		1863417A227893C900167AAE /* group.png in Resources */ = {isa = PBXBuildFile; fileRef = 18634179227893C800167AAE /* group.png */; };
 		1863417C227893D400167AAE /* list.png in Resources */ = {isa = PBXBuildFile; fileRef = 1863417B227893D400167AAE /* list.png */; };
@@ -197,6 +199,8 @@
 		181330312285E5AF00939671 /* Popup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Popup.m; sourceTree = "<group>"; };
 		184847C02289DD0B00C9940C /* ContactsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ContactsUI.framework; path = System/Library/Frameworks/ContactsUI.framework; sourceTree = SDKROOT; };
 		184847C12289DD0B00C9940C /* Contacts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Contacts.framework; path = System/Library/Frameworks/Contacts.framework; sourceTree = SDKROOT; };
+		1859674A233540A70014CA7F /* unfav30.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = unfav30.png; sourceTree = "<group>"; };
+		1859674B233540A70014CA7F /* fav30.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fav30.png; sourceTree = "<group>"; };
 		186341762278756F00167AAE /* FTPopOverMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FTPopOverMenu.h; sourceTree = "<group>"; };
 		186341772278756F00167AAE /* FTPopOverMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FTPopOverMenu.m; sourceTree = "<group>"; };
 		18634179227893C800167AAE /* group.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = group.png; sourceTree = "<group>"; };
@@ -664,6 +668,8 @@
 				7285348618E34FA600826581 /* close48.png */,
 				7285A6B1177CB6F2006137B8 /* forbidden.png */,
 				7284D97D1FE481C3000350D6 /* done.png */,
+				1859674B233540A70014CA7F /* fav30.png */,
+				1859674A233540A70014CA7F /* unfav30.png */,
 				724A596322F8E26100D0FF72 /* call.png */,
 				724A596422F8E26100D0FF72 /* email40.png */,
 				724A596222F8E26000D0FF72 /* facetime.png */,
@@ -938,6 +944,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1859674D233540A80014CA7F /* fav30.png in Resources */,
 				72F6BB912225C66A00929A14 /* twitter.png in Resources */,
 				72D25CEF21C79A660004EB21 /* sortb.png in Resources */,
 				722415461771148800989C3B /* InfoPlist.strings in Resources */,
@@ -1016,6 +1023,7 @@
 				7284D9781FE47FBC000350D6 /* clear.png in Resources */,
 				7298EC0A17DE1937002C30AE /* Unlock32.png in Resources */,
 				72E225421FD5FFAE0076C813 /* TwitterKitResources.bundle in Resources */,
+				1859674C233540A80014CA7F /* unfav30.png in Resources */,
 				72674E7517E26722001275AB /* GroupDetailsViewController.xib in Resources */,
 				7285348018E3415D00826581 /* Untitled.png in Resources */,
 			);

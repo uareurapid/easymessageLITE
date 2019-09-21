@@ -921,14 +921,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         [defaults setObject:OPTION_ORDER_BY_LASTNAME_KEY forKey:SETTINGS_PREF_ORDER_BY_KEY];
     }
     
-    if([self isDarkModeEnabled]) {
-        self.tabBarController.tabBar.backgroundColor = [UIColor blackColor]; //[self colorFromHexString:@"#1c1c1e"];//1c1c1e
-        self.tableView.backgroundColor = [UIColor blackColor];
-    } else {
-        PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
-        self.tabBarController.tabBar.backgroundColor =  [delegate colorFromHex:0xfb922b]; //normal premium color
-        self.tableView.backgroundColor = [delegate defaultTableColor: false];
-    }
+    //[self checkAppearance];
     
     initialSelectedContacts = selectedContactsList.count;
     groupLocked = false;
@@ -1134,6 +1127,19 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) { //UITableViewCellStyleSubtitle
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+    } else {
+        //reuse cell clear views
+        // Prepare cell for reuse
+
+        // Remove subviews from cell's contentView
+        for (UIView *view in cell.contentView.subviews)
+        {
+            // Remove only the appropriate views
+            if ([view isKindOfClass:[UIImageView class]])
+            {
+                [view removeFromSuperview];
+            }
+        }
     }
     
     PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
@@ -1142,7 +1148,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         
         cell.contentView.backgroundColor = [delegate defaultTableColor: true ];//1c1c1e
     } else {
-        cell.contentView.backgroundColor  = [delegate defaultTableColor: false ];
+        cell.contentView.backgroundColor  = [UIColor clearColor ];
     }
     
     NSInteger section = indexPath.section;
@@ -1174,6 +1180,12 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         contact = [array objectAtIndex:row];
     }
     
+    //favorite stuff
+    NSInteger height = cell.contentView.frame.size.height;
+    UIImage *favorite = [UIImage imageNamed:@"fav30"];
+    UIImageView *favView = [[UIImageView alloc] initWithImage:favorite];
+    [favView setFrame: CGRectMake( (cell.contentView.frame.size.width - 80), height - favorite.size.height, favorite.size.width, favorite.size.height)];
+    [cell.contentView addSubview:favView];
     
     if([contact isKindOfClass:Group.class]) {
         Group *thisOne = (Group *) contact;
@@ -1306,7 +1318,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         
         cell.accessoryView.backgroundColor = [delegate defaultTableColor: true ];// [delegate colorFromHex:0x1c1c1e];
     } else {
-        cell.accessoryView.backgroundColor  = [delegate defaultTableColor: false ];
+        cell.accessoryView.backgroundColor  = [UIColor clearColor ];
     }
     
     
@@ -2613,5 +2625,40 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         return NO;
     }
 }
+
+-(void) viewWillLayoutSubviews {
+    
+   BOOL darkModeEnabled = [self isDarkModeEnabled];
+   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+   BOOL savedValue = [defaults boolForKey:@"darkModeEnabled"];
+    
+   if(darkModeEnabled) {
+       self.tabBarController.tabBar.backgroundColor = [UIColor blackColor]; //[self colorFromHexString:@"#1c1c1e"];//1c1c1e
+       self.tableView.backgroundColor = [UIColor blackColor];
+   } else {
+       PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
+       self.tabBarController.tabBar.backgroundColor =  [delegate colorFromHex:0xfb922b]; //normal premium color
+       self.tableView.backgroundColor = [delegate defaultTableColor: false];
+   }
+    
+    [defaults setBool:darkModeEnabled forKey:@"darkModeEnabled"];
+    
+    if(savedValue!= darkModeEnabled) {
+        
+        [self.tableView reloadData];
+    }
+}
+/*
+-(void) checkAppearance {
+    
+ if([self isDarkModeEnabled]) {
+        self.tabBarController.tabBar.backgroundColor = [UIColor blackColor]; //[self colorFromHexString:@"#1c1c1e"];//1c1c1e
+        self.tableView.backgroundColor = [UIColor blackColor];
+    } else {
+        PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
+        self.tabBarController.tabBar.backgroundColor =  [delegate colorFromHex:0xfb922b]; //normal premium color
+        self.tableView.backgroundColor = [delegate defaultTableColor: false];
+    }
+}*/
 
 @end
