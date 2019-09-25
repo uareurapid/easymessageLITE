@@ -142,6 +142,8 @@
     contactModel.phone = contact.phone;
     contactModel.lastname = contact.lastName;
     contactModel.name = contact.name;
+    //assign this default value
+    contactModel.favorite = contact.isFavorite;
     
     BOOL OK = NO;
     NSError *error;
@@ -177,6 +179,8 @@
         //force a reload of list on viewDidAppear
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         [defaults setBool:true forKey:@"force_import"];
+        //also reload recipients
+        [defaults setBool:true forKey:@"force_reload"];
         
         //the date picker is enabled?
         if(self.datePicker.enabled) {
@@ -230,6 +234,8 @@
                 contact.lastName = self.txtLastName.text.length==0? @"": self.txtLastName.text;
                 
                 contact.isNative = false;
+                //by default is not favorite
+                contact.isFavorite = false;
                 /**
                 NSLog(@"-----------------------------------");
                 NSLog(@"contact name: %@",contact.name);
@@ -275,6 +281,8 @@
                     //force a reload of list on viewDidAppear
                     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
                     [defaults setBool:true forKey:@"force_import"];
+                    //only refresh recipients list
+                    [defaults setBool:true forKey:@"force_reload"];
                     
                     //the date picker is enabled?
                     if(self.datePicker.enabled) {

@@ -13,5 +13,6 @@
 
 @dynamic name;
 @dynamic contacts;
+@dynamic favorite;
 
 @end

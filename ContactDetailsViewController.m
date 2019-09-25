@@ -102,6 +102,47 @@
     
 }
 
+-(void) addContactToFavorites: (BOOL) addORemove{
+    
+    if(self.contactModel == nil || self.contact == nil) {
+        return;
+    }
+    
+    self.contact.isFavorite = addORemove;
+    NSManagedObjectContext *managedObjectContext = [(PCAppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
+    ContactDataModel *contactModel = (ContactDataModel *) self.contactModel;
+    contactModel.favorite = contact.isFavorite;
+    
+    BOOL OK = NO;
+    NSError *error;
+    
+    if(![managedObjectContext save:&error]){
+        [[[[iToast makeText: [NSString stringWithFormat:@"Unable to save object, error is: %@",error.description]]
+           setGravity:iToastGravityBottom] setDuration:2000] show];
+        NSLog(@"Unable to save object, error is: %@",error.description);
+        //This is a serious error saying the record
+        //could not be saved. Advise the user to
+        //try again or restart the application.
+        
+    }
+    else {
+   
+        OK = YES;
+        
+        [[[[iToast makeText:NSLocalizedString(@"done_button",@"done_button")]
+           setGravity:iToastGravityBottom] setDuration:2000] show];
+        //force
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setBool:true forKey:@"force_reload"];
+    }
+    
+    if(OK) {
+       
+        [self.navigationController popToRootViewControllerAnimated:YES];
+     
+    }
+}
+
 - (void) showMenu:(id)sender withEvent: (UIEvent *)event
 {
     
@@ -116,73 +157,106 @@
     BOOL canDoPhoneCall = contact!= nil && [self isValidPhone:contact.phone];
     BOOL canSendEmail = contact!=nil && [self isValidEmail:contact.email];
     BOOL canDoFaceTime = (canSendEmail || canDoPhoneCall) && [[UIApplication sharedApplication] canOpenURL: [NSURL URLWithString: @"facetime://"]];
+    BOOL canAddToFavorites = contact!=nil && ![self isNativeContact];
     
-    NSArray* options = [self getMenuArray:canDoFaceTime call:canDoPhoneCall email:canSendEmail];
+    NSArray* options = [self getMenuArray:canDoFaceTime call:canDoPhoneCall email:canSendEmail showFavoriteOption: canAddToFavorites];
     
-    NSArray* images = [self getImagesArray:canDoFaceTime call:canDoPhoneCall email:canSendEmail];
+    NSArray* images = [self getImagesArray:canDoFaceTime call:canDoPhoneCall email:canSendEmail showFavoriteOption: canAddToFavorites];
     
     //no selection @[NSLocalizedString(@"edit",@"edit"),NSLocalizedString(@"delete",@"delete"),@"facetime",@"call", @"email"]
     [FTPopOverMenu showFromEvent:event withMenuArray:options
-                      imageArray:images
-                   configuration:configuration
-                       doneBlock:^(NSInteger selectedIndex) {
-                           //NSLog(@"selected %ld", (long)selectedIndex);
-                           if(selectedIndex == 0) {
-                               //edit
-                               //TODO if native contact show native interface otherwise the controller in edit mode
-                               [self showAddContactController];
+                  imageArray:images
+               configuration:configuration
+                   doneBlock:^(NSInteger selectedIndex) {
+                       //NSLog(@"selected %ld", (long)selectedIndex);
+                       if(selectedIndex == 0) {
+                           //edit
+                           //TODO if native contact show native interface otherwise the controller in edit mode
+                           [self showAddContactController];
+                       }
+                       else if(selectedIndex == 1){
+                           //delete
+                           [self deleteContactClicked: sender];
+                       } else if(selectedIndex == 2){
+                           
+                           if(canDoFaceTime) {
+                               //facetime
+                               NSString *str = [NSString stringWithFormat:@"facetime://%@", canDoPhoneCall ? contact.phone :  contact.email];
+                               [self warnAboutFacetimeOrShow:str];
+                           } else if(canDoPhoneCall) {
+                               //NSLog(@"do call selected");
+                               NSString *phoneToCall = [[contact.phone mutableCopy] stringByReplacingOccurrencesOfString:@" " withString:@""];
+                               [self makePhoneCall:phoneToCall];
+                           } else if(canSendEmail) {
+                               //NSLog(@"send email selected");
+                               [self sendEmail:contact.email];
+                           } else if(!canDoFaceTime && !canSendEmail && !canDoPhoneCall && canAddToFavorites) {
+                               [self addContactToFavorites : !self.contact.isFavorite];
                            }
-                           else if(selectedIndex == 1){
-                               //delete
-                               [self deleteContactClicked: sender];
-                           } else if(selectedIndex == 2){
+                           
+                       } else if(selectedIndex == 3){
+                           
+                           //facetime will be at position 2
+                           if(canDoFaceTime) {
                                
-                               if(canDoFaceTime) {
-                                   //facetime
-                                   NSString *str = [NSString stringWithFormat:@"facetime://%@", canDoPhoneCall ? contact.phone :  contact.email];
-                                   [self warnAboutFacetimeOrShow:str];
-                               } else if(canDoPhoneCall) {
+                               //either call or mail
+                               if(canDoPhoneCall) {
                                    //NSLog(@"do call selected");
                                    NSString *phoneToCall = [[contact.phone mutableCopy] stringByReplacingOccurrencesOfString:@" " withString:@""];
                                    [self makePhoneCall:phoneToCall];
                                } else if(canSendEmail) {
                                    //NSLog(@"send email selected");
                                    [self sendEmail:contact.email];
+                               } else if(canAddToFavorites) {
+                                   [self addContactToFavorites : !self.contact.isFavorite];
                                }
                                
-                           } else if(selectedIndex == 3){
-                               
-                               //facetime will be at position 2
-                               if(canDoFaceTime) {
-                                   
-                                   //either call or mail
-                                   if(canDoPhoneCall) {
-                                       //NSLog(@"do call selected");
-                                       NSString *phoneToCall = [[contact.phone mutableCopy] stringByReplacingOccurrencesOfString:@" " withString:@""];
-                                       [self makePhoneCall:phoneToCall];
-                                   } else if(canSendEmail) {
-                                       //NSLog(@"send email selected");
-                                       [self sendEmail:contact.email];
-                                   }
-                                   
-                               } else if(canSendEmail) {
-                                   
-                                   //NSLog(@"send email selected");
-                                   [self sendEmail:contact.email];
-                               }
-                               
-                           }
-                           else if(selectedIndex == 4){ //means i have the 5 options, last one is email
-                               //NSLog(@"send email selected");
+                           } else if(canSendEmail) {
+                        
+                               //send email selected
                                [self sendEmail:contact.email];
+                               //favorites selected
+                           } else if(canAddToFavorites) {
+                               [self addContactToFavorites : !self.contact.isFavorite];
                            }
-                       } dismissBlock:^{
                            
-                       }];
+                       }
+                       else if(selectedIndex == 4){ //means i have at least 5 options, last one is either email or favorite
+                           
+                           if(canDoFaceTime) {
+                               
+                               if(canDoPhoneCall) {
+                                   
+                                   if(canSendEmail) {
+                                     [self sendEmail:contact.email];
+                                   } else {
+                                       //favorite
+                                       [self addContactToFavorites : !self.contact.isFavorite];
+                                   }
+                               } else {
+                                   //favorite
+                                   [self addContactToFavorites : !self.contact.isFavorite];
+                               }
+                               
+                               
+                           } else  {
+                               //favorite
+                               [self addContactToFavorites : !self.contact.isFavorite];
+                           }
+                           
+                           
+                           //means i have the 6 options, last one is canAddToFavorites
+                       }else if(selectedIndex == 5 && canAddToFavorites) {
+                           [self addContactToFavorites : !self.contact.isFavorite];
+                       }
+    
+                   } dismissBlock:^{
+                       
+                   }];
 }
 
--(NSArray *) getMenuArray: (BOOL) canDoFaceTime call: (BOOL) canDoPhoneCall email: (BOOL) canSendEmail {
-    
+-(NSArray *) getMenuArray: (BOOL) canDoFaceTime call: (BOOL) canDoPhoneCall email: (BOOL) canSendEmail showFavoriteOption: (BOOL) canAddToFavorites {
+  
     NSMutableArray *options = [[NSMutableArray alloc] init];
     
     [options addObject:NSLocalizedString(@"edit",@"edit")];
@@ -200,10 +274,19 @@
         [options addObject:NSLocalizedString(@"contact_email", @"Email")];
     }
     
+    if(canAddToFavorites) {
+        if(self.contact.isFavorite) {
+            [options addObject: NSLocalizedString(@"remove_from_favorites", nil) ];
+        } else {
+           [options addObject: NSLocalizedString(@"add_to_favorites", nil) ];
+        }
+        
+    }
+    
     return options;
 }
 
--(NSArray *) getImagesArray: (BOOL) canDoFaceTime call: (BOOL) canDoPhoneCall email: (BOOL) canSendEmail {
+-(NSArray *) getImagesArray: (BOOL) canDoFaceTime call: (BOOL) canDoPhoneCall email: (BOOL) canSendEmail showFavoriteOption: (BOOL) canAddToFavorites {
     NSMutableArray *options = [[NSMutableArray alloc] init];
     
     [options addObject:@"edit40"];
@@ -219,6 +302,10 @@
     
     if(canSendEmail) {
         [options addObject:@"email40"];
+    }
+    
+    if(canAddToFavorites) {
+        [options addObject:@"favorite"];
     }
     
     return options;

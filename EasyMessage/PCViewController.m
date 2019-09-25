@@ -296,6 +296,9 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             if(forceImport) {
                 [defaults setBool:false forKey:@"force_import"];
             }
+            
+            //also avoid unnecessary reload of recipients screen
+            [defaults setBool:false forKey:@"force_reload"];
         }
     }
     
@@ -600,7 +603,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         self.body.backgroundColor = [delegate defaultTableColor:true]; //[delegate colorFromHex:0x1c1c1e];
     } else {
         
-        self.tabBarController.tabBar.backgroundColor =  [delegate colorFromHex:0x4f6781]; //normal premium color
+        self.tabBarController.tabBar.backgroundColor =  [delegate colorFromHex:0xfb922b]; //normal lite color
         self.view.backgroundColor = [UIColor whiteColor];//[UIColor whiteColor];
         self.labelAttach.textColor = [UIColor blackColor];
         self.labelSaveArchive.textColor = [UIColor blackColor];
@@ -1395,6 +1398,8 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         group.name = model.name;
         group.isNative = false;
         
+        group.isFavorite = model.favorite;
+        
         for(ContactDataModel *contact in model.contacts) {
             
             Contact *c = [[Contact alloc] init];
@@ -1402,6 +1407,8 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             c.phone = contact.phone;
             c.email = contact.email;
             c.lastName = contact.lastname;
+            
+            c.isFavorite = contact.favorite;
             
             if(c!=nil) {
               [group.contactsList addObject:c];
@@ -1500,6 +1507,9 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                 c.email = contact.email;
                 c.lastName = contact.lastname;
                 c.birthday = contact.birthday;
+                
+                c.isFavorite = contact.favorite;
+                
                 if(c.birthday!=nil) {
                     
                     NSDateComponents *componentsContact = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:c.birthday];
@@ -1567,6 +1577,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             group.person = nil;
             
             group.isNative = true;
+            group.isFavorite = false;
             
             //always add
             if(![groupsArray containsObject:group] && group!=nil) {
@@ -1724,6 +1735,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                 //save the reference
                 contact.person=person;
                 contact.isNative = true;
+                contact.isFavorite = false;//false for native ones
                 
                 NSString *email;
                 
@@ -3555,6 +3567,30 @@ void addressBookChanged(ABAddressBookRef reference,
         // Fallback on earlier versions
         return NO;
     }
+}
+
+//TODO
+-(ContactDataModel *) prepareModelFromContact: (NSManagedObjectContext *) managedObjectContext: (Contact *)contact {
+    
+    ContactDataModel *contactModel = (ContactDataModel *)[NSEntityDescription insertNewObjectForEntityForName:@"ContactDataModel" inManagedObjectContext:managedObjectContext];
+    contactModel.name = contact.name;
+    contactModel.phone = contact.phone;
+    contactModel.email = contact.email;
+    contactModel.birthday = contact.birthday;
+    contactModel.lastname = contact.lastName;
+    contactModel.group = nil;
+    contactModel.favorite = contact.isFavorite;
+    
+    return contactModel;
+}
+
+
+-(GroupDataModel *) prepareModelFromGroup: (NSManagedObjectContext *) managedObjectContext: (Group *)group {
+    
+    GroupDataModel *groupModel = (GroupDataModel *)[NSEntityDescription insertNewObjectForEntityForName:@"GroupDataModel" inManagedObjectContext:managedObjectContext];
+    groupModel.name = group.name;
+
+    return groupModel;
 }
 
 @end

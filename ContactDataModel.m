@@ -18,5 +18,6 @@
 @dynamic lastname;
 @dynamic group;
 @dynamic birthday;
+@dynamic favorite;
 
 @end

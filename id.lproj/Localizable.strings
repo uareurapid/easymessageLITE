@@ -160,3 +160,6 @@
 "call_phone" = "Panggilan";
 "facetime_warning" = "'Facetime' hanya akan berfungsi jika keduanya diinstal dan diaktifkan pada perangkat";
 "native_groups_remove_support" = "Menghapus kontak dari grup iCloud tidak didukung";
+"add_to_favorites" = "Tambahkan ke Favorit";
+"remove_from_favorites" = "Hapus dari favorit";
+"show_favorites_only" = "Hanya tampilkan favorit";

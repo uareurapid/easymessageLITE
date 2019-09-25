@@ -355,6 +355,9 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     NSString *filterOption = [defaults objectForKey:SETTINGS_FILTER_OPTIONS];
     BOOL showAll = [filterOption isEqualToString:OPTION_FILTER_SHOW_ALL_KEY];
     BOOL groupsOnly = [filterOption isEqualToString:OPTION_FILTER_GROUPS_ONLY_KEY];
+    //fav only?
+    BOOL favoritesOnly = [filterOption isEqualToString:OPTION_FILTER_FAVORITES_ONLY_KEY];
+    
     //TODO clear the groupsNamesArray ??
     NSMutableArray *workingContactsList;
     if(self.isFiltered) {
@@ -365,12 +368,16 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     }
     
     for(id contact in workingContactsList) {
-        if([contact isKindOfClass:Group.class] && (showAll || groupsOnly)) {
+        if([contact isKindOfClass:Group.class]) {
+            
             Group *gr = (Group *)contact;
             
-            if(![self.groupsNamesArray containsObject:gr.name]) {
-                [self.groupsList addObject:gr];
-                [self.groupsNamesArray addObject:gr.name];
+            if( gr!=nil && ( (showAll || groupsOnly ) || (favoritesOnly && gr.isFavorite) ) ) {
+                
+                if(![self.groupsNamesArray containsObject:gr.name]) {
+                    [self.groupsList addObject:gr];
+                    [self.groupsNamesArray addObject:gr.name];
+                }
             }
         }
     }
@@ -480,6 +487,8 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     
     BOOL groupsOnly = [filterOption isEqualToString:OPTION_FILTER_GROUPS_ONLY_KEY];
     BOOL contactsOnly = [filterOption isEqualToString:OPTION_FILTER_CONTACTS_ONLY_KEY];
+    //only fav?
+    BOOL favoritesOnly = [filterOption isEqualToString:OPTION_FILTER_FAVORITES_ONLY_KEY];
     //clear first
     if(self.filteredContactsList.count > 0) {
        [self.filteredContactsList removeAllObjects];
@@ -487,11 +496,26 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     
     for(id contact in self.contactsList) {
         BOOL isGroup = [contact isKindOfClass:Group.class];
+        
         if(groupsOnly && isGroup) {
-           [self.filteredContactsList addObject:contact];
+            [self.filteredContactsList addObject:contact];
         }
         else if(contactsOnly && !isGroup) {
             [self.filteredContactsList addObject:contact];
+        } else if(favoritesOnly) {
+            //is a group contact
+            if(isGroup) {
+                Group *gr = (Group *) contact;
+                if(gr!=nil && gr.isFavorite) {
+                    [self.filteredContactsList addObject:contact];
+                }
+            } else {
+                //normal contact
+                Contact *c = (Contact *) contact;
+                if(c!=nil && c.isFavorite) {
+                   [self.filteredContactsList addObject:contact];
+                }
+            }
         }
     }
     NSLog(@"creating filtered list with %lu elements", (unsigned long)self.filteredContactsList.count);
@@ -540,6 +564,8 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     BOOL showAll = [filterOption isEqualToString:OPTION_FILTER_SHOW_ALL_KEY];
     BOOL groupsOnly = [filterOption isEqualToString:OPTION_FILTER_GROUPS_ONLY_KEY];
     BOOL contactsOnly = [filterOption isEqualToString:OPTION_FILTER_CONTACTS_ONLY_KEY];
+    //fav only?
+    BOOL favoritesOnly = [filterOption isEqualToString:OPTION_FILTER_FAVORITES_ONLY_KEY];
     
     NSLog(@"filter option %@ show all -> %d  groups only -> %d contacts only --> %d", filterOption, showAll, groupsOnly, contactsOnly);
     
@@ -939,9 +965,16 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         //[self.navigationItem.rightBarButtonItem setTitle:NSLocalizedString(@"new_contact",@"new_contact")];
     }
     
-    //from adding new contact
-    if(self.reload) {
+    BOOL isForceReloadSet = [defaults boolForKey: @"force_reload"];
+    //from adding new contact, updating favorites
+    if(self.reload || isForceReloadSet) {
+        //avoid refresh again
+        if(isForceReloadSet) {
+             [defaults setBool:false forKey: @"force_reload"];
+        }
+        //refresh
         [self refreshPhonebook:nil];
+        
     }
     else {
         //check if the setting changed or something
@@ -1180,19 +1213,16 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         contact = [array objectAtIndex:row];
     }
     
-    //favorite stuff
-    NSInteger height = cell.contentView.frame.size.height;
-    UIImage *favorite = [UIImage imageNamed:@"fav30"];
-    UIImageView *favView = [[UIImageView alloc] initWithImage:favorite];
-    [favView setFrame: CGRectMake( (cell.contentView.frame.size.width - 80), height - favorite.size.height, favorite.size.width, favorite.size.height)];
-    [cell.contentView addSubview:favView];
-    
     if([contact isKindOfClass:Group.class]) {
         Group *thisOne = (Group *) contact;
         cell.detailTextLabel.text = [NSString stringWithFormat: @"Group (%lu %@)",(unsigned long)thisOne.contactsList.count, NSLocalizedString(@"members", nil)  ];
         isGroup = YES;
         cell.textLabel.text = contact.name;
         cell.textLabel.font = [UIFont boldSystemFontOfSize:(16.0)];
+        
+        if(thisOne.isFavorite) {
+           cell.textLabel.text = [NSString stringWithFormat:@"%@ \U0001F9E1", cell.textLabel.text];
+        }
         
         NSString *text = thisOne.name;
         text = [[text substringToIndex:1] uppercaseString];
@@ -1251,6 +1281,11 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         else if(contact.phone!=nil) {
             cell.textLabel.text = contact.phone;
         }
+        
+        if(contact.isFavorite) {
+           cell.textLabel.text = [NSString stringWithFormat:@"%@ \U0001F9E1", cell.textLabel.text];
+        }
+        
         //add a rounded photo
         if(contact.photo!=nil) {
             cell.imageView.image = contact.photo;
@@ -1369,7 +1404,11 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     if(contact!=nil && [contact isKindOfClass:Group.class]) {
         Group *group = (Group*)contact;
         
-        GroupDetailsViewController *detailViewController = [[GroupDetailsViewController alloc] initWithNibName:@"GroupDetailsViewController" bundle:nil group:group];
+        //get the groupModel
+        GroupDataModel *groupModel = [CoreDataUtils fetchGroupDataModelByName: group.name];
+        
+        GroupDetailsViewController *detailViewController = [[GroupDetailsViewController alloc] initWithNibName:@"GroupDetailsViewController" bundle:nil group:group andModel:groupModel];
+        
         self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
         // ...
         // Pass the selected object to the new view controller.
@@ -2458,6 +2497,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         Group *group = [[Group alloc]init];
         group.name = name;
         group.isNative = false;
+        group.isFavorite = false;
         
         for(Contact *selected in selectedContactsList) {
             
@@ -2637,7 +2677,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
        self.tableView.backgroundColor = [UIColor blackColor];
    } else {
        PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
-       self.tabBarController.tabBar.backgroundColor =  [delegate colorFromHex:0xfb922b]; //normal premium color
+       self.tabBarController.tabBar.backgroundColor =  [delegate colorFromHex:0xfb922b]; //normal lite color
        self.tableView.backgroundColor = [delegate defaultTableColor: false];
    }
     

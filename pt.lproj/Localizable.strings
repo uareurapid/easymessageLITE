@@ -154,3 +154,6 @@
 "call_phone" = "Ligar";
 "facetime_warning" = "Chamadas através do 'Facetime' só funcionarão se ambos o tiverem instalado e activo no aparelho";
 "native_groups_remove_support" = "Não é suportada a remoção de contactos em grupos iCloud";
+"add_to_favorites" = "Adicionar aos favoritos";
+"remove_from_favorites" = "Remover dos favoritos";
+"show_favorites_only" = "Mostrar apenas favoritos";

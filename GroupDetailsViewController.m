@@ -8,6 +8,9 @@
 
 #import "GroupDetailsViewController.h"
 #import "SelectRecipientsViewController.h"
+#import "PCAppDelegate.h"
+#import "iToast.h"
+#import "GroupDataModel.h"
 
 @interface GroupDetailsViewController ()
 
@@ -15,7 +18,7 @@
 
 @implementation GroupDetailsViewController
 
-@synthesize group;
+@synthesize group,groupModel;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -28,17 +31,20 @@
     return self;
 }
 
--(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil group: (Group*) groupToShow {
+-(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil group: (Group*) groupToShow andModel: (NSObject *) model {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if(self) {
         group = groupToShow;
         self.title = group.name;
+        groupModel = model;
+        
         //cannot delete native groups
         if(!group.isNative) {
-            UIBarButtonItem *deteleGroupButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"delete",@"delete")
-                                                                                  style:UIBarButtonItemStyleDone target:self action:@selector(deleteGroupClicked:)];
-            deteleGroupButton.tintColor = UIColor.whiteColor;
-            self.navigationItem.rightBarButtonItem = deteleGroupButton;
+            //no options for native groups
+            UIBarButtonItem *optionsButton = [[UIBarButtonItem alloc] initWithImage: [UIImage imageNamed:@"list"] style:UIBarButtonItemStyleDone target:self action:@selector(optionsClicked:event:)];
+            
+            optionsButton.tintColor = UIColor.whiteColor;
+            self.navigationItem.rightBarButtonItem = optionsButton;
         }
         self.navigationItem.backBarButtonItem.tintColor = UIColor.whiteColor;
     }
@@ -60,6 +66,115 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)optionsClicked:(id)sender event:(UIEvent *)event{
+    [self showMenu:sender withEvent: event];
+}
+
+- (void) showMenu:(id)sender withEvent: (UIEvent *)event
+{
+    
+    FTPopOverMenuConfiguration *configuration = [FTPopOverMenuConfiguration defaultConfiguration];
+    configuration.textColor = [UIColor blackColor];
+    configuration.backgroundColor = [UIColor whiteColor];
+    configuration.menuWidth = 200;
+    
+    PCAppDelegate *delegate = (PCAppDelegate *) [[UIApplication sharedApplication] delegate];
+    configuration.separatorColor = [delegate colorFromHex:0xfb922b];
+    
+    BOOL canDelete = group!= nil && !group.isNative;
+    BOOL canAddToFavorites = canDelete;
+    
+    NSArray* options = [self getMenuArray:canDelete showFavoriteOption: canAddToFavorites];
+    
+    NSArray* images = [self getImagesArray:canDelete showFavoriteOption: canAddToFavorites];
+    
+        //no selection @[NSLocalizedString(@"edit",@"edit"),NSLocalizedString(@"delete",@"delete"),@"facetime",@"call", @"email"]
+        [FTPopOverMenu showFromEvent:event withMenuArray:options
+                          imageArray:images
+                       configuration:configuration
+                           doneBlock:^(NSInteger selectedIndex) {
+                               //NSLog(@"selected %ld", (long)selectedIndex);
+                               if(selectedIndex == 0 && canDelete) {
+                                   [self deleteGroupClicked: nil];
+                               } else if(selectedIndex == 1 && canAddToFavorites) {
+                                   
+                                   [self addGroupToFavorites:!self.group.isFavorite];
+                               }
+            
+                           } dismissBlock:^{
+                               
+                           }];
+}
+
+-(NSArray *) getMenuArray: (BOOL) canDelete showFavoriteOption: (BOOL) canAddToFavorites {
+  
+    NSMutableArray *options = [[NSMutableArray alloc] init];
+    
+    [options addObject:NSLocalizedString(@"delete",@"delete")];
+    
+    if(canAddToFavorites) {
+        if(self.group.isFavorite) {
+            [options addObject: NSLocalizedString(@"remove_from_favorites", nil) ];
+        } else {
+           [options addObject: NSLocalizedString(@"add_to_favorites", nil) ];
+        }
+        
+    }
+    
+    return options;
+}
+
+-(NSArray *) getImagesArray: (BOOL) canDelete showFavoriteOption: (BOOL) canAddToFavorites {
+    NSMutableArray *options = [[NSMutableArray alloc] init];
+    [options addObject:@"delete"];
+    
+    if(canAddToFavorites) {
+        [options addObject:@"favorite"];
+    }
+    
+    return options;
+}
+
+-(void) addGroupToFavorites: (BOOL) addORemove{
+    
+    if(self.group == nil || self.groupModel == nil) {
+        return;
+    }
+    
+    self.group.isFavorite = addORemove;
+    NSManagedObjectContext *managedObjectContext = [(PCAppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
+    GroupDataModel *theGroupModel = (GroupDataModel *) self.groupModel;
+    theGroupModel.favorite = self.group.isFavorite;
+    
+    BOOL OK = NO;
+    NSError *error;
+    
+    if(![managedObjectContext save:&error]){
+        [[[[iToast makeText: [NSString stringWithFormat:@"Unable to save object, error is: %@",error.description]]
+           setGravity:iToastGravityBottom] setDuration:2000] show];
+        NSLog(@"Unable to save object, error is: %@",error.description);
+        //This is a serious error saying the record
+        //could not be saved. Advise the user to
+        //try again or restart the application.
+        
+    }
+    else {
+   
+        OK = YES;
+        
+        [[[[iToast makeText:NSLocalizedString(@"done_button",@"done_button")]
+           setGravity:iToastGravityBottom] setDuration:2000] show];
+        //force
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setBool:true forKey:@"force_reload"];
+    }
+    
+    if(OK) {
+       
+        [self.navigationController popToRootViewControllerAnimated:YES];
+    }
 }
 
 #pragma mark - Table view data source

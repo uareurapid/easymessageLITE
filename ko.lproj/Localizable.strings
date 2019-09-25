@@ -153,3 +153,6 @@
 "call_phone" = "칭하다";
 "facetime_warning" = "'Facetime'은 둘 다 장치에 설치되어 있고 장치에서 활성화 된 경우에만 작동합니다.";
 "native_groups_remove_support" = "iCloud 그룹에서 연락처 제거는 지원되지 않습니다";
+"add_to_favorites" = "즐겨 찾기에 추가";
+"remove_from_favorites" = "즐겨 찾기에서 삭제하기";
+"show_favorites_only" = "즐겨 찾기 만 표시";

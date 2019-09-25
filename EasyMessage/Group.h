@@ -14,5 +14,6 @@
 
 @property (strong,nonatomic) NSMutableArray *contactsList;
 @property (assign,nonatomic) BOOL isNative;
+@property (assign,nonatomic) BOOL isFavorite;
 -(BOOL)isNativeGroup;
 @end

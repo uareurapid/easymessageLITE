@@ -48,6 +48,7 @@
 
 #define OPTION_FILTER_CONTACTS_ONLY_KEY    @"show_contacts_only"
 #define OPTION_FILTER_GROUPS_ONLY_KEY    @"show_group_only"
+#define OPTION_FILTER_FAVORITES_ONLY_KEY    @"show_favorites_only"
 #define OPTION_FILTER_SHOW_ALL_KEY    @"show_all"
 #define SETTINGS_FILTER_OPTIONS         @"filter_options"
 #define SETTINGS_FILTER_PREVIOUS_OPTIONS         @"previous_filter_options"

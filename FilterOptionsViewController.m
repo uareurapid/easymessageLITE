@@ -65,7 +65,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 #warning Incomplete implementation, return the number of rows
-    return 3;
+    return 4;
 }
 
 -(IBAction)goBackAfterSelection:(id)sender {
@@ -100,6 +100,16 @@
         else if(row == 1) {
             cell.textLabel.text = NSLocalizedString(@"show_groups_only", @"");
             if([[defaults objectForKey:SETTINGS_FILTER_OPTIONS] isEqualToString:OPTION_FILTER_GROUPS_ONLY_KEY]) {
+                
+                cell.accessoryType = UITableViewCellAccessoryCheckmark;
+            }
+            else {
+                cell.accessoryType = UITableViewCellAccessoryNone;
+            }
+        }
+        else if(row == 2) {
+            cell.textLabel.text = NSLocalizedString(@"show_favorites_only", @"");
+            if([[defaults objectForKey:SETTINGS_FILTER_OPTIONS] isEqualToString:OPTION_FILTER_FAVORITES_ONLY_KEY]) {
                 
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
             }
@@ -194,6 +204,16 @@
             }
             
         }
+        else if(row == 2) {
+            
+            if ([[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
+                [defaults setObject:OPTION_FILTER_FAVORITES_ONLY_KEY forKey:SETTINGS_FILTER_OPTIONS];
+            }
+            else {
+                //this filtering is only for premium users
+                [self showUpgradeToPremiumMessage];
+            }
+        }
         else {
             [defaults setObject:OPTION_FILTER_SHOW_ALL_KEY forKey:SETTINGS_FILTER_OPTIONS];
         }
@@ -208,8 +228,10 @@
 -(void)showUpgradeToPremiumMessage {
     
     PCAppDelegate *delegate  = (PCAppDelegate *)[[UIApplication sharedApplication] delegate];
+    [delegate showUpgradeToPremiumMessage];
     
-    Popup *popup = [[Popup alloc] initWithTitle:@"Easy Message"
+    
+    /*Popup *popup = [[Popup alloc] initWithTitle:@"Easy Message"
                                        subTitle:NSLocalizedString(@"premium_feature_only", nil)
                                     cancelTitle:NSLocalizedString(@"Cancel",nil)
                                    successTitle:@"OK"
@@ -248,7 +270,7 @@
     [popup setRoundedCorners:YES];
     [popup setTapBackgroundToDismiss:YES];
     [popup setDelegate:self];
-    [popup showPopup];
+    [popup showPopup];*/
 }
 /*
 -(void) showAlertBox:(NSString *) msg {

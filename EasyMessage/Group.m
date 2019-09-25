@@ -10,7 +10,7 @@
 
 @implementation Group
 
-@synthesize contactsList,isNative;
+@synthesize contactsList,isNative,isFavorite;
 
 -(id) init {
     self = [super init];

@@ -10,7 +10,7 @@
 
 @implementation Contact
 
-@synthesize phone,email,name,lastName,photo,person, birthday;
+@synthesize phone,email,name,lastName,photo,person,birthday,isFavorite;
 
 //we just consider the name
 -(BOOL) isEqual:(id)object {

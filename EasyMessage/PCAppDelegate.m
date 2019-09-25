@@ -449,4 +449,51 @@
     //https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/color/#system-colors
 }
 
+
+-(void)showUpgradeToPremiumMessage {
+    
+    
+    
+    Popup *popup = [[Popup alloc] initWithTitle:@"Easy Message"
+                                       subTitle:NSLocalizedString(@"premium_feature_only", nil)
+                                    cancelTitle:NSLocalizedString(@"Cancel",nil)
+                                   successTitle:@"OK"
+                                    cancelBlock:^{
+                                        //Custom code after cancel button was pressed
+                                    } successBlock:^{
+                                        //Custom code after success button was pressed
+                                        //NSLog(@"Try Buying %@...", PRODUCT_PREMIUM_UPGRADE);
+                                
+                                        //REALLY BAD CODE AHEAD BUT DOES THE JOB FOR NOW!!
+                                        UITabBarController *tabController = (UITabBarController *) self.window.rootViewController;
+                                        if(tabController!=nil) {
+                                             UINavigationController *mainViewController = (UINavigationController*)[tabController.viewControllers objectAtIndex:0];
+                                            if(mainViewController!=nil) {
+                                                PCViewController *pc = [mainViewController.viewControllers objectAtIndex:0];
+                                                if(pc!=nil) {
+                                                    [pc buyProductWithidentifier:PRODUCT_PREMIUM_UPGRADE];
+                                                }
+                                               
+                                            }
+                                            
+                                        }
+                                        
+                                    }];
+    
+    [popup setBackgroundColor:[self colorFromHex:0xfb922b]];
+    //https://github.com/miscavage/Popup
+    [popup setBorderColor:[UIColor blackColor]];
+    [popup setTitleColor:[UIColor whiteColor]];
+    [popup setSubTitleColor:[UIColor whiteColor]];
+    [popup setSuccessBtnColor:[self colorFromHex:0x4f6781]];
+    [popup setSuccessTitleColor:[UIColor whiteColor]];
+    [popup setCancelBtnColor:[self colorFromHex:0x4f6781]];
+    [popup setCancelTitleColor:[UIColor whiteColor]];
+    //[popup setBackgroundBlurType:PopupBackGroundBlurTypeLight];
+    [popup setRoundedCorners:YES];
+    [popup setTapBackgroundToDismiss:YES];
+    [popup setDelegate:self];
+    [popup showPopup];
+}
+
 @end

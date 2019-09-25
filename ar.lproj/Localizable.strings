@@ -152,3 +152,6 @@
 "call_phone" = "مكالمة";
 "facetime_warning" = "لن يعمل 'Facetime' إلا إذا تم تثبيته وتمكينه على الجهاز";
 "native_groups_remove_support" = "لا يتم دعم إزالة جهات الاتصال من مجموعات iCloud";
+"add_to_favorites" = "اضافة الى المفضلة";
+"remove_from_favorites" = "إزالة من المفضلة";
+"show_favorites_only" = "عرض المفضلة فقط";

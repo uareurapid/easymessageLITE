@@ -154,3 +154,6 @@
 "call_phone" = "Call";
 "facetime_warning" = "'Facetime' calls will only work if both have it installed and enabled on the device";
 "native_groups_remove_support" = "Removing contacts from iCloud groups is not supported";
+"add_to_favorites" = "Add to favorites";
+"remove_from_favorites" = "Remove from favorites";
+"show_favorites_only" = "Show favorites only";

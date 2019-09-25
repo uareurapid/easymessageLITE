@@ -13,6 +13,7 @@
 
 @interface ContactDataModel : NSManagedObject
 
+@property (nonatomic, assign) BOOL favorite;
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSString * phone;
 @property (nonatomic, retain) NSString * lastname;

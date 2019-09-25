@@ -12,6 +12,7 @@
 
 @interface GroupDataModel : NSManagedObject
 
+@property (nonatomic, assign) BOOL favorite;
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSMutableSet *contacts;
 @end

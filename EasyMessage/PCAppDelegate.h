@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <CoreData/CoreData.h>
-
+#import "Popup.h"
 #import <UserNotifications/UserNotifications.h>
 
 #define IS_IPAD ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
@@ -20,9 +20,10 @@
 @class CustomMessagesController;
 @class IAPMasterViewController;
 
-@interface PCAppDelegate : UIResponder <UIApplicationDelegate, UNUserNotificationCenterDelegate>
+@interface PCAppDelegate : UIResponder <UIApplicationDelegate, UNUserNotificationCenterDelegate, PopupDelegate>
 
 -(void) scheduleNotification: (NSString *) type nameOfContact: name month: (NSInteger) month day: (NSInteger) day fireDelayInSeconds: (NSTimeInterval) delay;
+-(void)showUpgradeToPremiumMessage;
 
 @property (strong, nonatomic) UIWindow *window;
 

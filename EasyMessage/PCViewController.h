@@ -45,6 +45,9 @@
 
 #define LINKEDIN_ME_KEY   @"linkedin_me"
 
+#define LITE_COLOR 0xfb922b
+#define PREMIUM COLOR 0x4f6781
+
 @interface PCViewController : UIViewController <MFMailComposeViewControllerDelegate,MFMessageComposeViewControllerDelegate,UIImagePickerControllerDelegate,UITextViewDelegate,UITextFieldDelegate, FBSDKSharingDelegate,UICollectionViewDataSource,UICollectionViewDelegate,
 UITextFieldDelegate, NSURLConnectionDelegate,SKStoreProductViewControllerDelegate,QBImagePickerControllerDelegate, PopupDelegate>
 @property (weak, nonatomic) IBOutlet UIScrollView *attachmentsScrollview;

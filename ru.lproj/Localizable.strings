@@ -154,3 +154,6 @@
 "call_phone" = "вызов";
 "facetime_warning" = "'Facetime' будет работать только в том случае, если оба устройства установлены и включены на устройстве";
 "native_groups_remove_support" = "Удаление контактов из групп iCloud не поддерживается";
+"add_to_favorites" = "Добавить в избранное";
+"remove_from_favorites" = "Удалить из Избранного";
+"show_favorites_only" = "Показывать только избранное";

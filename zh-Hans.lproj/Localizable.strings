@@ -149,3 +149,6 @@
 "call_phone" = "呼叫";
 "facetime_warning" = "'Facetime'仅在设备上安装并启用它时才有效";
 "native_groups_remove_support" = "不支持从iCloud组中删除联系人";
+"add_to_favorites" = "添加到收藏夹";
+"remove_from_favorites" = "从收藏夹中删除";
+"show_favorites_only" = "仅显示收藏夹";
