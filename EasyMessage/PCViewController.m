@@ -59,7 +59,7 @@
 @synthesize labelAttachCount;
 @synthesize lblAsterisk,lblPremium;
 @synthesize addRemoveRecipientsView;
-@synthesize addImage, removeImage;
+@synthesize addImage, removeImage, tooltipView;
 //google plus sdk
 //TODO check
 static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpdnlq.apps.googleusercontent.com";
@@ -79,10 +79,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
     [self.imagesCollection registerNib:[UINib nibWithNibName:@"AttachCellCollectionViewCell" bundle:nil] forCellWithReuseIdentifier:@"imageCell"];
     
-    //[self.imagesCollection registerClass:AttachCellCollectionViewCell.class forCellWithReuseIdentifier:@"imageCell"];
-   // [self.imagesCollection registerNib:[UINib nibWithNibName:@"AttachCellCollectionViewCell" bundle:nil] forCellWithReuseIdentifier:@"imageCell"];
-    
-    //.register(UINib(nibName: "name", bundle: nil), forCellWithReuseIdentifier: "cellIdentifier")
+
     self.imagesCollection.scrollEnabled = true;
    //  self.imagesCollection setS
     self.imagesCollection.dataSource = self;
@@ -90,12 +87,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
     addImage = [UIImage imageNamed:@"add"];
     removeImage = [UIImage imageNamed:@"delete"];
-    
-    /*for(int i = 0; i < 3; i++) {
-     UIImage *img = [UIImage imageNamed:@"attachment"];
-        [attachments addObject:img];
-    }
-    [self.imagesCollection reloadData];*/
+
     
     smsSentOK = NO;
     emailSentOK = NO;
@@ -129,9 +121,6 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     //the table that shows the in app purchases
     inAppPurchaseTableController = [[IAPMasterViewController alloc] initWithNibName:@"IAPMasterViewController" bundle:nil];
     
-    //set the images
-    //imageLock = [UIImage imageNamed:@"Lock32"];
-    //imageUnlock = [UIImage imageNamed:@"Unlock32"];
     
     selectedRecipientsList = [[NSMutableArray alloc]init];
     [scrollView flashScrollIndicators];
@@ -143,10 +132,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     [self.attachmentsScrollview setContentSize: CGSizeMake(self.imagesCollection.frame.size.width,0 )];//;self.view.frame.size
     [self.attachmentsScrollview setContentOffset: CGPointMake(self.attachmentsScrollview.contentOffset.x,0)];
     self.attachmentsScrollview.directionalLockEnabled = YES;
-    
-    //TODO possible solution check
-    //CGSize scrollSize = CGSizeMake([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
-    //[scrollView setContentSize: scrollSize];
+
     self.tabBarController.tabBar.tintColor = [self colorFromHex:0xfb922b];
     
     //load the contacts list when the view loads
@@ -274,6 +260,20 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     NSString *lastImport = [defaults valueForKey:@"last_import"];
     return lastImport; //could be nil??
 }
+
+//handle tooltips on view appear and disapear
+-(void) viewDidDisappear:(BOOL)animated {
+    if(self.isShowingTooltip && self.tooltipView!=nil) {
+        [self.tooltipView dismissAnimated:YES];
+        self.isShowingTooltip = false;
+    }
+}
+
+// CMPopTipViewDelegate method
+- (void)popTipViewWasDismissedByUser:(CMPopTipView *)popTipView {
+    // any code, dismissed by user
+    self.isShowingTooltip = false;
+}
 -(void) viewDidAppear:(BOOL)animated {
     
     //get current date/time
@@ -300,6 +300,18 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             //also avoid unnecessary reload of recipients screen
             [defaults setBool:false forKey:@"force_reload"];
         }
+    }
+
+    if(![defaults boolForKey:SHOW_HELP_TOOLTIP_MAIN]) {
+        //shows help tooltip
+        self.tooltipView = [[CMPopTipView alloc] initWithMessage:NSLocalizedString(@"tooltip_easy_message",nil)];
+        self.tooltipView.delegate = self;
+        PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
+        self.tooltipView.backgroundColor =  [delegate colorFromHex:0xfb922b]; //normal lite color
+        //self.tooltipView.title = NSLocalizedString(@"welcome_message", nil);
+        [self.tooltipView  presentPointingAtView:self.sendButton.imageView inView:self.view animated:YES];
+        self.isShowingTooltip = true;
+        [defaults setBool:YES forKey:SHOW_HELP_TOOLTIP_MAIN];
     }
     
     
@@ -1274,17 +1286,6 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                 
                 [recipientsController refreshPhonebook:nil];
                 
-                /*
-                
-                NSLog(@"readed %ld contacts from core data models, but will only add %ld",(unsigned long)models.count, cleanList.count);
-                
-                [recipientsController.contactsList addObjectsFromArray:cleanList];
-                
-                [recipientsController.selectedContactsList removeAllObjects];
-                [recipientsController.selectedContactsList addObjectsFromArray:selectedRecipientsList];
-                
-                [recipientsController refreshPhonebook:nil];
-                 */
             }
             
  
@@ -1338,24 +1339,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         [recipientsController.groupsNamesArray removeAllObjects];
         
         [recipientsController refreshPhonebook:nil];
-        /*
         
-        NSLog(@"readed %ld contacts from core data models, but will only add %ld",(unsigned long)models.count, cleanList.count);
-        
-        [recipientsController.contactsList addObjectsFromArray:cleanList];
-        
-        NSMutableArray *groupsFromDB = [self fetchGroupRecords];
-        [recipientsController.contactsList addObjectsFromArray:groupsFromDB];
-        
-        [recipientsController.groupsList removeAllObjects];
-
-        
-        [recipientsController.selectedContactsList removeAllObjects];
-        [recipientsController.selectedContactsList addObjectsFromArray:selectedRecipientsList];
-        
-        NSLog(@"Skipped %ld duplicated contacts",(long)duplicates);
-        
-        [recipientsController refreshPhonebook:nil];*/
         
     }
     else {
@@ -1363,6 +1347,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         // Send an alert telling user to change privacy setting in settings app
         if ( ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusDenied ||
             ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusRestricted ) {
+           
             // Display an error.
             [self showPermissionsMessage];
             
@@ -1409,6 +1394,11 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             c.lastName = contact.lastname;
             
             c.isFavorite = contact.favorite;
+            
+            if(contact.alternateEmails!=nil && contact.alternateEmails.length > 0) {
+                c.alternateEmails = [[NSMutableArray alloc] init];
+                [c.alternateEmails addObjectsFromArray:[contact.alternateEmails componentsSeparatedByString: @";"]];
+            }
             
             if(c!=nil) {
               [group.contactsList addObject:c];
@@ -1509,6 +1499,11 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                 c.birthday = contact.birthday;
                 
                 c.isFavorite = contact.favorite;
+                
+                if(contact.alternateEmails!=nil && contact.alternateEmails.length > 0) {
+                    c.alternateEmails = [[NSMutableArray alloc] init];
+                    [c.alternateEmails addObjectsFromArray:[contact.alternateEmails componentsSeparatedByString: @";"]];
+                }
                 
                 if(c.birthday!=nil) {
                     
@@ -1614,20 +1609,43 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                     ABMultiValueRef phoneMulti = ABRecordCopyValue(person, kABPersonPhoneProperty);
                     int countPhones = ABMultiValueGetCount(phoneMulti);
                     if(countPhones>0) {
+                        
                         phone = [self getPreferredPhone: phoneMulti forLabel:kABPersonPhoneMobileLabel count: countPhones];
                         if(phone!=nil) {
                             c.phone = phone;
+                            //add the other alternatives
+                            if(countPhones > 1) {
+                                //multiple phones
+                                c.alternatePhones = [[NSMutableArray alloc] initWithCapacity:countPhones-1];
+                                NSMutableArray *alt = [self getAllPhonesButPreferred: phoneMulti preferredPhone:phone count:countPhones];
+                                if(alt!=nil && alt.count > 0) {
+                                    [c.alternatePhones addObjectsFromArray: alt];
+                                }
+                                
+                            }
                         }
+                        
                     }
                     //get email
                     NSString *email;
-                    ABMultiValueRef multi = ABRecordCopyValue(person, kABPersonEmailProperty);
-                    int count = ABMultiValueGetCount(multi);
+                    ABMultiValueRef emailMulti = ABRecordCopyValue(person, kABPersonEmailProperty);
+                    int countEmails = ABMultiValueGetCount(emailMulti);
                     //do we have more than 1?
-                    if(count > 0) {
-                        email = [self getPreferredEmail: multi forLabel:kABHomeLabel count: count];
+                    if(countEmails > 0) {
+                        email = [self getPreferredEmail: emailMulti forLabel:kABHomeLabel count: countEmails];
                         if(email!=nil) {
                             c.email = email;
+                            
+                            //add the other alternatives
+                            if(countEmails > 1) {
+                                //multiple phones
+                                c.alternateEmails = [[NSMutableArray alloc] initWithCapacity:countEmails-1];
+                                NSMutableArray *alt = [self getAllEmailsButPreferred: emailMulti preferredEmail:email count:countEmails];
+                                if(alt!=nil && alt.count > 0) {
+                                    [c.alternateEmails addObjectsFromArray: alt];
+                                }
+                                
+                            }
                         }
                     }
                     
@@ -1742,22 +1760,34 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                 //NSString *theName = (__bridge NSString*)ABRecordCopyCompositeName(person);
                 
                 
-                ABMultiValueRef multi = ABRecordCopyValue(person, kABPersonEmailProperty);
+                ABMultiValueRef emailMulti = ABRecordCopyValue(person, kABPersonEmailProperty);
                 
 #pragma GET EMAIL ADDRESS
                 
                 
-                int count = ABMultiValueGetCount(multi);
+                int countEmails = ABMultiValueGetCount(emailMulti);
                 
                 //do we have more than 1?
-                if(count > 0) {
-                    email = [self getPreferredEmail: multi forLabel:kABHomeLabel count: count];
+                if(countEmails > 0) {
+                    email = [self getPreferredEmail: emailMulti forLabel:kABHomeLabel count: countEmails];
+                    
                 }
                 //else, we don´t have email
                 
                 //add it if we have it
                 if(email!=nil) {
                     contact.email = email;
+                    
+                    //add the other alternatives
+                    if(countEmails > 1) {
+                        //multiple phones
+                        contact.alternateEmails = [[NSMutableArray alloc] initWithCapacity:countEmails-1];
+                        NSMutableArray *alt = [self getAllEmailsButPreferred: emailMulti preferredEmail:email count:countEmails];
+                        if(alt!=nil && alt.count > 0) {
+                            [contact.alternateEmails addObjectsFromArray: alt];
+                        }
+                        
+                    }
                 }
                 
                 
@@ -1773,13 +1803,19 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                     
                 }
                 
-                //NSLog(@"READED %@", name);
-                //NSLog(@"ANDREIA PHONE %@  count: %d", phone, countPhones);
-                
-                
                 //add the phone number
                 if(phone!=nil) {
                     contact.phone = phone;
+                    //add the other alternatives
+                    if(countPhones > 1) {
+                        //multiple phones
+                        contact.alternatePhones = [[NSMutableArray alloc] initWithCapacity:countPhones-1];
+                        NSMutableArray *alt = [self getAllPhonesButPreferred: phoneMulti preferredPhone:phone count:countPhones];
+                        if(alt!=nil && alt.count > 0) {
+                             [contact.alternatePhones addObjectsFromArray: alt];
+                        }
+                       
+                    }
                 }
                 
                 //i must have some sort of contact info
@@ -1804,10 +1840,6 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                             UIImage  *img = [UIImage imageWithData:imgData];
                             contact.photo = img;
                         }
-                        //else {
-                        //    UIImage  *img = [UIImage imageNamed:@"user"];
-                        //    contact.photo = img;
-                        //}
                         
                     }
                     @catch (NSException *exception) {
@@ -1893,6 +1925,34 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     return phone;
 }
 
+//add alternate phones
+-(NSMutableArray *) getAllPhonesButPreferred: (ABMultiValueRef) properties preferredPhone:(NSString *) pref count: (NSInteger) size {
+    
+    NSMutableArray *array = [[NSMutableArray alloc] init];
+    for (int k=0 ;k <size; k++)
+    {
+        NSString *phone = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(properties, k);
+        if(phone!=nil && ![phone isEqualToString:pref]) {
+            [array addObject:phone];
+        }
+        
+    }
+    return array;
+}
+//add alternate emails
+-(NSMutableArray *) getAllEmailsButPreferred: (ABMultiValueRef) properties preferredEmail:(NSString *) pref count: (NSInteger) size {
+    
+    NSMutableArray *array = [[NSMutableArray alloc] init];
+    for (int k=0 ;k <size; k++)
+    {
+        NSString *email = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(properties, k);
+        if(email!=nil && ![email isEqualToString:pref]) {
+            [array addObject:email];
+        }
+        
+    }
+    return array;
+}
 
 
 - (IBAction)showSettings:(id)sender {

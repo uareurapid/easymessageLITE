@@ -61,6 +61,8 @@
 #define SETTINGS_PREF_ORDER_BY_KEY_FORCE_RELOAD        @"pref_order_by_key_force_reload"
 #define SETTINGS_PREF_ORDER_BY_KEY_PREVIOUS_SETTINGS       @"pref_order_by_key_previous_setting"
 
+
+
 @class SocialNetworksViewController;
 @class FilterOptionsViewController;
 @class IAPMasterViewController;

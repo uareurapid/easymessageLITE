@@ -58,9 +58,9 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if(![defaults boolForKey:SHOW_HELP_TOOLTIP_CONTACT_DETAILS]) {
         //shows help tooltip
-        self.tooltipView = [[CMPopTipView alloc] initWithMessage:NSLocalizedString(@"tooltip_groups_management",nil)];
+        self.tooltipView = [[CMPopTipView alloc] initWithMessage:NSLocalizedString(@"tooltip_contact_details",nil)];
         self.tooltipView.delegate = self;
-        [self.tooltipView setTitle:NSLocalizedString(@"message_recipients",nil)];
+        //self.tooltipView.title = NSLocalizedString(@"message_recipients",nil);
         PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
         self.tooltipView.backgroundColor =  [delegate colorFromHex:0xfb922b]; //normal lite color
         [self.tooltipView  presentPointingAtBarButtonItem:self.navigationItem.rightBarButtonItem animated:YES];

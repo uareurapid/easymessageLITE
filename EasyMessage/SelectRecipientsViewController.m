@@ -15,7 +15,6 @@
 #import "ContactDetailsViewController.h"
 #import "CoreDataUtils.h"
 
-
 const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 
 @interface SelectRecipientsViewController ()
@@ -27,7 +26,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 @synthesize contactsList,selectedContactsList,rootViewController, filteredContactsList;
 @synthesize initialSelectedContacts,contactsByLastNameInitial; //TODO PC ORDER BY last name, first name
 @synthesize sortedKeys,groupLocked,databaseRecords;
-@synthesize groupsNamesArray, groupsList, activityIndicator;
+@synthesize groupsNamesArray, groupsList, activityIndicator, tooltipView,isShowingTooltip;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -536,14 +535,12 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     }
     
     contactsByLastNameInitial = [self loadInitialNamesDictionary];
-    //NSLog(@"number of contacts in list: %lu", (unsigned long)self.contactsList.count);
-    
+
     [self checkForExistingGroups];
     
-    //dispatch_async(dispatch_get_main_queue(), ^(){
-        [self.tableView reloadData];
-    //});
-    
+    [self.tableView reloadData];
+        
+
 }
 
 //will group the contacts by last name initial
@@ -623,7 +620,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         }
         
         //make sure we have an initial
-        if(initial!=nil) {
+        if(initial!=nil ) {
             
             id listForThatInitial = [dic objectForKey:initial];
             if(listForThatInitial == nil) {
@@ -666,15 +663,6 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     [self refreshPhonebook:nil];
 
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
-    //set the images
-    //imageLock = [UIImage imageNamed:@"Lock32"];
-    //imageUnlock = [UIImage imageNamed:@"Unlock32"];
-    
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
  
 }
 
@@ -934,6 +922,37 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         [self.tableView reloadData];
     });
 
+}
+//handle tooltips on view appear and disapear
+-(void) viewDidDisappear:(BOOL)animated {
+    if(self.isShowingTooltip && self.tooltipView!=nil) {
+        self.isShowingTooltip = false;
+        [self.tooltipView dismissAnimated:YES];
+    }
+}
+
+-(void) viewDidAppear:(BOOL)animated {
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if(![defaults boolForKey:SHOW_HELP_TOOLTIP_RECIPIENTS]) {
+        //shows help tooltip
+        self.tooltipView = [[CMPopTipView alloc] initWithMessage:NSLocalizedString(@"tooltip_groups_management",nil)];
+        self.tooltipView.delegate = self;
+        //self.tooltipView.title = NSLocalizedString(@"message_recipients",nil);
+        PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
+        self.tooltipView.backgroundColor =  [delegate colorFromHex:0xfb922b]; //normal lite color
+        [self.tooltipView  presentPointingAtBarButtonItem:self.navigationItem.rightBarButtonItem animated:YES];
+        self.isShowingTooltip = true;
+        [defaults setBool:YES forKey:SHOW_HELP_TOOLTIP_RECIPIENTS];
+    }
+    
+    
+}
+
+// CMPopTipViewDelegate method
+- (void)popTipViewWasDismissedByUser:(CMPopTipView *)popTipView {
+    // any code, dismissed by user
+    self.isShowingTooltip = false;
 }
 
 -(void) viewWillAppear:(BOOL)animated {
@@ -1288,9 +1307,26 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         
         //add a rounded photo
         if(contact.photo!=nil) {
-            cell.imageView.image = contact.photo;
-            cell.imageView.layer.cornerRadius = 20.0;
+            
+            /*if(contact.phone!=nil && [contact.phone isEqualToString:@"968495110"]) {
+                NSLog(@"this one pai");
+            
+                CGFloat imageWidth = contact.photo.size.width;
+                CGFloat imageHeight = contact.photo.size.height;
+                 NSLog(@"size: %f %f", imageWidth, imageHeight);
+            }*/
+        
+            //cell.imageView.contentMode = UIViewContentModeScaleAspectFill;
+            cell.imageView.layer.cornerRadius = 20;//self.frame.height / 2;
             cell.imageView.layer.masksToBounds = true;
+            cell.imageView.clipsToBounds = true;
+            cell.imageView.image = [self imageByCroppingImage:contact.photo toSize:CGSizeMake(60, 60)];
+            //cell.imageView.la.cornerRadius = 20.0;
+            //cell.imageView.layer.masksToBounds = true;
+            // size: 1936.000000 2592.000000
+            
+            
+            
         }
         else {
             UIImage  *img = [UIImage imageNamed:@"user"];
@@ -1313,8 +1349,8 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
             }
             
             cell.imageView.image = img;
-            cell.imageView.layer.cornerRadius = 20.0;
-            cell.imageView.layer.masksToBounds = true;
+           // cell.imageView.layer.cornerRadius = 20.0;
+           // cell.imageView.layer.masksToBounds = true;
             
         }
         
@@ -1678,9 +1714,12 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     if(self.searchController!=nil && self.searchController.active) {
         return @"";
     }
-   
-    NSString *key = [sortedKeys objectAtIndex:section];
-    return key;
+
+    if(sortedKeys.count > 0 && section < sortedKeys.count) {
+        NSString *key = [sortedKeys objectAtIndex:section];
+        return key;
+    }
+    return @"";
     
 }
 
@@ -2051,6 +2090,16 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     c.lastName = model.lastname;
     c.phone = model.phone;
     c.email = model.email;
+    /*TODOS
+    if(model.alternateEmails!=nil && model.alternateEmails.length > 0) {
+        c.alternateEmails = [[NSMutableArray alloc] init];
+        [c.alternateEmails addObjectsFromArray:[model.alternateEmails componentsSeparatedByString: @";"]];
+    }
+    
+    if(model.alternatePhones!=nil && model.alternatePhones.length > 0) {
+        c.alternatePhones = [[NSMutableArray alloc] init];
+        [c.alternatePhones addObjectsFromArray:[model.alternatePhones componentsSeparatedByString: @";"]];
+    }*/
     return c;
 }
 
@@ -2700,5 +2749,41 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         self.tableView.backgroundColor = [delegate defaultTableColor: false];
     }
 }*/
+
+- (UIImage *)imageByCroppingImage:(UIImage *)image toSize:(CGSize)size
+{
+    double newCropWidth, newCropHeight;
+
+    //=== To crop more efficently =====//
+    if(image.size.width < image.size.height){
+         if (image.size.width < size.width) {
+                 newCropWidth = size.width;
+          }
+          else {
+                 newCropWidth = image.size.width;
+          }
+          newCropHeight = (newCropWidth * size.height)/size.width;
+    } else {
+          if (image.size.height < size.height) {
+                newCropHeight = size.height;
+          }
+          else {
+                newCropHeight = image.size.height;
+          }
+          newCropWidth = (newCropHeight * size.width)/size.height;
+    }
+    //==============================//
+
+    double x = image.size.width/2.0 - newCropWidth/2.0;
+    double y = image.size.height/2.0 - newCropHeight/2.0;
+
+    CGRect cropRect = CGRectMake(x, y, newCropWidth, newCropHeight);
+    CGImageRef imageRef = CGImageCreateWithImageInRect([image CGImage], cropRect);
+
+    UIImage *cropped = [UIImage imageWithCGImage:imageRef];
+    CGImageRelease(imageRef);
+
+    return cropped;
+}
 
 @end

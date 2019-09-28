@@ -27,6 +27,7 @@
 #import <QBImagePickerController/QBImagePickerController.h>
 #import "AttachCellCollectionViewCell.h"
 #import "Popup.h"
+#import "CMPopTipView.h"
 
 @class SelectRecipientsViewController;
 @class IAPMasterViewController;
@@ -48,8 +49,14 @@
 #define LITE_COLOR 0xfb922b
 #define PREMIUM COLOR 0x4f6781
 
+#define SHOW_HELP_TOOLTIP_MAIN @"show_help_tooltip_main"
+#define SHOW_HELP_TOOLTIP_RECIPIENTS @"show_help_tooltip_recipients"
+#define SHOW_HELP_TOOLTIP_SETTINGS @"show_help_tooltip_settings"
+#define SHOW_HELP_TOOLTIP_TEMPLATES @"show_help_tooltip_templates"
+#define SHOW_HELP_TOOLTIP_CONTACT_DETAILS @"show_help_tooltip_contact_details"
+
 @interface PCViewController : UIViewController <MFMailComposeViewControllerDelegate,MFMessageComposeViewControllerDelegate,UIImagePickerControllerDelegate,UITextViewDelegate,UITextFieldDelegate, FBSDKSharingDelegate,UICollectionViewDataSource,UICollectionViewDelegate,
-UITextFieldDelegate, NSURLConnectionDelegate,SKStoreProductViewControllerDelegate,QBImagePickerControllerDelegate, PopupDelegate>
+UITextFieldDelegate, NSURLConnectionDelegate,SKStoreProductViewControllerDelegate,QBImagePickerControllerDelegate, PopupDelegate, CMPopTipViewDelegate>
 @property (weak, nonatomic) IBOutlet UIScrollView *attachmentsScrollview;
 @property (weak, nonatomic) IBOutlet UICollectionView *imagesCollection;
 - (IBAction)sendMessage:(id)sender;
@@ -152,5 +159,7 @@ void addressBookChanged(ABAddressBookRef reference,
 @property BOOL timeToShowPromoPopup;
 @property BOOL saveMessage;
 
+@property (strong,nonatomic) CMPopTipView *tooltipView;
+@property BOOL isShowingTooltip;
 
 @end

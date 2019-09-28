@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		181330322285E5AF00939671 /* Popup.m in Sources */ = {isa = PBXBuildFile; fileRef = 181330312285E5AF00939671 /* Popup.m */; };
+		1815A239233EA702006B92F3 /* CMPopTipView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1815A238233EA702006B92F3 /* CMPopTipView.m */; };
 		184847C22289DD0B00C9940C /* ContactsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 184847C02289DD0B00C9940C /* ContactsUI.framework */; };
 		184847C32289DD0B00C9940C /* Contacts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 184847C12289DD0B00C9940C /* Contacts.framework */; };
 		1859674C233540A80014CA7F /* unfav30.png in Resources */ = {isa = PBXBuildFile; fileRef = 1859674A233540A70014CA7F /* unfav30.png */; };
@@ -197,6 +198,8 @@
 /* Begin PBXFileReference section */
 		181330302285E5AF00939671 /* Popup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Popup.h; sourceTree = "<group>"; };
 		181330312285E5AF00939671 /* Popup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Popup.m; sourceTree = "<group>"; };
+		1815A237233EA702006B92F3 /* CMPopTipView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMPopTipView.h; sourceTree = "<group>"; };
+		1815A238233EA702006B92F3 /* CMPopTipView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMPopTipView.m; sourceTree = "<group>"; };
 		183F73E8233BE12A0053D39B /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		184847C02289DD0B00C9940C /* ContactsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ContactsUI.framework; path = System/Library/Frameworks/ContactsUI.framework; sourceTree = SDKROOT; };
 		184847C12289DD0B00C9940C /* Contacts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Contacts.framework; path = System/Library/Frameworks/Contacts.framework; sourceTree = SDKROOT; };
@@ -506,6 +509,15 @@
 			path = Popup;
 			sourceTree = "<group>";
 		};
+		1815A236233EA702006B92F3 /* CMPopTipView */ = {
+			isa = PBXGroup;
+			children = (
+				1815A237233EA702006B92F3 /* CMPopTipView.h */,
+				1815A238233EA702006B92F3 /* CMPopTipView.m */,
+			);
+			path = CMPopTipView;
+			sourceTree = "<group>";
+		};
 		186341752278754C00167AAE /* FTPopOverMenu */ = {
 			isa = PBXGroup;
 			children = (
@@ -806,6 +818,7 @@
 		72B58BD221B1C4770021DE44 /* External */ = {
 			isa = PBXGroup;
 			children = (
+				1815A236233EA702006B92F3 /* CMPopTipView */,
 				1813302F2285E5AF00939671 /* Popup */,
 				186341752278754C00167AAE /* FTPopOverMenu */,
 				72B58BD421B1C48A0021DE44 /* PickerView.h */,
@@ -1122,6 +1135,7 @@
 				727A765A17DFE1100032EFF8 /* ContactDataModel.m in Sources */,
 				7264F87F17E115F0000D656C /* CoreDataUtils.m in Sources */,
 				72674E7417E26722001275AB /* GroupDetailsViewController.m in Sources */,
+				1815A239233EA702006B92F3 /* CMPopTipView.m in Sources */,
 				727C8F0E17E37C8900BDABA1 /* MessageDataModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

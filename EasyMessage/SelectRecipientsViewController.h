@@ -16,12 +16,13 @@
 //new contacts framework
 #import <Contacts/Contacts.h>
 #import <ContactsUI/ContactsUI.h>
+#import "CMPopTipView.h"
 
 @class PCViewController;
 
 
 
-@interface SelectRecipientsViewController : UITableViewController <UISearchBarDelegate,UISearchResultsUpdating, UIPickerViewDataSource,UIPickerViewDelegate>
+@interface SelectRecipientsViewController : UITableViewController <UISearchBarDelegate,UISearchResultsUpdating, UIPickerViewDataSource,UIPickerViewDelegate, CMPopTipViewDelegate>
 
 -(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil contacts: (NSMutableArray *) contacts;
 -(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil contacts: (NSMutableArray *) contacts rootViewController: (PCViewController*) viewController;
@@ -75,6 +76,8 @@
 @property (strong,nonatomic) UISearchBar *searchBar;
 @property (strong,nonatomic) UISearchController *searchController;
 
+@property (strong,nonatomic) CMPopTipView *tooltipView;
+@property BOOL isShowingTooltip;
 
 //will hold a list of contacts per each letter
 

@@ -181,6 +181,11 @@
             //toast we will use social services
         }
     }
+    
+    if([self hasShownAllTooltipsAlready] && self.tableView.numberOfSections == 6) {
+        //1 section is missing, make it appear again
+        [self.tableView reloadData];
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -196,7 +201,9 @@
 #warning Potentially incomplete method implementation.
     // Return the number of sections.
     
-    return 6; //added one for restore purchase/buy premium
+    return [self hasShownAllTooltipsAlready] ? 7 : 6;
+    //add an option to show them again, putting all to false 7;
+    //added one for restore purchase/buy premium + reset
 }
 
 -(IBAction)goBackAfterSelection:(id)sender {
@@ -306,6 +313,24 @@
     
 }
 
+-(BOOL) hasShownAllTooltipsAlready {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([defaults boolForKey:SHOW_HELP_TOOLTIP_MAIN] && [defaults boolForKey:SHOW_HELP_TOOLTIP_RECIPIENTS] && [defaults boolForKey:SHOW_HELP_TOOLTIP_CONTACT_DETAILS]) {
+        return true;
+    }
+    
+    return false;
+}
+
+-(void) resetAllTooltips {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:FALSE forKey:SHOW_HELP_TOOLTIP_MAIN];
+    [defaults setBool:FALSE forKey:SHOW_HELP_TOOLTIP_RECIPIENTS];
+    [defaults setBool:FALSE forKey:SHOW_HELP_TOOLTIP_CONTACT_DETAILS];
+    [defaults synchronize];
+    [self.tableView reloadData];
+}
+
 -(NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if(section==0) {
         return  NSLocalizedString(@"header_message_send_options",nil);
@@ -357,7 +382,7 @@
         return NSLocalizedString(@"unlock_premium", nil);
     }
     else {
-        return @"Use social services";
+        return @"";
     }
     
     
@@ -474,6 +499,12 @@
         cell.textLabel.text =  NSLocalizedString(@"unlock_premium", nil);
         cell.accessoryType = UITableViewCellAccessoryNone;
         cell.imageView.image = [UIImage imageNamed:@"Unlock32"];
+        //restore tooltips
+    } else if (section == 6 && [self hasShownAllTooltipsAlready]) {
+        
+        cell.textLabel.text =  NSLocalizedString(@"show_tooltips_again", nil);
+        cell.accessoryType = UITableViewCellAccessoryNone;
+        cell.imageView.image = [UIImage imageNamed:@"gear"];
     }
  
     
@@ -687,6 +718,9 @@
         if(self.purchasesController !=nil) {
             [self.navigationController pushViewController:purchasesController animated:YES];
         }
+    } else if(section == 6 && row == 0 && [self hasShownAllTooltipsAlready]) {
+        
+        [self resetAllTooltips];
     }
     
     //else {
