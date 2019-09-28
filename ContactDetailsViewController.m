@@ -14,6 +14,7 @@
 #import "NBPhoneNumber.h"
 #import "NBPhoneNumberUtil.h"
 #import "iToast.h"
+#import "PCViewController.h"
 
 @interface ContactDetailsViewController ()
 
@@ -21,7 +22,7 @@
 
 @implementation ContactDetailsViewController
 
-@synthesize contactModel, contact;
+@synthesize contactModel, contact, tooltipView,isShowingTooltip;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -42,6 +43,38 @@
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+}
+
+//handle tooltips on view appear and disapear
+-(void) viewDidDisappear:(BOOL)animated {
+    if(self.isShowingTooltip && self.tooltipView!=nil) {
+        self.isShowingTooltip = false;
+        [self.tooltipView dismissAnimated:YES];
+    }
+}
+
+-(void) viewDidAppear:(BOOL)animated {
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if(![defaults boolForKey:SHOW_HELP_TOOLTIP_CONTACT_DETAILS]) {
+        //shows help tooltip
+        self.tooltipView = [[CMPopTipView alloc] initWithMessage:NSLocalizedString(@"tooltip_groups_management",nil)];
+        self.tooltipView.delegate = self;
+        [self.tooltipView setTitle:NSLocalizedString(@"message_recipients",nil)];
+        PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
+        self.tooltipView.backgroundColor =  [delegate colorFromHex:0xfb922b]; //normal lite color
+        [self.tooltipView  presentPointingAtBarButtonItem:self.navigationItem.rightBarButtonItem animated:YES];
+        self.isShowingTooltip = true;
+        [defaults setBool:YES forKey:SHOW_HELP_TOOLTIP_CONTACT_DETAILS];
+    }
+    
+    
+}
+
+// CMPopTipViewDelegate method
+- (void)popTipViewWasDismissedByUser:(CMPopTipView *)popTipView {
+    // any code, dismissed by user
+    self.isShowingTooltip = false;
 }
 
 -(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil contact: (Contact*) contactToShow {
@@ -71,7 +104,6 @@
         contact = contactToShow;
         contactModel = model;
         self.title = contact.name;
-
         
         UIBarButtonItem *optionsButton = [[UIBarButtonItem alloc] initWithImage: [UIImage imageNamed:@"list"] style:UIBarButtonItemStyleDone target:self action:@selector(optionsClicked:event:)];
         
@@ -541,19 +573,82 @@
     
 }
 
+//TODO contact has alternates??
+
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    
+    if(contact!=nil) {
+        if( [contact hasAlternatePhonesAndEmails ]) {
+            return 3;//one for details + 1 for phones and 1 for emails
+        } else if( [contact hasAlternatePhones] || [contact hasAlternateEmails] ) {
+            return 2;//one for details + 1 for phones OR 1 for emails
+        }
+    }
     return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if(contact.phone!=nil && contact.email!=nil ){
-        return 3;
+    
+    NSInteger altPhones = [contact hasAlternatePhones] ? contact.alternatePhones.count : 0;
+    NSInteger altEmails = [contact hasAlternateEmails] ? contact.alternateEmails.count : 0;
+    
+    
+    if(section == 0) {
+        if(contact.phone!=nil && contact.email!=nil ){
+            //has both, at least 3
+            //return 3 + altEmails + altPhones;
+            return 3; //details + phone + email
+        } else {
+            return 2;//details + phone OR email
+        }
+    } else if(section == 1) {
+        //has alternates for both, first we show alternate phones
+        if(altPhones > 0 && altEmails > 0) {
+            //means it has 2 sections
+            return altPhones;
+        } else {
+            //ret phones count
+            if(altPhones > 0) {
+               return altPhones;
+            } else {
+                //emails counts instead
+                return altEmails;
+            }
+        }
+    } else {
+        //has alternates for both
+        //emails counts instead
+        return altEmails;
     }
-    return 2;
+    
+    //should never happen
+    //return 2;
 }
 
+-(NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    if(section == 0) {
+        return NSLocalizedString(@"contact_info", nil);
+    }
+    else if(section == 1) {
+        if(contact!=nil ) {
+            
+            if([contact hasAlternatePhones]) {
+               return NSLocalizedString(@"alternative_phones", nil);
+            } else if([contact hasAlternateEmails]) {
+                return NSLocalizedString(@"alternative_emails", nil);
+            }
+            
+        }
+    }
+    else if(section == 2) {
+        return NSLocalizedString(@"alternative_emails", nil);
+    }
+    
+    return @"";
+}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
    // UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
@@ -567,83 +662,107 @@
     }
     
     NSInteger row = indexPath.row;
+    NSInteger section = indexPath.section;
+    
+    
     if(contact!=nil) {
         
-        // Configure the cell...
-        BOOL hasPhone = contact.phone!=nil;
-        BOOL hasEmail = contact.email!=nil;
-        
-        if(row==0){
-            if(contact.name!=nil) {
-                if(contact.lastName!=nil) {
-                    
-                    NSRange range = [contact.name rangeOfString:contact.lastName
-                                                        options:NSCaseInsensitiveSearch];
-                    if (range.length == 0) { //if the substring did not match
-                        //append also lastname
-                        cell.textLabel.text = [NSString stringWithFormat:@"%@ %@",contact.name, contact.lastName ];//use both
+        if(section == 0) {
+            
+            // Configure the cell...
+            BOOL hasPhone = contact.phone!=nil;
+            BOOL hasEmail = contact.email!=nil;
+            
+            if(row==0){
+                if(contact.name!=nil) {
+                    if(contact.lastName!=nil) {
+                        
+                        NSRange range = [contact.name rangeOfString:contact.lastName
+                                                            options:NSCaseInsensitiveSearch];
+                        if (range.length == 0) { //if the substring did not match
+                            //append also lastname
+                            cell.textLabel.text = [NSString stringWithFormat:@"%@ %@",contact.name, contact.lastName ];//use both
+                        }
+                        else {
+                            //append just the name, since the last name is already included (happens on native contacts, not core data models)
+                            cell.textLabel.text = contact.name;
+                        }
                     }
                     else {
-                        //append just the name, since the last name is already included (happens on native contacts, not core data models)
+                        // just the name, since last name is null
                         cell.textLabel.text = contact.name;
                     }
                 }
-                else {
-                    // just the name, since last name is null
-                    cell.textLabel.text = contact.name;
+                else if(contact.lastName!=nil) {
+                    cell.textLabel.text = contact.lastName;
                 }
+                //also add detail info
+                if(hasEmail && hasPhone) {
+                    //has both
+                    cell.detailTextLabel.text =  [NSString stringWithFormat:@"Email + %@", NSLocalizedString(@"phone_label",@"Phone") ];
+                }
+                else if(hasEmail) {
+                    //only email
+                    cell.detailTextLabel.text = @"Email";
+                }
+                else {
+                    //only phone
+                    cell.detailTextLabel.text = NSLocalizedString(@"phone_label",@"Phone");
+                }
+                //cell.editing = true;
+                //cell.editingStyle = UITableViewCellStyleE
             }
-            else if(contact.lastName!=nil) {
-                cell.textLabel.text = contact.lastName;
-            }
-            //also add detail info
-            if(hasEmail && hasPhone) {
-                //has both
-                cell.detailTextLabel.text =  [NSString stringWithFormat:@"Email + %@", NSLocalizedString(@"phone_label",@"Phone") ];
-            }
-            else if(hasEmail) {
-                //only email
-                cell.detailTextLabel.text = @"Email";
+            else if(row==1){
+                //either phone or email
+                if(contact.email!=nil) {
+                    cell.textLabel.text = [NSString stringWithFormat:@"Email: %@", contact.email];
+                }
+                else if(contact.phone!=nil) {
+                    cell.textLabel.text = [NSString stringWithFormat:@"%@: %@", NSLocalizedString(@"phone_label",@"Phone"),contact.phone ];
+                }
+            
             }
             else {
-                //only phone
-                cell.detailTextLabel.text = NSLocalizedString(@"phone_label",@"Phone");
+                if(contact.phone!=nil) {
+                    cell.textLabel.text = [NSString stringWithFormat:@"%@: %@", NSLocalizedString(@"phone_label",@"Phone"),contact.phone ];
+                }
+                else if(contact.email!=nil) {
+                    cell.textLabel.text =  [NSString stringWithFormat:@"Email: %@", contact.email];
+                }
             }
-            //cell.editing = true;
-            //cell.editingStyle = UITableViewCellStyleE
+            
+        } else if(section == 1) {
+            
+            NSInteger altPhones = [contact hasAlternatePhones] ? contact.alternatePhones.count : 0;
+            NSInteger altEmails = [contact hasAlternateEmails] ? contact.alternateEmails.count : 0;
+            if(altPhones > 0 && altEmails > 0) {
+                //show alternate phones here
+                if(row < contact.alternatePhones.count ) {
+                    cell.textLabel.text = [contact.alternatePhones objectAtIndex:row];
+                }
+                
+                
+            } else if(altPhones > 0) {
+                if(row < contact.alternatePhones.count ) {
+                    cell.textLabel.text = [contact.alternatePhones objectAtIndex:row];
+                }
+            } else {
+                //altEmails > 0
+                if(row < contact.alternateEmails.count ) {
+                    cell.textLabel.text = [contact.alternateEmails objectAtIndex:row];
+                }
+            }
+            
+        } else {
+            //section 2 is jus emails
+            if(row < contact.alternateEmails.count ) {
+                cell.textLabel.text = [contact.alternateEmails objectAtIndex:row];
+            }
         }
-        else if(row==1){
-            //either phone or email
-            if(contact.email!=nil) {
-                cell.textLabel.text = [NSString stringWithFormat:@"Email: %@", contact.email];
-            }
-            else if(contact.phone!=nil) {
-                cell.textLabel.text = [NSString stringWithFormat:@"%@: %@", NSLocalizedString(@"phone_label",@"Phone"),contact.phone ];
-            }
-        }
-        else{
-            if(contact.phone!=nil) {
-                cell.textLabel.text = [NSString stringWithFormat:@"%@: %@", NSLocalizedString(@"phone_label",@"Phone"),contact.phone ];
-            }
-            else if(contact.email!=nil) {
-                cell.textLabel.text =  [NSString stringWithFormat:@"Email: %@", contact.email];
-            }
-        }
-       
         
-        /*
-        if(hasEmail && hasPhone) {
-            //has both
-            cell.detailTextLabel.text =  [NSString stringWithFormat:@"Email + %@", NSLocalizedString(@"phone_label",@"Phone") ];
-        }
-        else if(hasEmail) {
-            //only email
-            cell.detailTextLabel.text = @"Email";
-        }
-        else {
-            //only phone
-            cell.detailTextLabel.text = NSLocalizedString(@"phone_label",@"Phone");
-        }*/
+        
+        
+       
     }
     
     return cell;
