@@ -10,7 +10,7 @@
 
 @implementation Contact
 
-@synthesize phone,email,name,lastName,photo,person,birthday,isFavorite;
+@synthesize phone,email,name,lastName,photo,person,birthday,isFavorite,alternatePhones,alternateEmails;
 
 //we just consider the name
 -(BOOL) isEqual:(id)object {
@@ -49,6 +49,10 @@
         }
     }
     
+    if([self.description isEqualToString:otherContact.description]) {
+        return YES;
+    }
+    
     //if one has null name, they are not the same for sure
     
     return NO;
@@ -61,6 +65,8 @@
         if([lastName isEqualToString:otherContact.lastName]) {
             return YES;
         }
+    } else if(lastName == nil && otherContact.lastName == nil) {
+        return YES;
     }
     return NO;
 }
@@ -72,6 +78,8 @@
             //ok name is equal, check lastname
             return YES;
         }
+    } else if(name == nil && otherContact.name == nil) {
+        return YES;
     }
     return NO;
 }
@@ -81,6 +89,8 @@
         if([phone isEqualToString:otherContact.phone]) {
             return YES;
         }
+    } else if(phone == nil && otherContact.phone == nil) {
+        return YES;
     }
     
     
@@ -93,6 +103,8 @@
         if([email isEqualToString:otherContact.email]) {
             return YES;
         }
+    } else if(email == nil && otherContact.email == nil) {
+        return YES;
     }
     
     return NO;
@@ -137,4 +149,14 @@
     <#code#>
 }*/
 
+-(BOOL) hasAlternateEmails {
+    return (self.alternateEmails!=nil && self.alternateEmails.count > 0);
+}
+-(BOOL) hasAlternatePhones {
+    return (self.alternatePhones!=nil && self.alternatePhones.count > 0);
+}
+
+-(BOOL) hasAlternatePhonesAndEmails {
+    return [self hasAlternateEmails] && [self hasAlternatePhones];
+}
 @end

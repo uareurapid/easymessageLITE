@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14903" systemVersion="18G95" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
     <entity name="ContactDataModel" representedClassName="ContactDataModel" syncable="YES">
+        <attribute name="alternateEmails" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="alternatePhones" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="birthday" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="favorite" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
@@ -20,7 +22,7 @@
         <attribute name="msg" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="ContactDataModel" positionX="-171" positionY="144" width="128" height="148"/>
+        <element name="ContactDataModel" positionX="-171" positionY="144" width="128" height="178"/>
         <element name="GroupDataModel" positionX="160" positionY="192" width="128" height="88"/>
         <element name="MessageDataModel" positionX="160" positionY="192" width="128" height="90"/>
     </elements>

@@ -37,13 +37,6 @@
         self.tabBarItem.image = [UIImage imageNamed:@"33-cabinet"];
         self.title = NSLocalizedString(@"archive",@"Archive");
         
-        //self.addNewMessage = YES;
-        
-        //UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"add",@"add") style:UIBarButtonItemStyleDone target:self action:@selector(selectFinished:)];
-        //unlock = [UIImage imageNamed:@"Unlock32"];
-        //lock = [UIImage imageNamed:@"Lock32"];
-        
-        //doneButton.tintColor = UIColor.whiteColor;
         
         UIBarButtonItem *optionsButton = [[UIBarButtonItem alloc] initWithImage: [UIImage imageNamed:@"list"] style:UIBarButtonItemStyleDone target:self action:@selector(optionsClicked:event:)];
         
@@ -52,17 +45,7 @@
         self.navigationItem.rightBarButtonItem = optionsButton;
         //[addToGroupButton setEnabled:NO];
         [optionsButton setEnabled:YES];
-        
-        
-        //UIBarButtonItem *deleteButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Delete" style:UIBarButtonItemStyleDone target:self action:@selector(deleteMessageClicked:)];
-        
-        //deleteButtonItem.tintColor = UIColor.whiteColor;
-        
-        //[doneButton setEnabled:YES];
-        //[deleteButtonItem setEnabled:NO];
-        
-        //self.navigationItem.rightBarButtonItem = doneButton;
-        //self.navigationItem.leftBarButtonItem = deleteButtonItem;
+
         self.navigationController.toolbarHidden = NO;
         
         selectedMessageIndex = -1;

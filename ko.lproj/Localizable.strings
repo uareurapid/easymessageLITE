@@ -156,3 +156,12 @@
 "add_to_favorites" = "즐겨 찾기에 추가";
 "remove_from_favorites" = "즐겨 찾기에서 삭제하기";
 "show_favorites_only" = "즐겨 찾기 만 표시";
+"contact_info" = "연락 정보";
+"alternative_emails" = "대체 이메일 주소";
+"alternative_phones" = "대체 전화 번호";
+"tooltip_groups_management" = "You can use this menu to create new groups or contacts. You can either start with an empty group or select some contacts to initiate the group. Select the recipients you want to put in your group and choose either 'New group' (for a new group) or 'Add to group' (for an existing group).\r\n In order to choose the recipients for your message, just select the corresponding rows. To see or edit contact details press the (i) button.";
+"tooltip_easy_message" = "Once your message is ready click this button to send it. Only 'Message' field is mandatory while subject can be used for email. You can attach images and save the current message as template for later re-use. We already created some useful 'Templates' for you. Use the (+) button or the 'Recipients' screen to add recipients to your message. On the 'Settings' page you can further customize the app and the message delivery.";
+"welcome_message" = "Welcome to Easy Message";
+"message_recipients" = "Message recipients and groups";
+"tooltip_contact_details" = "You can use this menu to change or delete your contact/group. In order to remove contacts from an existing group swipe left on the corresponding row";
+"show_tooltips_again" = "Show help tooltips again";

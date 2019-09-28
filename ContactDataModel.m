@@ -19,5 +19,7 @@
 @dynamic group;
 @dynamic birthday;
 @dynamic favorite;
+@dynamic alternateEmails;
+@dynamic alternatePhones;
 
 @end

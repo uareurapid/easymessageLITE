@@ -21,8 +21,13 @@
 @property (copy,nonatomic) NSDate *birthday;
 @property (strong,nonatomic) UIImage *photo;
 @property (assign,nonatomic) BOOL isFavorite;
+@property (strong,nonatomic) NSMutableArray *alternatePhones;
+@property (strong,nonatomic) NSMutableArray *alternateEmails;
 
 -(BOOL) isEqual:(id)object;
+-(BOOL) hasAlternateEmails;
+-(BOOL) hasAlternatePhones;
+-(BOOL) hasAlternatePhonesAndEmails;
 
 @property ABRecordRef person;//ref to the person
 
