@@ -940,7 +940,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         self.tooltipView.delegate = self;
         //self.tooltipView.title = NSLocalizedString(@"message_recipients",nil);
         PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
-        self.tooltipView.backgroundColor =  [delegate colorFromHex:0xfb922b]; //normal lite color
+        self.tooltipView.backgroundColor =  [delegate colorFromHex:PREMIUM_COLOR]; //normal lite color
         [self.tooltipView  presentPointingAtBarButtonItem:self.navigationItem.rightBarButtonItem animated:YES];
         self.isShowingTooltip = true;
         [defaults setBool:YES forKey:SHOW_HELP_TOOLTIP_RECIPIENTS];
@@ -1308,25 +1308,15 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         //add a rounded photo
         if(contact.photo!=nil) {
             
-            /*if(contact.phone!=nil && [contact.phone isEqualToString:@"968495110"]) {
-                NSLog(@"this one pai");
-            
-                CGFloat imageWidth = contact.photo.size.width;
-                CGFloat imageHeight = contact.photo.size.height;
-                 NSLog(@"size: %f %f", imageWidth, imageHeight);
-            }*/
-        
-            //cell.imageView.contentMode = UIViewContentModeScaleAspectFill;
-            cell.imageView.layer.cornerRadius = 20;//self.frame.height / 2;
+            cell.imageView.layer.cornerRadius = 20.0;
             cell.imageView.layer.masksToBounds = true;
-            cell.imageView.clipsToBounds = true;
-            cell.imageView.image = [self imageByCroppingImage:contact.photo toSize:CGSizeMake(60, 60)];
-            //cell.imageView.la.cornerRadius = 20.0;
-            //cell.imageView.layer.masksToBounds = true;
-            // size: 1936.000000 2592.000000
-            
-            
-            
+            cell.imageView.image = contact.photo;
+            /*if(contact.photo.size.width < contact.photo.size.height) {
+                //portrait image
+                cell.imageView.image = [self imageByCroppingImage:contact.photo toSize:CGSizeMake(60, 60)];
+                cell.imageView.transform = CGAffineTransformMakeRotation(M_PI_2);
+            } */
+              
         }
         else {
             UIImage  *img = [UIImage imageNamed:@"user"];
@@ -1349,8 +1339,8 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
             }
             
             cell.imageView.image = img;
-           // cell.imageView.layer.cornerRadius = 20.0;
-           // cell.imageView.layer.masksToBounds = true;
+            cell.imageView.layer.cornerRadius = 20.0;
+            cell.imageView.layer.masksToBounds = true;
             
         }
         

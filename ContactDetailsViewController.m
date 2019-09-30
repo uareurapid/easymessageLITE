@@ -62,7 +62,7 @@
         self.tooltipView.delegate = self;
         //self.tooltipView.title = NSLocalizedString(@"message_recipients",nil);
         PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
-        self.tooltipView.backgroundColor =  [delegate colorFromHex:0xfb922b]; //normal lite color
+        self.tooltipView.backgroundColor =  [delegate colorFromHex:PREMIUM_COLOR]; //normal lite color
         [self.tooltipView  presentPointingAtBarButtonItem:self.navigationItem.rightBarButtonItem animated:YES];
         self.isShowingTooltip = true;
         [defaults setBool:YES forKey:SHOW_HELP_TOOLTIP_CONTACT_DETAILS];

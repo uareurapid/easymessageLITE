@@ -307,7 +307,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         self.tooltipView = [[CMPopTipView alloc] initWithMessage:NSLocalizedString(@"tooltip_easy_message",nil)];
         self.tooltipView.delegate = self;
         PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
-        self.tooltipView.backgroundColor =  [delegate colorFromHex:0xfb922b]; //normal lite color
+        self.tooltipView.backgroundColor =  [delegate colorFromHex:PREMIUM_COLOR]; //normal lite color
         //self.tooltipView.title = NSLocalizedString(@"welcome_message", nil);
         [self.tooltipView  presentPointingAtView:self.sendButton.imageView inView:self.view animated:YES];
         self.isShowingTooltip = true;

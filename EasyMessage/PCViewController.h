@@ -47,13 +47,14 @@
 #define LINKEDIN_ME_KEY   @"linkedin_me"
 
 #define LITE_COLOR 0xfb922b
-#define PREMIUM COLOR 0x4f6781
+#define PREMIUM_COLOR 0x4f6781
 
 #define SHOW_HELP_TOOLTIP_MAIN @"show_help_tooltip_main"
 #define SHOW_HELP_TOOLTIP_RECIPIENTS @"show_help_tooltip_recipients"
 #define SHOW_HELP_TOOLTIP_SETTINGS @"show_help_tooltip_settings"
 #define SHOW_HELP_TOOLTIP_TEMPLATES @"show_help_tooltip_templates"
 #define SHOW_HELP_TOOLTIP_CONTACT_DETAILS @"show_help_tooltip_contact_details"
+#define SHOW_HELP_TOOLTIP_APP_SETTINGS @"show_help_tooltip_app_settings"
 
 @interface PCViewController : UIViewController <MFMailComposeViewControllerDelegate,MFMessageComposeViewControllerDelegate,UIImagePickerControllerDelegate,UITextViewDelegate,UITextFieldDelegate, FBSDKSharingDelegate,UICollectionViewDataSource,UICollectionViewDelegate,
 UITextFieldDelegate, NSURLConnectionDelegate,SKStoreProductViewControllerDelegate,QBImagePickerControllerDelegate, PopupDelegate, CMPopTipViewDelegate>

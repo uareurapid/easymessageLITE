@@ -11,6 +11,8 @@
 #import "SocialNetworksViewController.h"
 #import <StoreKit/StoreKit.h>
 #import "FilterOptionsViewController.h"
+#import "PCAppDelegate.h"
+#import "PCViewController.h"
 @interface SettingsViewController ()
 
 @end
@@ -22,7 +24,7 @@
 @synthesize socialOptionsController, purchasesController, filterOptionsController;
 @synthesize showToast;
 @synthesize initiallySelectedPreferredService,initiallySelectedSendOption, initiallySelectedOrderByOption;
-@synthesize isFacebookAvailable,isTwitterAvailable,isLinkedinAvailable;
+@synthesize isFacebookAvailable,isTwitterAvailable,isLinkedinAvailable,isShowingTooltip,tooltipView;
 
 //ABOUT IOS MESSAGES:
 //https://support.apple.com/en-us/HT202724
@@ -165,6 +167,30 @@
     [self saveSettings];
 }
 
+-(void) viewDidAppear:(BOOL)animated {
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if(![defaults boolForKey:SHOW_HELP_TOOLTIP_APP_SETTINGS]) {
+        //shows help tooltip
+        self.tooltipView = [[CMPopTipView alloc] initWithMessage:NSLocalizedString(@"tooltip_app_settings",nil)];
+        self.tooltipView.delegate = self;
+        PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
+        self.tooltipView.backgroundColor =  [delegate colorFromHex:PREMIUM_COLOR]; //normal lite color
+        UIView *view = [self.tableView headerViewForSection:1];
+        [self.tooltipView presentPointingAtView:view inView:self.view animated:YES];
+        self.isShowingTooltip = true;
+        [defaults setBool:YES forKey:SHOW_HELP_TOOLTIP_APP_SETTINGS];
+    }
+    
+    
+}
+
+// CMPopTipViewDelegate method
+- (void)popTipViewWasDismissedByUser:(CMPopTipView *)popTipView {
+    // any code, dismissed by user
+    self.isShowingTooltip = false;
+}
+
 -(void) viewWillAppear:(BOOL)animated {
     
     initiallySelectedSendOption = selectSendOption;
@@ -184,7 +210,10 @@
     
     if([self hasShownAllTooltipsAlready] && self.tableView.numberOfSections == 6) {
         //1 section is missing, make it appear again
-        [self.tableView reloadData];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+        });
+        
     }
 }
 
@@ -315,7 +344,8 @@
 
 -(BOOL) hasShownAllTooltipsAlready {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if([defaults boolForKey:SHOW_HELP_TOOLTIP_MAIN] && [defaults boolForKey:SHOW_HELP_TOOLTIP_RECIPIENTS] && [defaults boolForKey:SHOW_HELP_TOOLTIP_CONTACT_DETAILS]) {
+    if([defaults boolForKey:SHOW_HELP_TOOLTIP_MAIN] && [defaults boolForKey:SHOW_HELP_TOOLTIP_RECIPIENTS] &&
+       [defaults boolForKey:SHOW_HELP_TOOLTIP_CONTACT_DETAILS] && [defaults boolForKey:SHOW_HELP_TOOLTIP_APP_SETTINGS]) {
         return true;
     }
     
@@ -327,6 +357,8 @@
     [defaults setBool:FALSE forKey:SHOW_HELP_TOOLTIP_MAIN];
     [defaults setBool:FALSE forKey:SHOW_HELP_TOOLTIP_RECIPIENTS];
     [defaults setBool:FALSE forKey:SHOW_HELP_TOOLTIP_CONTACT_DETAILS];
+    [defaults setBool:FALSE forKey:SHOW_HELP_TOOLTIP_APP_SETTINGS];
+    self.isShowingTooltip = false;
     [defaults synchronize];
     [self.tableView reloadData];
 }
@@ -723,25 +755,7 @@
         [self resetAllTooltips];
     }
     
-    //else {
-        //present the other table
-    //    showToast = NO;
-    //    [self.navigationController pushViewController:furtherOptionsController animated:YES];
-    //}
-   // [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
-    
-    
-    //[self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
-    //[self.tableView selectRowAtIndexPath:indexPath animated:nil scrollPosition:nil];
-    
-    
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
+  
 }
 
 - (IBAction)sendEmail:(id)sender {

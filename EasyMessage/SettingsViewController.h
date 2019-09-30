@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <Social/Social.h>
 #import <MessageUI/MessageUI.h>
+#import "CMPopTipView.h"
 
 //TODO PC this is not translated??
 #define OPTION_ALWAYS_SEND_BOTH   @"Always send both"
@@ -66,9 +67,8 @@
 @class SocialNetworksViewController;
 @class FilterOptionsViewController;
 @class IAPMasterViewController;
-@class PCViewController;
 
-@interface SettingsViewController : UITableViewController<MFMailComposeViewControllerDelegate,MFMessageComposeViewControllerDelegate>
+@interface SettingsViewController : UITableViewController<MFMailComposeViewControllerDelegate,MFMessageComposeViewControllerDelegate,CMPopTipViewDelegate>
 
 @property(strong,nonatomic)NSMutableArray *sendOptions;
 @property(strong,nonatomic)NSMutableArray *preferedServiceOptions;
@@ -92,6 +92,8 @@
 @property (strong,nonatomic) SocialNetworksViewController *socialOptionsController;
 @property (strong,nonatomic) IAPMasterViewController *purchasesController;
 @property (strong,nonatomic) FilterOptionsViewController *filterOptionsController;
+@property (strong,nonatomic) CMPopTipView *tooltipView;
+@property BOOL isShowingTooltip;
 
 -(void) resetSocialNetworks;
 

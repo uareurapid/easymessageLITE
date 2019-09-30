@@ -159,9 +159,10 @@
 "contact_info" = "연락 정보";
 "alternative_emails" = "대체 이메일 주소";
 "alternative_phones" = "대체 전화 번호";
-"tooltip_groups_management" = "You can use this menu to create new groups or contacts. You can either start with an empty group or select some contacts to initiate the group. Select the recipients you want to put in your group and choose either 'New group' (for a new group) or 'Add to group' (for an existing group).\r\n In order to choose the recipients for your message, just select the corresponding rows. To see or edit contact details press the (i) button.";
-"tooltip_easy_message" = "Once your message is ready click this button to send it. Only the 'Message' field is mandatory while you can use the 'Subject' for email. You can attach images and save the current message as template for later re-use. We already created some useful 'Templates' for you. Use the (+) button or the 'Recipients' screen to add recipients to your message. On the 'Settings' page you can further customize the app and the message delivery.";
+"tooltip_groups_management" = "이 메뉴를 사용하여 새 그룹이나 연락처를 만들 수 있습니다. 빈 그룹으로 시작하거나 일부 연락처를 선택하여 그룹을 시작할 수 있습니다. 그룹에 추가 할 수신자를 선택하고 '새 그룹'(새 그룹의 경우) 또는 '그룹에 추가'(기존 그룹의 경우)를 선택하십시오.\r\n메시지 수신자를 선택하려면, 해당 행을 선택하십시오. 연락처 세부 정보를 보거나 편집하려면 (i) 버튼을 누릅니다.";
+"tooltip_easy_message" = "메시지가 준비되면이 버튼을 클릭하여 보내십시오. 이메일에 '제목'을 사용할 수있는 동안 '메시지'필드 만 필수입니다. 나중에 재사용 할 수 있도록 이미지를 첨부하고 현재 메시지를 템플릿으로 저장할 수 있습니다. 이미 유용한 '템플릿'을 만들었습니다. 메시지에 수신자를 추가하려면 (+) 버튼 또는 '수신자'화면을 사용하십시오. '설정'페이지에서 앱 및 메시지 전달을 추가로 사용자 정의 할 수 있습니다.";
 "welcome_message" = "Welcome to Easy Message";
 "message_recipients" = "Message recipients and groups";
-"tooltip_contact_details" = "You can use this menu to change or delete your contact/group. In order to remove contacts from an existing group swipe left on the corresponding row";
-"show_tooltips_again" = "Show help tooltips again";
+"tooltip_contact_details" = "이 메뉴를 사용하여 연락처/그룹을 변경하거나 삭제할 수 있습니다. 기존 그룹에서 연락처를 제거하려면 해당 행에서 왼쪽으로 스 와이프합니다.";
+"show_tooltips_again" = "도움말 툴팁 다시 표시";
+"tooltip_app_settings" = "여기에서 메시지 배달 및 '받는 사람'화면 모양을 사용자 지정할 수 있습니다. SMS/iMessage 또는 이메일 만 보내거나 소셜 미디어에 게시하거나 모든 서비스를 한 번에 사용하도록 선택할 수 있습니다. (힌트 : 대상 고객이 사용할 수있는 연락처 정보 유형을 고려하십시오). SMS / iMessage를 사용하는 경우 그룹 대화를 만드는 대신 공개되지 않은 수신자를 원하면 iMessage를 비활성화하고 일반 SMS 서비스 (전화 설정-> 메시지-> iMessage 및 MMS 메시징 비활성화)를 사용해야합니다.\r\n참고 일부 서비스는 인터넷 연결이 필요하거나 추가 요금이 발생할 수 있습니다";

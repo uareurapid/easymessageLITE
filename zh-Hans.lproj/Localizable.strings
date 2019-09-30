@@ -155,9 +155,11 @@
 "contact_info" = "联络资料";
 "alternative_emails" = "备用电子邮件地址";
 "alternative_phones" = "备用电话号码";
-"tooltip_groups_management" = "You can use this menu to create new groups or contacts. You can either start with an empty group or select some contacts to initiate the group. Select the recipients you want to put in your group and choose either 'New group' (for a new group) or 'Add to group' (for an existing group).\r\n In order to choose the recipients for your message, just select the corresponding rows. To see or edit contact details press the (i) button.";
-"tooltip_easy_message" = "Once your message is ready click this button to send it. Only the 'Message' field is mandatory while you can use the 'Subject' for email. You can attach images and save the current message as template for later re-use. We already created some useful 'Templates' for you. Use the (+) button or the 'Recipients' screen to add recipients to your message. On the 'Settings' page you can further customize the app and the message delivery.";
+"tooltip_groups_management" = "您可以使用此菜单创建新的组或联系人。 您可以从一个空的组开始，也可以选择一些联系人来发起该组。 选择要放入组中的收件人，然后选择“新组”（对于新组）或“添加到组”（对于现有组）。\r\n为了选择邮件的收件人， 只需选择相应的行。 要查看或编辑联系人详细信息，请按（i）按钮。";
+"tooltip_easy_message" = "邮件准备就绪后，请单击此按钮进行发送。 只有“消息”字段为必填项，而您可以将“主题”用于电子邮件。 您可以附加图像并将当前消息另存为模板，以备将来使用。 我们已经为您创建了一些有用的“模板”。 使用（+）按钮或“收件人”屏幕将收件人添加到您的邮件中。 在“设置”页面上，您可以进一步自定义应用程序和消息传递。";
 "welcome_message" = "Welcome to Easy Message";
 "message_recipients" = "Message recipients and groups";
-"tooltip_contact_details" = "You can use this menu to change or delete your contact/group. In order to remove contacts from an existing group swipe left on the corresponding row";
-"show_tooltips_again" = "Show help tooltips again";
+"tooltip_contact_details" = "您可以使用此菜单来更改或删除您的联系人/组。 为了从现有组中删除联系人，请在相应行上向左滑动";
+"show_tooltips_again" = "再次显示帮助工具提示";
+"tooltip_app_settings" = "您可以在此处自定义消息传递和“收件人”屏幕外观。 您可以选择仅发送SMS/iMessage或电子邮件，发布到社交媒体或一次使用所有服务。 （提示：请考虑可用于目标受众的联系信息的类型）。 当您使用SMS / iMessage时，如果希望未公开的收件人而不是创建群组对话，则应禁用iMessage并使用普通的SMS服务（电话设置->消息->禁用iMessage和MMS消息传递）。\r\n注意 某些服务可能需要Internet连接或产生一些额外费用";
+
