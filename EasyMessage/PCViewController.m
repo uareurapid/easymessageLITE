@@ -830,6 +830,12 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     }
     else { //we have recipients
        
+        //save prior to delivery
+        if(saveMessage) {
+            //TODO SAVE THE MESSAGE
+            saveMessage = NO;
+            [self saveMessageInArchive];
+        }
         /**
          #define OPTION_ALWAYS_SEND_BOTH   @"Always send both" 0
          #define OPTION_SEND_EMAIL_ONLY    @"Send email only" 1
@@ -2535,7 +2541,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         if(![managedObjectContext save:&error]){
             NSLog(@"Unable to save object, error is: %@",error.description);
         } else {
-            [customMessagesController addRecordsFromDatabase];
+             [customMessagesController setForceReload:YES];
         }
     }
     

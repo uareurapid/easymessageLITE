@@ -28,6 +28,7 @@
 - (void)optionsClicked:(id)sender event:(UIEvent *)event;
 -(void) editSelectedMessage;
 -(void) addRecordsFromDatabase;
+-(void) setForceReload:(BOOL) force;
 @property BOOL addNewMessage;
 @property BOOL forceReload;
 @end

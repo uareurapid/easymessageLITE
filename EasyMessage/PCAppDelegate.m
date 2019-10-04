@@ -64,6 +64,8 @@
     
     self.viewController.recipientsController = self.recipientsController;
     
+    self.viewController.customMessagesController = self.customMessagesController;
+    
     UINavigationController *easyMessageController = [[UINavigationController alloc] init];
     [easyMessageController setViewControllers: [[NSArray alloc]  initWithObjects:self.viewController, nil]];
     
@@ -83,8 +85,7 @@
     [customMessagesControllerNav setViewControllers: [[NSArray alloc]  initWithObjects:self.customMessagesController, nil]];
     
     customMessagesControllerNav.navigationBar.barTintColor = [self colorFromHex:0xfb922b];
-   // UINavigationController *inAppPurchasesControllerNav = [[UINavigationController alloc] init];
-   // [inAppPurchasesControllerNav setViewControllers: [[NSArray alloc]  initWithObjects:self.inAppPurchasesController, nil]];
+   
     
     
     UITabBarController *tabController = [[UITabBarController alloc] init];

@@ -76,7 +76,7 @@
         [self.navigationController popToRootViewControllerAnimated:YES];
     }//otherwise no changes
     else {
-        NSLog(@"ERROR");
+        [self.navigationController popToRootViewControllerAnimated:YES];
     }
 }
 

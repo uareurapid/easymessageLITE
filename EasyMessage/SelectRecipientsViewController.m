@@ -705,47 +705,55 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 //delete a group
 -(void) deleteGroup:(Group *)group{
     
-    BOOL deleted = [CoreDataUtils deleteGroupDataModelByName:group.name];
-    if(deleted) {
-        NSLog(@"deleted on db, group: %@",group.name);
-        [group.contactsList removeAllObjects];
-        [contactsList removeObject:group];
+    if(group!=nil && group.name!=nil) {
         
-        [groupsList removeObject:group];
-        
-        for(NSString *name in groupsNamesArray) {
-            if([name isEqualToString:group.name]) {
-                [groupsNamesArray removeObject:name];
+        NSString *groupName = group.name;
+        BOOL deleted = [CoreDataUtils deleteGroupDataModelByName:groupName];
+        if(deleted) {
+            //NSLog(@"deleted on db, group: %@",groupName);
+            [group.contactsList removeAllObjects];
+            [contactsList removeObject:group];
+            
+            [groupsList removeObject:group];
+            
+            for(NSString *name in groupsNamesArray) {
+                if(name!=nil && groupName!=nil && [name isEqualToString:groupName]) {
+                    [groupsNamesArray removeObject:name];
+                }
             }
+            
+            
+            [[[[iToast makeText:NSLocalizedString(@"deleted", @"deleted")]
+               setGravity:iToastGravityBottom] setDuration:2000] show];
+            
+            [self refreshPhonebook:nil];
+            
         }
-        
-        [[[[iToast makeText:NSLocalizedString(@"deleted", @"deleted")]
-           setGravity:iToastGravityBottom] setDuration:2000] show];
-        
-        [self refreshPhonebook:nil];
     }
-
     
 }
 
 //delete a contact
 -(void) deleteContact:(Contact *)contact{
     
-    if([self isNativeContact:contact]) {
-      [self searchAndDeleteContactInContactsList: contact];
-    }
-    else {
-        
-        BOOL deleted = [CoreDataUtils deleteContactDataModelByName: contact];
-        if(deleted) {
-            NSLog(@"deleted on db, contact: %@",contact.name);
-            [contactsList removeObject:contact];
-            [[[[iToast makeText:NSLocalizedString(@"deleted", @"deleted")]
-                setGravity:iToastGravityBottom] setDuration:2000] show];
-                
-            [self refreshPhonebook:nil];
+    if(contact!=nil) {
+        if([self isNativeContact:contact]) {
+          [self searchAndDeleteContactInContactsList: contact];
+        }
+        else {
+            
+            BOOL deleted = [CoreDataUtils deleteContactDataModelByName: contact];
+            if(deleted) {
+                //NSLog(@"deleted on db, contact: %@",contact.name);
+                [contactsList removeObject:contact];
+                [[[[iToast makeText:NSLocalizedString(@"deleted", @"deleted")]
+                    setGravity:iToastGravityBottom] setDuration:2000] show];
+                    
+                [self refreshPhonebook:nil];
+            }
         }
     }
+    
     
 }
 
@@ -1308,14 +1316,19 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         //add a rounded photo
         if(contact.photo!=nil) {
             
-            cell.imageView.layer.cornerRadius = 20.0;
+            cell.imageView.layer.cornerRadius = 20;
             cell.imageView.layer.masksToBounds = true;
-            cell.imageView.image = contact.photo;
-            /*if(contact.photo.size.width < contact.photo.size.height) {
+            cell.imageView.clipsToBounds = true;
+            
+            if( [self isNotSquaredPhoto:contact.photo] && ( (contact.photo.size.width >= 300.0 ) && (contact.photo.size.height >= 300.0 ) )  ) {
                 //portrait image
-                cell.imageView.image = [self imageByCroppingImage:contact.photo toSize:CGSizeMake(60, 60)];
+                cell.imageView.layer.cornerRadius = 20;
+                cell.imageView.image = [self imageByCroppingImage:contact.photo toSize:CGSizeMake(300, 300)];
                 cell.imageView.transform = CGAffineTransformMakeRotation(M_PI_2);
-            } */
+            } else {
+                cell.imageView.image = contact.photo;
+                cell.imageView.transform = CGAffineTransformMakeRotation(0);
+            }
               
         }
         else {
@@ -2443,8 +2456,50 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         
         //we just grab the first one matching this name
         if(contacts.count > 0) {
-            CNMutableContact* copyOfContact = (CNMutableContact *)[[contacts objectAtIndex:0] mutableCopy] ;
-            //NSLog(@"FIND BY NAME");
+            CNMutableContact* copyOfContact = nil;
+            
+            if(contacts.count == 1) {
+                copyOfContact = (CNMutableContact *)[[contacts objectAtIndex:0] mutableCopy] ;
+                return copyOfContact;
+            }
+            
+            //we have more than 1 result
+            int index = 0;
+            BOOL foundMatch = false;
+            for(CNMutableContact *resultContact in contacts) {
+                //CHECK OTHER FIELDS
+                if(contact.email!= nil && resultContact.emailAddresses!=nil) {
+                   //email
+                    for(CNLabeledValue <CNPhoneNumber *> *email in resultContact.emailAddresses) {
+                        
+                        NSString *stringValue = email.value.stringValue;
+                        if(stringValue!=nil && [stringValue isEqualToString:contact.email]) {
+                            foundMatch = true;
+                            break;
+                        }
+                    }
+                    
+                }else if(contact.phone!= nil && resultContact.phoneNumbers!=nil) {
+                   //phone
+                    for(CNLabeledValue <CNPhoneNumber *> *phone in resultContact.phoneNumbers) {
+                        
+                       NSString *stringValue = phone.value.stringValue;
+                       if(stringValue!=nil && [stringValue isEqualToString:contact.phone]) {
+                           foundMatch = true;
+                           break;
+                       }
+                   }
+                }
+                
+                if(foundMatch && index < contacts.count) {
+                    copyOfContact = (CNMutableContact *)[[contacts objectAtIndex:index] mutableCopy] ;
+                    return copyOfContact;
+                }
+                //otherwise increase index to next
+                index++;
+            }
+            //if still here, grabe the first as default
+            copyOfContact = (CNMutableContact *)[[contacts objectAtIndex:0] mutableCopy] ;
             return copyOfContact;
         } else {
             //nothing returned, try find by phone number
@@ -2740,12 +2795,28 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     }
 }*/
 
+-(BOOL) isNotSquaredPhoto: (UIImage *) photo {
+    
+    //avoid any division by 0
+    if(photo.size.width == 0 || photo.size.height == 0) {
+        return false;
+    }
+    
+    if (  ( (photo.size.width / photo.size.height) < 0.75) || ( (photo.size.height / photo.size.width) < 0.75) ) {
+        return true;
+    }
+    return false;
+}
+
 - (UIImage *)imageByCroppingImage:(UIImage *)image toSize:(CGSize)size
 {
     double newCropWidth, newCropHeight;
 
+    newCropWidth = size.width;
+    newCropHeight = size.height;
+    
     //=== To crop more efficently =====//
-    if(image.size.width < image.size.height){
+    /*if(image.size.width < image.size.height){
          if (image.size.width < size.width) {
                  newCropWidth = size.width;
           }
@@ -2761,7 +2832,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
                 newCropHeight = image.size.height;
           }
           newCropWidth = (newCropHeight * size.width)/size.height;
-    }
+    }*/
     //==============================//
 
     double x = image.size.width/2.0 - newCropWidth/2.0;

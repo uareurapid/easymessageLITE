@@ -64,8 +64,9 @@
     return 38;
 }
 
+
 -(void)viewWillAppear:(BOOL)animated {
-    //if ([[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_COMMON_MESSAGES]) {
+    
     
     [self.navigationItem.leftBarButtonItem setEnabled: ![self isDefaultMessageSelected] ];
     
@@ -73,6 +74,17 @@
     [self.tableView setAllowsSelection:YES];
     
     self.addNewMessage = ([self getSelectedMessageIfAny]==nil);
+    
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL force = [defaults boolForKey:@"force_msg_reload"];
+    if(force) {
+        self.forceReload = force;
+        [defaults setBool:NO forKey:@"force_msg_reload"];
+    }
+    NSLog(@"Force %d ",force);
+    
+    NSLog(@"viewWillAppear %d", self.forceReload);
     
     if(self.forceReload) {
         [self addRecordsFromDatabase];
@@ -218,7 +230,7 @@
 //called on viewAppear
 -(void) addRecordsFromDatabase {
     
-    //NSMutableArray *databaseRecords = [CoreDataUtils fetchMessageRecordsFromDatabase];
+    NSLog(@"addRecordsFromDatabase");
     
     //make sure we load the default ones first
     NSMutableArray *databaseRecordsUnsorted = [CoreDataUtils fetchMessageRecordsFromDatabase];
@@ -262,9 +274,19 @@
     
     //TODO check
     if(add || self.forceReload ) {
+        NSLog(@"will reload messages");
         self.forceReload = false;
         [self.tableView reloadData];
+       
     }
+}
+
+- (void) setForceReload:(BOOL) force {
+    
+    NSLog(@"DEFAULTS CALLED Force %d ",force);
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:force forKey:@"force_msg_reload"];
+    [defaults synchronize];
 }
 
 - (void)didReceiveMemoryWarning
