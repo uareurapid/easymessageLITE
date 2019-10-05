@@ -75,16 +75,12 @@
     
     self.addNewMessage = ([self getSelectedMessageIfAny]==nil);
     
-    
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    BOOL force = [defaults boolForKey:@"force_msg_reload"];
-    if(force) {
-        self.forceReload = force;
-        [defaults setBool:NO forKey:@"force_msg_reload"];
+    NSString *force = [defaults objectForKey:@"force_msg_reload"];
+    if(force!=nil && [force isEqualToString:@"force"]) {
+        self.forceReload = true;
+        [defaults removeObjectForKey:@"force_msg_reload"];
     }
-    NSLog(@"Force %d ",force);
-    
-    NSLog(@"viewWillAppear %d", self.forceReload);
     
     if(self.forceReload) {
         [self addRecordsFromDatabase];
@@ -281,12 +277,13 @@
     }
 }
 
-- (void) setForceReload:(BOOL) force {
+- (void) setForceReloadMSG:(BOOL) force {
     
-    NSLog(@"DEFAULTS CALLED Force %d ",force);
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setBool:force forKey:@"force_msg_reload"];
-    [defaults synchronize];
+    if(force) {
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setObject:@"force" forKey:@"force_msg_reload"];
+        [defaults synchronize];
+    }
 }
 
 - (void)didReceiveMemoryWarning

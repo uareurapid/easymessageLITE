@@ -1332,6 +1332,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
               
         }
         else {
+            cell.imageView.transform = CGAffineTransformMakeRotation(0);
             UIImage  *img = [UIImage imageNamed:@"user"];
             
             //ordered by last name (default) ?
@@ -2388,10 +2389,61 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
         NSError* fetchError = nil;
         NSArray *contacts = [contactStore unifiedContactsMatchingPredicate:request.predicate keysToFetch:keys error:&fetchError];
         
+        CNMutableContact* copyOfContact = nil;
         //we just grab the first one
         if(contacts.count > 0) {
             
-            CNMutableContact* copyOfContact = (CNMutableContact *)[[contacts objectAtIndex:0] mutableCopy] ;
+            if(contacts.count == 1) {
+                copyOfContact = (CNMutableContact *)[[contacts objectAtIndex:0] mutableCopy] ;
+            } else {
+                
+                //more than 1
+                //we have more than 1 result
+                int index = 0;
+                BOOL foundMatch = false;
+                for(CNMutableContact *resultContact in contacts) {
+                    
+                    if(foundMatch) {
+                        break;
+                    }
+                    //CHECK OTHER FIELDS
+                    if(contact.email!= nil && resultContact.emailAddresses!=nil) {
+                        //email
+                        for(CNLabeledValue <CNPhoneNumber *> *email in resultContact.emailAddresses) {
+                            
+                            NSString *stringValue = email.value.stringValue;
+                            if(stringValue!=nil && [stringValue isEqualToString:contact.email]) {
+                                foundMatch = true;
+                                break;
+                            }
+                        }
+                        
+                    }else if(contact.phone!= nil && resultContact.phoneNumbers!=nil) {
+                        //phone
+                        for(CNLabeledValue <CNPhoneNumber *> *phone in resultContact.phoneNumbers) {
+                            
+                            NSString *stringValue = phone.value.stringValue;
+                            if(stringValue!=nil && [stringValue isEqualToString:contact.phone]) {
+                                foundMatch = true;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if(foundMatch && index < contacts.count) {
+                        copyOfContact = (CNMutableContact *)[[contacts objectAtIndex:index] mutableCopy] ;
+                    }
+                    //otherwise increase index to next
+                    index++;
+                }
+            }
+            
+            
+            //if still here, grabe the first as default
+            if(copyOfContact == nil) {
+                copyOfContact = (CNMutableContact *)[[contacts objectAtIndex:0] mutableCopy] ;
+            }
+            //-------------------------------------------------
             CNSaveRequest *edit = [[CNSaveRequest alloc] init];
             
             // Contact one each function block is executed whenever you get
