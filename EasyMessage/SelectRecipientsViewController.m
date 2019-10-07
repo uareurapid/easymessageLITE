@@ -1321,10 +1321,14 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
             cell.imageView.clipsToBounds = true;
             
             if( [self isNotSquaredPhoto:contact.photo] && ( (contact.photo.size.width >= 300.0 ) && (contact.photo.size.height >= 300.0 ) )  ) {
-                //portrait image
-                cell.imageView.layer.cornerRadius = 20;
+                
                 cell.imageView.image = [self imageByCroppingImage:contact.photo toSize:CGSizeMake(300, 300)];
-                cell.imageView.transform = CGAffineTransformMakeRotation(M_PI_2);
+                //portrait image
+                if(contact.photo.size.height > contact.photo.size.width) {
+                    cell.imageView.transform = CGAffineTransformMakeRotation(M_PI_2);
+                } else {
+                    cell.imageView.transform = CGAffineTransformMakeRotation(0);
+                }
             } else {
                 cell.imageView.image = contact.photo;
                 cell.imageView.transform = CGAffineTransformMakeRotation(0);
@@ -2853,10 +2857,17 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     if(photo.size.width == 0 || photo.size.height == 0) {
         return false;
     }
+    else if(photo.size.width ==  photo.size.height) {
+        return false;
+    }
     
-    if (  ( (photo.size.width / photo.size.height) < 0.75) || ( (photo.size.height / photo.size.width) < 0.75) ) {
+    float bigger = (photo.size.height > photo.size.width) ? photo.size.height : photo.size.width;
+    float smaller = (photo.size.height > photo.size.width) ? photo.size.width : photo.size.height;
+    
+    if(smaller / bigger <= 0.75) {
         return true;
     }
+    
     return false;
 }
 
