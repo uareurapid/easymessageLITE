@@ -22,12 +22,12 @@
 "header_message_send_options" = "رسالة - خيارات إرسال";
 "option_send_both" = "إرسال دائما على حد سواء";
 "option_send_email_only" = "ارسال البريد الالكتروني فقط";
-"option_send_sms_only" = "إرسال الرسائل القصيرة فقط";
+"option_send_sms_only" = "إرسال النص فقط";
 "option_send_facebook_only" = "أضف إلى الفيسبوك";
 "option_send_twitter_only" = "أضف إلى تويتر";
 "option_send_linkedin_only" = "إرسال إلى ينكدين";
 "option_send_include_social_network" = "وتشمل الشبكات الاجتماعية ...";
-"footer_select_service" = "حدد الخدمة (ق) لإرسال رسالة";
+"footer_select_service" = "اختر الخدمة (الخدمات) لإرسال الرسالة. بالنسبة للخدمة النصية ، يمكن استخدام SMS أو MMS أو iMessage ، اعتمادًا على تكوين رسائل هاتفك.";
 "header_preferred_service" = "خدمة المفضل";
 "preferred_email_service" = "خدمة البريد الإلكتروني";
 "preferred_sms_service" = "خدمة الرسائل القصيرة";

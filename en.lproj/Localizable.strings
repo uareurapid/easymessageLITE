@@ -22,17 +22,17 @@
 "header_message_send_options" = "Message - Send Options";
 "option_send_both" = "Always send both";
 "option_send_email_only" = "Send email only";
-"option_send_sms_only" = "Send SMS only";
+"option_send_sms_only" = "Send text only";
 "option_send_facebook_only" = "Post to Facebook";
 "option_send_twitter_only" = "Post to Twitter";
 "option_send_linkedin_only" = "Post to Linkedin";
 "option_send_include_social_network" = "Include social networks...";
-"footer_select_service" = "Select the service(s) to send the message";
+"footer_select_service" = "Select the service(s) to send the message. For text service it can be used SMS, MMS or iMessage, depending on your phone settings -> Messages configuration.";
 "header_preferred_service" = "Preferred Service";
 "preferred_email_service" = "Email service";
-"preferred_sms_service"= "SMS service";
+"preferred_sms_service"= "Text service";
 "preferred_use_both_services" = "Use both services";
-"footer_preferred_service" = "Select the preferred service, in case contact has both entries and you don´t want him to receive both email and SMS";
+"footer_preferred_service" = "Select the preferred service, in case contact has both entries and you don´t want him to receive both email and text messages";
 "footer_social_networks" = "Posts to social networks work on a per message basis, which means your choices are not persisted between different messages";
 "phone_label" = "Phone";
 //alert box
@@ -40,9 +40,9 @@
 "alert_message_both_empty" = "Subject and message body cannot be empty!";
 "alert_message_body_empty" = "The message body cannot be empty!";
 "alert_message_select_least_one" = "You need to select at least one recipient!";
-"alert_message_settings_updated_both" = "Settings have been updated.\r\nWill send both SMS and email!";
+"alert_message_settings_updated_both" = "Settings have been updated.\r\nWill send both text and email!";
 "alert_message_settings_updated_email" = "Settings have been updated.\r\nWill send email only!";
-"alert_message_settings_updated_sms" ="Settings have been updated.\r\nWill send SMS only!";
+"alert_message_settings_updated_sms" ="Settings have been updated.\r\nWill send text only!";
 //contacts
 "unable_load_contacts_error_%@" = "Unable to load contacts from address book: %@";
 "message_mail_canceled" = "Mail cancelled";
@@ -145,7 +145,7 @@
 "ask_to_rate" = "If you enjoy using Easy Message, would you mind taking a moment to rate it?";
 "groups" = "Groups";
 "members" = "members";
-"imessage_warn" = "If you want to send a group message via SMS, you should consider disabling iMessage and MMS Messaging on your phone settings first. This will make sure that the messages are sent individually!";
+"imessage_warn" = "When sending a group text message, you can consider to disable iMessage and MMS Messaging on your phone settings -> Messages first, if you want the messages to be sent sent individually (using plain SMS), unless you´re ok in creating some sort of chat, where people can see the replies from others!";
 "edit" = "Edit";
 "update_contact" = "Edit contact";
 "no_recipients" = "You don´t have any recipients selected";

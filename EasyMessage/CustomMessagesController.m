@@ -226,8 +226,6 @@
 //called on viewAppear
 -(void) addRecordsFromDatabase {
     
-    NSLog(@"addRecordsFromDatabase");
-    
     //make sure we load the default ones first
     NSMutableArray *databaseRecordsUnsorted = [CoreDataUtils fetchMessageRecordsFromDatabase];
     NSMutableArray *databaseRecords = [[NSMutableArray alloc] initWithCapacity:databaseRecordsUnsorted.count];
@@ -270,7 +268,6 @@
     
     //TODO check
     if(add || self.forceReload ) {
-        NSLog(@"will reload messages");
         self.forceReload = false;
         [self.tableView reloadData];
        

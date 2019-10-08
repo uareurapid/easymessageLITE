@@ -21,17 +21,17 @@
 "header_message_send_options" = "Mensagem - Opções De Envio";
 "option_send_both" = "Enviar sempre ambos";
 "option_send_email_only" = "Enviar apenas email";
-"option_send_sms_only" = "Enviar apenas SMS";
+"option_send_sms_only" = "Enviar apenas texto";
 "option_send_facebook_only" = "Enviar para o Facebook";
 "option_send_twitter_only" = "Enviar para o Twitter";
 "option_send_linkedin_only" = "Enviar para o Linkedin";
 "option_send_include_social_network" = "Incluir redes sociais...";
-"footer_select_service" = "Seleccione o(s) serviço(s) a usar para enviar a mensagem";
+"footer_select_service" = "Seleccione o(s) serviço(s) a usar para enviar a mensagem. Para o serviço de texto pode ser usado SMS, MMS ou iMessage, dependendo das configurações de Mensagens do telefone";
 "header_preferred_service" = "Serviço Preferencial";
 "preferred_email_service" = "Email";
-"preferred_sms_service"= "SMS";
+"preferred_sms_service"= "Texto";
 "preferred_use_both_services" = "Usar ambos";
-"footer_preferred_service" = "Seleccione o serviço preferencial, para o caso do contacto ter os dois e não querer que receba um email e um SMS";
+"footer_preferred_service" = "Seleccione o serviço preferencial, para o caso do contato ter os dois e não querer que receba um email e uma mensagem de texto";
 "footer_social_networks" = "O envio para as redes sociais funciona de forma individual para cada mensagem, o que significa que as suas opções não são preservadas entre mensagens distintas";
 "phone_label" = "Telefone";
 //alert box
@@ -39,9 +39,9 @@
 "alert_message_both_empty" = "O assunto e a mensagem não podem ser ambos vazios!";
 "alert_message_body_empty" = "A mensagem não pode ser vazia!";
 "alert_message_select_least_one" = "Deve seleccionar pelo menos um destinatário!";
-"alert_message_settings_updated_both" = "As definições foram actualizadas.\r\nEnviar email e SMS!";
+"alert_message_settings_updated_both" = "As definições foram actualizadas.\r\nEnviar email e texto!";
 "alert_message_settings_updated_email" = "As definições foram actualizadas.\r\nEnviar apenas email!";
-"alert_message_settings_updated_sms" ="As definições foram actualizadas.\r\nEnviar apenas SMS!";
+"alert_message_settings_updated_sms" ="As definições foram actualizadas.\r\nEnviar apenas texto!";
 //contacts
 "unable_load_contacts_error_%@" = "Unable to load contacts from address book: %@";
 //@"Unable to get contact photo, %@",[exception description]);
