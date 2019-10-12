@@ -10,6 +10,7 @@
 #import <Social/Social.h>
 #import <MessageUI/MessageUI.h>
 #import "CMPopTipView.h"
+#import "FAQViewController.h"
 
 //TODO PC this is not translated??
 #define OPTION_ALWAYS_SEND_BOTH   @"Always send both"
@@ -94,6 +95,8 @@
 @property (strong,nonatomic) FilterOptionsViewController *filterOptionsController;
 @property (strong,nonatomic) CMPopTipView *tooltipView;
 @property BOOL isShowingTooltip;
+@property BOOL isDeviceOnline;
+@property(strong,nonatomic) FAQViewController *faqView;
 
 -(void) resetSocialNetworks;
 

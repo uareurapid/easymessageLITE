@@ -13,6 +13,8 @@
 #import "FilterOptionsViewController.h"
 #import "PCAppDelegate.h"
 #import "PCViewController.h"
+#import "PCReachability.h"
+
 @interface SettingsViewController ()
 
 @end
@@ -25,6 +27,7 @@
 @synthesize showToast;
 @synthesize initiallySelectedPreferredService,initiallySelectedSendOption, initiallySelectedOrderByOption;
 @synthesize isFacebookAvailable,isTwitterAvailable,isLinkedinAvailable,isShowingTooltip,tooltipView;
+@synthesize isDeviceOnline;
 
 //ABOUT IOS MESSAGES:
 //https://support.apple.com/en-us/HT202724
@@ -51,7 +54,8 @@
 {
     [super viewDidLoad];
     
-  
+    self.isDeviceOnline = false;
+    [self checkIfOnline];
     sendOptions = [[NSMutableArray alloc] initWithObjects:OPTION_ALWAYS_SEND_BOTH, OPTION_SEND_EMAIL_ONLY, OPTION_SEND_SMS_ONLY,nil];
     preferedServiceOptions = [[NSMutableArray alloc] initWithObjects:OPTION_PREF_SERVICE_EMAIL,OPTION_PREF_SERVICE_SMS,OPTION_PREF_SERVICE_ALL, nil];
     
@@ -125,6 +129,42 @@
     
     showToast = YES;
     
+}
+
+-(void) checkIfOnline {
+    
+    // Allocate a reachability object
+    PCReachability* reach = [PCReachability reachabilityWithHostname:@"www.google.com"];
+
+    // Set the blocks
+    reach.reachableBlock = ^(PCReachability*reach)
+    {
+        // keep in mind this is called on a background thread
+        // and if you are updating the UI it needs to happen
+        // on the main thread, like this:
+        if(!self.isDeviceOnline) {
+            
+            self.isDeviceOnline = true;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tableView reloadData];
+            });
+        }
+        
+    };
+
+    reach.unreachableBlock = ^(PCReachability*reach)
+    {
+        if(self.isDeviceOnline) {
+            
+            self.isDeviceOnline = false;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tableView reloadData];
+            });
+        }
+    };
+
+    // Start the notifier, which will cause the reachability object to retain itself!
+    [reach startNotifier];
 }
 
 //check if the facebook and twitter services are available/configured
@@ -331,7 +371,7 @@
         
     }else if(section == 4) {
         //rate us/questions/suggestions
-        return 1;
+        return self.isDeviceOnline ? 2 : 1;//removeed the rate one
     }
     else if(section == 5) {
         //restore/purchase premium
@@ -515,16 +555,22 @@
         cell.imageView.image = [UIImage imageNamed:@"eyes"];
     }
     else if(section == 4) {
-        //if(row == 0) {
-        //    cell.textLabel.text =  NSLocalizedString(@"rate_us", nil);
-        //    cell.accessoryType = UITableViewCellAccessoryNone;
-        //    cell.imageView.image = [UIImage imageNamed:@"favorite"];
-        //}
-        //else {
-            cell.textLabel.text = NSLocalizedString(@"contact_us", nil); 
+        if(!self.isDeviceOnline) {
+            cell.textLabel.text = NSLocalizedString(@"contact_us", nil);
             cell.accessoryType = UITableViewCellAccessoryNone;
             cell.imageView.image = [UIImage imageNamed:@"contact"];
-        //}
+        }
+        else if(row == 0) {
+            cell.textLabel.text = NSLocalizedString(@"contact_us", nil);
+            cell.accessoryType = UITableViewCellAccessoryNone;
+            cell.imageView.image = [UIImage imageNamed:@"contact"];
+        }
+        else {
+            cell.textLabel.text = @"FAQ";//NSLocalizedString(@"contact_us", nil);
+            cell.accessoryType = UITableViewCellAccessoryNone;
+            cell.imageView.image = [UIImage imageNamed:@"faq"];
+        }
+        
         
     }//TODO
     else if(section == 5) {
@@ -743,7 +789,16 @@
 
     }
     else if(section == 4) {
-        [self sendEmail:nil];
+        if(row == 0) {
+            [self sendEmail:nil];
+        } else if(self.isDeviceOnline && row == 1) {
+            
+            if(self.faqView == nil) {
+                self.faqView = [[FAQViewController alloc] initWithNibName:@"FAQViewController" bundle:nil];
+            }
+           
+            [self.navigationController pushViewController:self.faqView animated:YES];
+        }
     }
     else if(section == 5 && row == 0) {
         

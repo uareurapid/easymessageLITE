@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		181330322285E5AF00939671 /* Popup.m in Sources */ = {isa = PBXBuildFile; fileRef = 181330312285E5AF00939671 /* Popup.m */; };
 		1815A239233EA702006B92F3 /* CMPopTipView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1815A238233EA702006B92F3 /* CMPopTipView.m */; };
+		1839E72523523333006CABC6 /* FAQViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1839E72123523333006CABC6 /* FAQViewController.xib */; };
+		1839E72623523333006CABC6 /* PCReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 1839E72223523333006CABC6 /* PCReachability.m */; };
+		1839E72723523333006CABC6 /* FAQViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1839E72323523333006CABC6 /* FAQViewController.m */; };
+		1839E729235239D9006CABC6 /* faq.png in Resources */ = {isa = PBXBuildFile; fileRef = 1839E728235239D9006CABC6 /* faq.png */; };
 		184847C22289DD0B00C9940C /* ContactsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 184847C02289DD0B00C9940C /* ContactsUI.framework */; };
 		184847C32289DD0B00C9940C /* Contacts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 184847C12289DD0B00C9940C /* Contacts.framework */; };
 		1859674C233540A80014CA7F /* unfav30.png in Resources */ = {isa = PBXBuildFile; fileRef = 1859674A233540A70014CA7F /* unfav30.png */; };
@@ -200,6 +204,12 @@
 		181330312285E5AF00939671 /* Popup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Popup.m; sourceTree = "<group>"; };
 		1815A237233EA702006B92F3 /* CMPopTipView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMPopTipView.h; sourceTree = "<group>"; };
 		1815A238233EA702006B92F3 /* CMPopTipView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMPopTipView.m; sourceTree = "<group>"; };
+		1839E72023523333006CABC6 /* PCReachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PCReachability.h; sourceTree = "<group>"; };
+		1839E72123523333006CABC6 /* FAQViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FAQViewController.xib; sourceTree = "<group>"; };
+		1839E72223523333006CABC6 /* PCReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PCReachability.m; sourceTree = "<group>"; };
+		1839E72323523333006CABC6 /* FAQViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FAQViewController.m; sourceTree = "<group>"; };
+		1839E72423523333006CABC6 /* FAQViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FAQViewController.h; sourceTree = "<group>"; };
+		1839E728235239D9006CABC6 /* faq.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = faq.png; sourceTree = "<group>"; };
 		183F73E8233BE12A0053D39B /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		184847C02289DD0B00C9940C /* ContactsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ContactsUI.framework; path = System/Library/Frameworks/ContactsUI.framework; sourceTree = SDKROOT; };
 		184847C12289DD0B00C9940C /* Contacts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Contacts.framework; path = System/Library/Frameworks/Contacts.framework; sourceTree = SDKROOT; };
@@ -518,6 +528,18 @@
 			path = CMPopTipView;
 			sourceTree = "<group>";
 		};
+		1839E71F2352330E006CABC6 /* FAQ */ = {
+			isa = PBXGroup;
+			children = (
+				1839E72423523333006CABC6 /* FAQViewController.h */,
+				1839E72323523333006CABC6 /* FAQViewController.m */,
+				1839E72123523333006CABC6 /* FAQViewController.xib */,
+				1839E72023523333006CABC6 /* PCReachability.h */,
+				1839E72223523333006CABC6 /* PCReachability.m */,
+			);
+			name = FAQ;
+			sourceTree = "<group>";
+		};
 		186341752278754C00167AAE /* FTPopOverMenu */ = {
 			isa = PBXGroup;
 			children = (
@@ -572,6 +594,7 @@
 				727906E517DB63360076F0FE /* Messages */,
 				72963F6617A9793600519FDC /* About-me-icon.png */,
 				72B843BE17A87DB300067A73 /* Default@2x.png */,
+				1839E728235239D9006CABC6 /* faq.png */,
 				720862FE17DD249C0024B662 /* 80-shopping-cart.png */,
 				72963F6A17A9825E00519FDC /* Forward.png */,
 				72D6CA3B222EE6E200376EE3 /* user.png */,
@@ -794,6 +817,7 @@
 		727906E417DB62DF0076F0FE /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				1839E71F2352330E006CABC6 /* FAQ */,
 				7218B7362238482F00477F96 /* Filter */,
 				72611AF91771E88B0043E508 /* SettingsViewController.h */,
 				72611AFA1771E88B0043E508 /* SettingsViewController.m */,
@@ -988,6 +1012,7 @@
 				7285A6AF177CB0A3006137B8 /* tableViewBackground@2x.png in Resources */,
 				1874DF0622B0E6BB006E82BB /* CustomMessagesDetailController.xib in Resources */,
 				7285A6B0177CB0A3006137B8 /* tableViewBackground.png in Resources */,
+				1839E72523523333006CABC6 /* FAQViewController.xib in Resources */,
 				72BFDEDF203CAEA3009A3021 /* attachment.png in Resources */,
 				7284D97E1FE481C3000350D6 /* done.png in Resources */,
 				721D2B1821C587E600D5BDB6 /* favorite.png in Resources */,
@@ -1023,6 +1048,7 @@
 				729AAC4517DA839800CABCB0 /* CustomMessagesController.xib in Resources */,
 				729AAC4717DA854800CABCB0 /* 33-cabinet.png in Resources */,
 				727906ED17DB677F0076F0FE /* IAPMasterViewController.xib in Resources */,
+				1839E729235239D9006CABC6 /* faq.png in Resources */,
 				729ED6B121C9AA8A005C7F73 /* delete_red.png in Resources */,
 				1863417A227893C900167AAE /* group.png in Resources */,
 				7284D9721FE47E64000350D6 /* select_all.png in Resources */,
@@ -1128,6 +1154,8 @@
 				7272FABF21C9851B00ED12A6 /* AttachCellCollectionViewCell.m in Sources */,
 				72BCE56418E20E9B00514A96 /* AFHTTPSessionManager.m in Sources */,
 				72BCE56818E20E9B00514A96 /* AFURLRequestSerialization.m in Sources */,
+				1839E72723523333006CABC6 /* FAQViewController.m in Sources */,
+				1839E72623523333006CABC6 /* PCReachability.m in Sources */,
 				727906EC17DB677F0076F0FE /* IAPMasterViewController.m in Sources */,
 				727A765417DFDF090032EFF8 /* CoreDataModel.xcdatamodeld in Sources */,
 				727A765717DFE1100032EFF8 /* GroupDataModel.m in Sources */,
@@ -1270,7 +1298,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MARKETING_VERSION = 1.5.2;
+				MARKETING_VERSION = 1.5.3;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pcdreams.easymessage.lite;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1306,7 +1334,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MARKETING_VERSION = 1.5.2;
+				MARKETING_VERSION = 1.5.3;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pcdreams.easymessage.lite;
 				PRODUCT_NAME = "$(TARGET_NAME)";
