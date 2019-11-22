@@ -384,8 +384,22 @@
 
 -(BOOL) hasShownAllTooltipsAlready {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if([defaults boolForKey:SHOW_HELP_TOOLTIP_MAIN] && [defaults boolForKey:SHOW_HELP_TOOLTIP_RECIPIENTS] &&
-       [defaults boolForKey:SHOW_HELP_TOOLTIP_CONTACT_DETAILS] && [defaults boolForKey:SHOW_HELP_TOOLTIP_APP_SETTINGS]) {
+    NSInteger count = 0;
+    if([defaults boolForKey:SHOW_HELP_TOOLTIP_MAIN]){
+        count+=1;
+    }
+    if([defaults boolForKey:SHOW_HELP_TOOLTIP_RECIPIENTS]) {
+        count+=1;
+    }
+    if([defaults boolForKey:SHOW_HELP_TOOLTIP_CONTACT_DETAILS]) {
+        count+=1;
+    }
+    if([defaults boolForKey:SHOW_HELP_TOOLTIP_APP_SETTINGS]) {
+        count+=1;
+    }
+    
+    //if i saw at least 3 or them already, allow to reset (cause the SHOW_HELP_TOOLTIP_CONTACT_DETAILS is a bit hidden and many will not see it)
+    if(count >= 3) {
         return true;
     }
     
@@ -847,6 +861,22 @@
         }
         
     }
+}
+//scrolls to last section of table
+-(void) scrollToLastRowOfFAQSection {
+    
+    [self.tableView reloadData];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSInteger numSections = [self.tableView numberOfSections];
+        if(numSections >=5) {
+            
+            NSUInteger numRowsInSection = [self.tableView numberOfRowsInSection: numSections-1]; //this the the 5th section
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:numRowsInSection > 0 ? numRowsInSection -1 : 0 inSection:numSections-1];
+            [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:true];
+        }
+        
+        
+    });
 }
 
 @end

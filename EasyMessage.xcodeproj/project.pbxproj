@@ -22,6 +22,14 @@
 		1863417C227893D400167AAE /* list.png in Resources */ = {isa = PBXBuildFile; fileRef = 1863417B227893D400167AAE /* list.png */; };
 		1874DF0522B0E6BB006E82BB /* CustomMessagesDetailController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1874DF0222B0E6BB006E82BB /* CustomMessagesDetailController.m */; };
 		1874DF0622B0E6BB006E82BB /* CustomMessagesDetailController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1874DF0422B0E6BB006E82BB /* CustomMessagesDetailController.xib */; };
+		18CFFF732370992C000AAC9B /* libJSONModel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 18CFFF722370992C000AAC9B /* libJSONModel.a */; };
+		18CFFF7523709BC8000AAC9B /* clock30.png in Resources */ = {isa = PBXBuildFile; fileRef = 18CFFF7423709BC8000AAC9B /* clock30.png */; };
+		18DEBCAC23707BD8008E1E03 /* ScheduledViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DEBCA323707BD8008E1E03 /* ScheduledViewController.m */; };
+		18DEBCAD23707BD8008E1E03 /* ScheduledModelDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DEBCA423707BD8008E1E03 /* ScheduledModelDetailsViewController.m */; };
+		18DEBCAE23707BD8008E1E03 /* ScheduledViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18DEBCA623707BD8008E1E03 /* ScheduledViewController.xib */; };
+		18DEBCAF23707BD8008E1E03 /* ScheduledModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DEBCA723707BD8008E1E03 /* ScheduledModel.m */; };
+		18DEBCB023707BD8008E1E03 /* SimpleContactModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DEBCAA23707BD8008E1E03 /* SimpleContactModel.m */; };
+		18DEBCB123707BD8008E1E03 /* ScheduledModelDetailsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18DEBCAB23707BD8008E1E03 /* ScheduledModelDetailsViewController.xib */; };
 		18E2B581228B23C600B9EAF7 /* edit40.png in Resources */ = {isa = PBXBuildFile; fileRef = 18E2B580228B23C600B9EAF7 /* edit40.png */; };
 		720020E421F1326500698245 /* Icon-76.png in Resources */ = {isa = PBXBuildFile; fileRef = 720020E321F1326500698245 /* Icon-76.png */; };
 		720862FF17DD249C0024B662 /* 80-shopping-cart.png in Resources */ = {isa = PBXBuildFile; fileRef = 720862FE17DD249C0024B662 /* 80-shopping-cart.png */; };
@@ -224,6 +232,18 @@
 		1874DF0422B0E6BB006E82BB /* CustomMessagesDetailController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomMessagesDetailController.xib; sourceTree = "<group>"; };
 		18B1117022A2CA92000CD0C5 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		18B1117122A2CA92000CD0C5 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		18CFFF722370992C000AAC9B /* libJSONModel.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libJSONModel.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		18CFFF7423709BC8000AAC9B /* clock30.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = clock30.png; sourceTree = "<group>"; };
+		18DEBCA223707BD8008E1E03 /* SimpleContactModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleContactModel.h; sourceTree = "<group>"; };
+		18DEBCA323707BD8008E1E03 /* ScheduledViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScheduledViewController.m; sourceTree = "<group>"; };
+		18DEBCA423707BD8008E1E03 /* ScheduledModelDetailsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScheduledModelDetailsViewController.m; sourceTree = "<group>"; };
+		18DEBCA523707BD8008E1E03 /* ScheduledModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScheduledModel.h; sourceTree = "<group>"; };
+		18DEBCA623707BD8008E1E03 /* ScheduledViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ScheduledViewController.xib; sourceTree = "<group>"; };
+		18DEBCA723707BD8008E1E03 /* ScheduledModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScheduledModel.m; sourceTree = "<group>"; };
+		18DEBCA823707BD8008E1E03 /* ScheduledModelDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScheduledModelDetailsViewController.h; sourceTree = "<group>"; };
+		18DEBCA923707BD8008E1E03 /* ScheduledViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScheduledViewController.h; sourceTree = "<group>"; };
+		18DEBCAA23707BD8008E1E03 /* SimpleContactModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimpleContactModel.m; sourceTree = "<group>"; };
+		18DEBCAB23707BD8008E1E03 /* ScheduledModelDetailsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ScheduledModelDetailsViewController.xib; sourceTree = "<group>"; };
 		18E2B580228B23C600B9EAF7 /* edit40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = edit40.png; sourceTree = "<group>"; };
 		2D5E9CC017E5903E74EB7D93 /* libPods-EasyMessage.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-EasyMessage.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		720020E321F1326500698245 /* Icon-76.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-76.png"; sourceTree = "<group>"; };
@@ -484,6 +504,7 @@
 				72E2253B1FD5F9DF0076C813 /* TwitterKit.framework in Frameworks */,
 				72AC6C6818E4765E0074DBCF /* CoreLocation.framework in Frameworks */,
 				72D84D371BF117A700D6B77C /* GoogleOpenSource.framework in Frameworks */,
+				18CFFF732370992C000AAC9B /* libJSONModel.a in Frameworks */,
 				72AC6C6618E476390074DBCF /* AVFoundation.framework in Frameworks */,
 				72AC6C6418E4762C0074DBCF /* AudioToolbox.framework in Frameworks */,
 				72BCE57118E213D300514A96 /* SystemConfiguration.framework in Frameworks */,
@@ -549,6 +570,23 @@
 			name = FTPopOverMenu;
 			sourceTree = "<group>";
 		};
+		18DEBCA123707BD8008E1E03 /* Scheduled */ = {
+			isa = PBXGroup;
+			children = (
+				18DEBCA223707BD8008E1E03 /* SimpleContactModel.h */,
+				18DEBCA323707BD8008E1E03 /* ScheduledViewController.m */,
+				18DEBCA423707BD8008E1E03 /* ScheduledModelDetailsViewController.m */,
+				18DEBCA523707BD8008E1E03 /* ScheduledModel.h */,
+				18DEBCA623707BD8008E1E03 /* ScheduledViewController.xib */,
+				18DEBCA723707BD8008E1E03 /* ScheduledModel.m */,
+				18DEBCA823707BD8008E1E03 /* ScheduledModelDetailsViewController.h */,
+				18DEBCA923707BD8008E1E03 /* ScheduledViewController.h */,
+				18DEBCAA23707BD8008E1E03 /* SimpleContactModel.m */,
+				18DEBCAB23707BD8008E1E03 /* ScheduledModelDetailsViewController.xib */,
+			);
+			path = Scheduled;
+			sourceTree = "<group>";
+		};
 		7218B7362238482F00477F96 /* Filter */ = {
 			isa = PBXGroup;
 			children = (
@@ -592,9 +630,10 @@
 				722415411771148800989C3B /* EasyMessage */,
 				721AB0651F0C2EC3006C25A6 /* icons */,
 				727906E517DB63360076F0FE /* Messages */,
-				72963F6617A9793600519FDC /* About-me-icon.png */,
-				72B843BE17A87DB300067A73 /* Default@2x.png */,
+				18DEBCA123707BD8008E1E03 /* Scheduled */,
 				1839E728235239D9006CABC6 /* faq.png */,
+				72B843BE17A87DB300067A73 /* Default@2x.png */,
+				72963F6617A9793600519FDC /* About-me-icon.png */,
 				720862FE17DD249C0024B662 /* 80-shopping-cart.png */,
 				72963F6A17A9825E00519FDC /* Forward.png */,
 				72D6CA3B222EE6E200376EE3 /* user.png */,
@@ -636,6 +675,7 @@
 		7224153A1771148800989C3B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				18CFFF722370992C000AAC9B /* libJSONModel.a */,
 				724A596822F8E32800D0FF72 /* liblibPhoneNumber-iOS.a */,
 				184847C12289DD0B00C9940C /* Contacts.framework */,
 				184847C02289DD0B00C9940C /* ContactsUI.framework */,
@@ -727,6 +767,7 @@
 				72A2C27D177B9F6D006FF12F /* phone-book.png */,
 				7284D9771FE47FBB000350D6 /* clear.png */,
 				72A2C27B177B9AE9006FF12F /* gear.png */,
+				18CFFF7423709BC8000AAC9B /* clock30.png */,
 				72A2C279177B99F2006FF12F /* email.png */,
 				7284D9791FE47FEE000350D6 /* share.png */,
 				728F27981776362D00A61BC8 /* iToast.m */,
@@ -983,6 +1024,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1859674D233540A80014CA7F /* fav30.png in Resources */,
+				18DEBCB123707BD8008E1E03 /* ScheduledModelDetailsViewController.xib in Resources */,
 				72F6BB912225C66A00929A14 /* twitter.png in Resources */,
 				72D25CEF21C79A660004EB21 /* sortb.png in Resources */,
 				722415461771148800989C3B /* InfoPlist.strings in Resources */,
@@ -1012,6 +1054,7 @@
 				7285A6AF177CB0A3006137B8 /* tableViewBackground@2x.png in Resources */,
 				1874DF0622B0E6BB006E82BB /* CustomMessagesDetailController.xib in Resources */,
 				7285A6B0177CB0A3006137B8 /* tableViewBackground.png in Resources */,
+				18CFFF7523709BC8000AAC9B /* clock30.png in Resources */,
 				1839E72523523333006CABC6 /* FAQViewController.xib in Resources */,
 				72BFDEDF203CAEA3009A3021 /* attachment.png in Resources */,
 				7284D97E1FE481C3000350D6 /* done.png in Resources */,
@@ -1057,6 +1100,7 @@
 				72F787FD17DCC38D00424519 /* 35-shopping.png in Resources */,
 				720862FF17DD249C0024B662 /* 80-shopping-cart.png in Resources */,
 				7298EC0517DDEEEA002C30AE /* buy48.png in Resources */,
+				18DEBCAE23707BD8008E1E03 /* ScheduledViewController.xib in Resources */,
 				7298EC0717DE0F2D002C30AE /* Lock32.png in Resources */,
 				7218B735223846BB00477F96 /* eyes.png in Resources */,
 				729BEC5221C67DC300947062 /* ContactDetailsViewController.xib in Resources */,
@@ -1129,9 +1173,11 @@
 				72611AFC1771E88B0043E508 /* SettingsViewController.m in Sources */,
 				72D84D321BF1108A00D6B77C /* LIALinkedInAuthorizationViewController.m in Sources */,
 				72611B0017720F740043E508 /* Contact.m in Sources */,
+				18DEBCAF23707BD8008E1E03 /* ScheduledModel.m in Sources */,
 				72611B04177213660043E508 /* EsyMessageViewController.m in Sources */,
 				72BCE56718E20E9B00514A96 /* AFURLConnectionOperation.m in Sources */,
 				72BCE56318E20E9B00514A96 /* AFHTTPRequestOperationManager.m in Sources */,
+				18DEBCAC23707BD8008E1E03 /* ScheduledViewController.m in Sources */,
 				729BEC5121C67DC300947062 /* ContactDetailsViewController.m in Sources */,
 				186341782278756F00167AAE /* FTPopOverMenu.m in Sources */,
 				72611B0B177216940043E508 /* SelectRecipientsViewController.m in Sources */,
@@ -1145,6 +1191,7 @@
 				7285347C18E3247000826581 /* JSONResponseSerializerWithData.m in Sources */,
 				72BCE56A18E20E9B00514A96 /* AFURLSessionManager.m in Sources */,
 				729AAC4417DA839800CABCB0 /* CustomMessagesController.m in Sources */,
+				18DEBCAD23707BD8008E1E03 /* ScheduledModelDetailsViewController.m in Sources */,
 				72BCE56618E20E9B00514A96 /* AFSecurityPolicy.m in Sources */,
 				72B58BD521B1C48A0021DE44 /* PickerView.m in Sources */,
 				727906E017DB624D0076F0FE /* IAPHelper.m in Sources */,
@@ -1160,6 +1207,7 @@
 				727A765417DFDF090032EFF8 /* CoreDataModel.xcdatamodeld in Sources */,
 				727A765717DFE1100032EFF8 /* GroupDataModel.m in Sources */,
 				72D84D311BF1108A00D6B77C /* LIALinkedInApplication.m in Sources */,
+				18DEBCB023707BD8008E1E03 /* SimpleContactModel.m in Sources */,
 				727A765A17DFE1100032EFF8 /* ContactDataModel.m in Sources */,
 				7264F87F17E115F0000D656C /* CoreDataUtils.m in Sources */,
 				72674E7417E26722001275AB /* GroupDetailsViewController.m in Sources */,
@@ -1284,7 +1332,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMPRESS_PNG_FILES = NO;
-				CURRENT_PROJECT_VERSION = 1.0.1;
+				CURRENT_PROJECT_VERSION = 1.0.0;
 				DEVELOPMENT_TEAM = VAZ5V665BS;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1298,7 +1346,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MARKETING_VERSION = 1.5.3;
+				MARKETING_VERSION = 1.5.6;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pcdreams.easymessage.lite;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1320,7 +1368,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMPRESS_PNG_FILES = NO;
-				CURRENT_PROJECT_VERSION = 1.0.1;
+				CURRENT_PROJECT_VERSION = 1.0.0;
 				DEVELOPMENT_TEAM = VAZ5V665BS;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1334,7 +1382,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MARKETING_VERSION = 1.5.3;
+				MARKETING_VERSION = 1.5.6;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pcdreams.easymessage.lite;
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -97,7 +97,8 @@
 @property BOOL isShowingTooltip;
 @property BOOL isDeviceOnline;
 @property(strong,nonatomic) FAQViewController *faqView;
-
+//scrolls to last section of table
+-(void) scrollToLastRowOfFAQSection;
 -(void) resetSocialNetworks;
 
 @end

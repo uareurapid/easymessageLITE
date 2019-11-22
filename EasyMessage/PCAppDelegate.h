@@ -14,11 +14,15 @@
 #define IS_IPAD ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
 #define SYSTEM_VERSION_GRATERTHAN_OR_EQUALTO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending) 
 
+#define NOTIFICATION_TYPE_BIRTHDAY @"birthday"
+#define NOTIFICATION_TYPE_SCHEDULED_MESSAGE @"scheduled_message"
+
 @class PCViewController;
 @class SettingsViewController;
 @class SelectRecipientsViewController;
 @class CustomMessagesController;
 @class IAPMasterViewController;
+@class ScheduledViewController;
 
 @interface PCAppDelegate : UIResponder <UIApplicationDelegate, UNUserNotificationCenterDelegate, PopupDelegate>
 
@@ -32,6 +36,7 @@
 @property (strong, nonatomic) SelectRecipientsViewController *recipientsController;
 @property (strong, nonatomic) CustomMessagesController *customMessagesController;
 @property (strong, nonatomic) IAPMasterViewController *inAppPurchasesController;
+@property (strong, nonatomic) ScheduledViewController *scheduleModelsController;
 
 //CORE DATA
 @property (nonatomic, retain, readonly) NSManagedObjectModel *managedObjectModel;

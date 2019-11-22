@@ -14,6 +14,7 @@
 #import "GroupDetailsViewController.h"
 #import "ContactDetailsViewController.h"
 #import "CoreDataUtils.h"
+#import "SimpleContactModel.h"
 
 const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 
@@ -660,8 +661,8 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     
     self.tableView.sectionHeaderHeight = 2.0;
     self.tableView.sectionFooterHeight = 2.0;
+    self.groupsNamesArray = [[NSMutableArray alloc] init];
     [self refreshPhonebook:nil];
-
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
  
 }
@@ -871,64 +872,70 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 
 -(IBAction)selectAllContacts:(id)sender {
     
-    //if we have all selected, remove selection
-    if(selectedContactsList.count > 0) {
+    if(self.contactsList.count > MAX_RECIPIENTS_WITHOUT_PREMIUM && ![[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
+        [self showAlertBox:NSLocalizedString(@"lite_only_10_recipients", nil)];
+    } else {
         
-        //[activityIndicator startAnimating];
-        
-        rootViewController.recipientsLabel.text = @"";
-        [selectedContactsList removeAllObjects];
-        
-        //[activityIndicator stopAnimating];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
+        //if we have all selected, remove selection
+        if(selectedContactsList.count > 0) {
             
-            self.navigationItem.leftBarButtonItem.title = NSLocalizedString(@"select_all",@"select_all");
-           //self.navigationItem.leftBarButtonItem.title = NSLocalizedString(@"select_all", @"seleccionar tudo");
-            //[self.navigationItem.rightBarButtonItem setEnabled:NO];
-            //can add a contact
-            //self.navigationItem.rightBarButtonItem.title = NSLocalizedString(@"new_contact", @"new_contact");
-            //self.navigationItem.rightBarButtonItem.title = NSLocalizedString(@"new_contact",@"new_contact");
+            //[activityIndicator startAnimating];
             
-        });
-        
-        self.groupLocked = true;
-        
-    }
-    else {
-        
-        //[activityIndicator startAnimating];
-        
-        [selectedContactsList removeAllObjects];
-        
-        for(Contact *contact in contactsList) {
-            if(contact!=nil) {
-                [selectedContactsList addObject:contact];
-            }
+            rootViewController.recipientsLabel.text = @"";
+            [selectedContactsList removeAllObjects];
+            
+            //[activityIndicator stopAnimating];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                self.navigationItem.leftBarButtonItem.title = NSLocalizedString(@"select_all",@"select_all");
+               //self.navigationItem.leftBarButtonItem.title = NSLocalizedString(@"select_all", @"seleccionar tudo");
+                //[self.navigationItem.rightBarButtonItem setEnabled:NO];
+                //can add a contact
+                //self.navigationItem.rightBarButtonItem.title = NSLocalizedString(@"new_contact", @"new_contact");
+                //self.navigationItem.rightBarButtonItem.title = NSLocalizedString(@"new_contact",@"new_contact");
+                
+            });
+            
+            self.groupLocked = true;
             
         }
-        
-        //[activityIndicator stopAnimating];
-        
-        NSString *msg = [NSString stringWithFormat: NSLocalizedString(@"selected_%@_recipients", @"num of recipients"),@(selectedContactsList.count)];
-        [[[[iToast makeText:msg]
-           setGravity:iToastGravityBottom] setDuration:1000] show];
-        rootViewController.recipientsLabel.text = msg;
-       
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.navigationItem.leftBarButtonItem.title = NSLocalizedString(@"unselect_all",@"unselect_all");
-            //title = NSLocalizedString(@"unselect_all", @"remover selecção");
-            //can add them to the group
-            //self.navigationItem.rightBarButtonItem.title = NSLocalizedString(@"create_group", @"create_group");
+        else {
             
+            //[activityIndicator startAnimating];
+            
+            [selectedContactsList removeAllObjects];
+            
+            for(Contact *contact in contactsList) {
+                if(contact!=nil) {
+                    [selectedContactsList addObject:contact];
+                }
+                
+            }
+            
+            //[activityIndicator stopAnimating];
+            
+            NSString *msg = [NSString stringWithFormat: NSLocalizedString(@"selected_%@_recipients", @"num of recipients"),@(selectedContactsList.count)];
+            [[[[iToast makeText:msg]
+               setGravity:iToastGravityBottom] setDuration:1000] show];
+            rootViewController.recipientsLabel.text = msg;
+           
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.navigationItem.leftBarButtonItem.title = NSLocalizedString(@"unselect_all",@"unselect_all");
+                //title = NSLocalizedString(@"unselect_all", @"remover selecção");
+                //can add them to the group
+                //self.navigationItem.rightBarButtonItem.title = NSLocalizedString(@"create_group", @"create_group");
+                
+            });
+            self.groupLocked = false;
+            
+        }
+            
+        dispatch_async(dispatch_get_main_queue(), ^(){
+            [self.tableView reloadData];
         });
-        self.groupLocked = false;
-        
     }
-        
-    dispatch_async(dispatch_get_main_queue(), ^(){
-        [self.tableView reloadData];
-    });
+    
 
 }
 //handle tooltips on view appear and disapear
@@ -2908,6 +2915,64 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     CGImageRelease(imageRef);
 
     return cropped;
+}
+
+#pragma ScheduleModel stuff
+
+-(NSMutableArray *) findRecipientsFromScheduledModel: (NSMutableArray *) recipientsList {
+    
+    NSMutableArray *results = [[NSMutableArray alloc] init];
+    if(recipientsList!=nil && recipientsList.count > 0) {
+        for(SimpleContactModel *model in recipientsList) {
+            Contact *c = [self findByName:model.name email:model.email orPhone:model.phone];
+            if(c!=nil && ![results containsObject:c]) {
+                [results addObject:c];
+            }
+        }
+    }
+ 
+    if(results.count > 0) {
+
+        [self.selectedContactsList removeAllObjects];
+        [self.selectedContactsList addObjectsFromArray:results];
+        
+        NSString *msg = [NSString stringWithFormat: NSLocalizedString(@"selected_%@_recipients", @"num of recipients"),@(selectedContactsList.count)];
+        
+        dispatch_async(dispatch_get_main_queue(), ^(){
+            [self.tableView reloadData];
+            self.rootViewController.recipientsLabel.text = msg;
+        });
+        
+    }
+    
+    return results;
+}
+-(Contact *) findByName: (NSString *) name email:(NSString *) email orPhone: (NSString *) phone {
+    
+    if(name!=nil) {
+        for(Contact *c in self.contactsList) {
+            
+            if(c!=nil && name!=nil && [c.name isEqualToString:name]) {
+              //possible candidate, first check by name
+                if(c.phone!=nil && phone!=nil && [c.phone isEqualToString:phone]) {
+                    return c;
+                }else if(c.email!=nil && email!=nil && [c.email isEqualToString:email]) {
+                    return c;
+                } else if(c.phone == nil && phone == nil && c.email == nil && email == nil) {
+                    return c;
+                }
+            } else {
+              //either name is missing or they are not equal, just phone and email
+              if(c.phone!=nil && phone!=nil && [c.phone isEqualToString:phone]) {
+                  return c;
+              }else if(c.email!=nil && email!=nil && [c.email isEqualToString:email]) {
+                  return c;
+              }
+            }
+        }
+    }
+    
+    return nil;
 }
 
 @end

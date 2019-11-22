@@ -10,6 +10,7 @@
 
 #import "PCViewController.h"
 #import "SettingsViewController.h"
+#import "ScheduledViewController.h"
 #import "SelectRecipientsViewController.h"
 #import "CustomMessagesController.h"
 #import "EasyMessageIAPHelper.h"
@@ -54,6 +55,10 @@
     self.settingsController = [[SettingsViewController alloc] initWithNibName:@"SettingsViewController" bundle:nil];
     self.viewController.settingsController = self.settingsController;
     
+    //scheduled models
+    self.scheduleModelsController = [[ScheduledViewController alloc] initWithNibName:@"ScheduledViewController" bundle:nil];
+    
+    
     self.recipientsController = [[SelectRecipientsViewController alloc] initWithNibName:@"SelectRecipientsViewController" bundle:nil rootViewController:self.viewController];
     
     self.customMessagesController = [[CustomMessagesController alloc] initWithNibName:@"CustomMessagesController" bundle:nil rootViewController:self.viewController ];
@@ -86,10 +91,13 @@
     
     customMessagesControllerNav.navigationBar.barTintColor = [self colorFromHex:0xfb922b];
    
+    UINavigationController *scheduledControllerSettings = [[UINavigationController alloc] init];
+    [scheduledControllerSettings setViewControllers: [[NSArray alloc]  initWithObjects:self.scheduleModelsController, nil]];
     
+    scheduledControllerSettings.navigationBar.barTintColor = [self colorFromHex:0xfb922b];
     
     UITabBarController *tabController = [[UITabBarController alloc] init];
-    [tabController setViewControllers: [NSArray arrayWithObjects:easyMessageController,navControllerRecipients,navControllerSettings,customMessagesControllerNav, /*inAppPurchasesControllerNav*/ nil] ];
+    [tabController setViewControllers: [NSArray arrayWithObjects:easyMessageController,navControllerRecipients,navControllerSettings,customMessagesControllerNav, scheduledControllerSettings, nil] ];
    
     //[tabController setSelectedIndex:0];
     
@@ -126,6 +134,50 @@
     // But, you should always refresh your token on each application start
     // This will make sure that even if your user's token changes, you still get notifications
     // [BatchPush refreshToken];
+    
+    // Launched from push notification ??
+    if (launchOptions != nil && [launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey]!=nil) {
+        
+        UILocalNotification *notification = [launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
+        
+        if(notification!=nil && notification.userInfo!=nil) {
+            
+            //Get notification type
+                      
+                   NSString *notificationType = [notification.userInfo valueForKey:@"type"];
+                   if(notificationType!=nil && [notificationType isEqualToString:NOTIFICATION_TYPE_SCHEDULED_MESSAGE])
+                   {
+
+                      NSString *notificationIdentifier = [notification.userInfo valueForKey:@"identifier"];
+                       //NOTE WE CANNOT DO THIS HERE YET BECAUSE THE CONTACTS LIST IS NOT LOADED YET
+                       //SAVE THE IDENTIFIER AND DO IT AS SOON AS WE LOAD THE CONTACTS, THEN CLEAR THE DICTIONARY KEY
+                      /*
+                      if(notificationIdentifier!=nil) {
+                        //get the data and prefill stuff
+                        [self.viewController checkForPrefilledScheduledMessage:notificationIdentifier];
+                        //we do not need it anymore, remove it
+                        [self.scheduleModelsController removeModel:notificationIdentifier];
+                      }*/
+                          
+                      NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
+                      [defaults setObject:notificationIdentifier forKey:APP_OPENED_FROM_PUSH];
+                          
+                  }
+        }
+        else {
+            //no notif present but key exists? delete it
+            if([defaults objectForKey:APP_OPENED_FROM_PUSH]!=nil) {
+                [defaults removeObjectForKey:APP_OPENED_FROM_PUSH];
+            }
+       }
+
+    } else {
+        //if not but key exists, just remove it too
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        if([defaults objectForKey:APP_OPENED_FROM_PUSH]!=nil) {
+            [defaults removeObjectForKey:APP_OPENED_FROM_PUSH];
+        }
+    }
     
     return YES;
 }
@@ -182,11 +234,11 @@
     [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
     
     //Get notification type
-    NSString *notificationType = [notification.userInfo valueForKey:@"Type"];
+    NSString *notificationType = [notification.userInfo valueForKey:@"type"];
     //notificationType as: message, friend Request, video call, Audio call.
     NSLog(@"notification type %@",notificationType);
     
-    if ([notificationType isEqualToString:@"birthday"]) {
+    if ([notificationType isEqualToString:NOTIFICATION_TYPE_BIRTHDAY]) {
         
         NSLog(@"prefill load message aniversary...");
         
@@ -205,6 +257,22 @@
         [defaults synchronize];
         
         [self.viewController checkForPrefilledMessage];
+    } else if ([notificationType isEqualToString:NOTIFICATION_TYPE_SCHEDULED_MESSAGE]) {
+        
+        NSLog(@"prefill scheduled message..");
+        
+        NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
+        
+        NSString *notificationIdentifier = [notification.userInfo valueForKey:@"identifier"];
+        
+        if(notificationIdentifier!=nil) {
+          //get the data and prefill stuff
+          [self.viewController checkForPrefilledScheduledMessage:notificationIdentifier];
+          //we do not need it anymore, remove it
+          [self.scheduleModelsController removeModel:notificationIdentifier];
+        }
+        
+        
     }
 }
 
@@ -245,7 +313,7 @@
     //if more than one we do not add the name, but if only 1 then it is more personalized msg!!!
     //TODO translate this str
     
-    if([type isEqualToString:@"birthday"]) {
+    if([type isEqualToString:NOTIFICATION_TYPE_BIRTHDAY]) {
         
         NSLog(@"birthday notification fire date: %@ ",[SetAlarmAt description]);
         
@@ -262,7 +330,7 @@
         
         localNotification.userInfo = @{
                                        @"alarmID":alarmID,//,
-                                       @"Type":type,
+                                       @"type":type,
                                        @"day" : [NSString stringWithFormat:@"%ld", (long)day ],
                                        @"month" : [NSString stringWithFormat:@"%ld", (long)month ],
                                        @"name" : name

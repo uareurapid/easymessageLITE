@@ -11,4 +11,5 @@ pod "QBImagePickerController"
 pod 'Batch', '~> 1.13'
 source 'https://github.com/CocoaPods/Specs.git'
 pod 'libPhoneNumber-iOS', '~> 0.8'
+pod 'JSONModel'
 end

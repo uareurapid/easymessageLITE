@@ -43,11 +43,15 @@
 #define PROMO_SHOW_COUNTER @"promo_show_counter"
 #define MAX_ATTACHMENTS 5
 #define MAX_ATTACHMENTS_WITHOUT_PREMIUM 1
+#define MAX_RECIPIENTS_WITHOUT_PREMIUM 10
 
 #define LINKEDIN_ME_KEY   @"linkedin_me"
 
 #define LITE_COLOR 0xfb922b
 #define PREMIUM_COLOR 0x4f6781
+
+#define FAILED_MESSAGE_COUNTER @"FAILED_MSG_COUNT"
+#define APP_OPENED_FROM_PUSH @"OPENED_FROM_PUSH"
 
 #define SHOW_HELP_TOOLTIP_MAIN @"show_help_tooltip_main"
 #define SHOW_HELP_TOOLTIP_RECIPIENTS @"show_help_tooltip_recipients"
@@ -65,6 +69,7 @@ UITextFieldDelegate, NSURLConnectionDelegate,SKStoreProductViewControllerDelegat
 @property (weak, nonatomic) IBOutlet UILabel *lblAsterisk;
 @property (weak, nonatomic) IBOutlet UILabel *lblPremium;
 - (IBAction)switchSaveMessageValueChanged:(id)sender;
+- (IBAction)switchScheduleMessageValueChanged:(id)sender;
 @property (strong, nonatomic) IBOutlet UIButton *sendButton;
 @property (strong, nonatomic) IBOutlet UILabel *labelMessage;
 @property (strong, nonatomic) IBOutlet UILabel *labelSubject;
@@ -72,6 +77,7 @@ UITextFieldDelegate, NSURLConnectionDelegate,SKStoreProductViewControllerDelegat
 @property (weak, nonatomic) IBOutlet UILabel *labelAttachCount;
 
 @property (strong, nonatomic) IBOutlet UISwitch *saveMessageSwitch;
+@property (strong, nonatomic) IBOutlet UISwitch *scheduleLaterSwitch;
 @property (weak, nonatomic) IBOutlet UILabel *recipientsLabel;
 
 @property (weak, nonatomic) IBOutlet UILabel *labelAttach;
@@ -97,7 +103,9 @@ UITextFieldDelegate, NSURLConnectionDelegate,SKStoreProductViewControllerDelegat
 @property (strong, nonatomic) LIALinkedInHttpClient *_client;
 
 @property (strong, nonatomic) PCPopupViewController  *popupView;
+@property (strong, nonatomic) UIView *pickerBlockView;
 
+@property BOOL isDeviceOnline;
 
 -(IBAction)loadContactsList:(id)sender;
 - (IBAction)showSettings:(id)sender;
@@ -115,6 +123,7 @@ void addressBookChanged(ABAddressBookRef reference,
 -(void) checkForPrefilledMessage;
 -(BOOL) checkIfShouldWarnAboutImessage;
 -(void) warnAboutImessage: (void (^)(BOOL finished))completion;
+-(void) checkForPrefilledScheduledMessage: (NSString *) modelIdentifier;
 -(void) updateAddRemoveRecipients;
 //Purchase stuff
 -(void)showUpgradeToPremiumMessage;

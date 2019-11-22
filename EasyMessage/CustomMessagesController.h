@@ -14,7 +14,7 @@
 #define NUM_DEFAULT_MESSAGES 11
 #define SAVED_DEFAULT_MESSAGES @"saved_default_messages"
 
-@interface CustomMessagesController : UITableViewController
+@interface CustomMessagesController : UITableViewController<UIAlertViewDelegate>
 
 
 @property (strong,nonatomic) NSMutableArray * messagesList;

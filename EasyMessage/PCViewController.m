@@ -17,8 +17,9 @@
 #import "MessageDataModel.h"
 #import "CustomMessagesController.h"
 #import "LIALinkedInHttpClient.h"
-
-//#import "AFNetworking.h"
+#import "ScheduledModel.h"
+#import "SimpleContactModel.h"
+#import "PCReachability.h"
 #import "AFHTTPSessionManager.h"
 #import "AFURLResponseSerialization.h"
 #import "AFHTTPRequestOperation.h"
@@ -59,7 +60,8 @@
 @synthesize labelAttachCount;
 @synthesize lblAsterisk,lblPremium;
 @synthesize addRemoveRecipientsView;
-@synthesize addImage, removeImage, tooltipView;
+@synthesize addImage, removeImage, tooltipView,pickerBlockView;
+@synthesize scheduleLaterSwitch;
 //google plus sdk
 //TODO check
 static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpdnlq.apps.googleusercontent.com";
@@ -88,6 +90,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     addImage = [UIImage imageNamed:@"add"];
     removeImage = [UIImage imageNamed:@"delete"];
 
+    self.isDeviceOnline = false;
     
     smsSentOK = NO;
     emailSentOK = NO;
@@ -133,7 +136,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     [self.attachmentsScrollview setContentOffset: CGPointMake(self.attachmentsScrollview.contentOffset.x,0)];
     self.attachmentsScrollview.directionalLockEnabled = YES;
 
-    self.tabBarController.tabBar.tintColor = [self colorFromHex:0xfb922b];
+    self.tabBarController.tabBar.tintColor = [self colorFromHex:LITE_COLOR];
     
     //load the contacts list when the view loads
     [self setupAddressBook];
@@ -276,6 +279,8 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 }
 -(void) viewDidAppear:(BOOL)animated {
     
+    [self checkIfOnline];
+    
     //get current date/time
     double nowMilis = [[NSDate date] timeIntervalSince1970] * 1000;
     //read date/time of last import
@@ -347,6 +352,110 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         [defaults synchronize];
     }
 }
+
+//prefill all the stuff form the scheduled model
+-(void) checkForPrefilledScheduledMessage: (NSString *) modelIdentifier {
+    
+    
+    //TODO save current settings and restore them after the prefilled message? or not?!!!
+    if(modelIdentifier!=nil) {
+        
+        ScheduledModel *model = [ScheduledModel getModelFromIndentifier:modelIdentifier];
+        if(model!=nil) {
+            self.body.text = model.message;
+            self.subject.text = model.subject!=nil ? model.subject : @"";
+            self.saveMessage = model.saveAsTemplate;
+            
+            dispatch_async(dispatch_get_main_queue(), ^(){
+                [self.saveMessageSwitch setOn:self.saveMessage];
+                [self.scheduleLaterSwitch setOn:false];
+            });
+            
+            if(model.socialNetworks!=nil && model.socialNetworks.count > 0) {
+             
+                BOOL isFacebookAvailable = settingsController.socialOptionsController.isFacebookAvailable;
+                BOOL isTwitterAvailable = settingsController.socialOptionsController.isTwitterAvailable;
+
+                [settingsController.socialOptionsController.selectedServiceOptions removeAllObjects]; //we clear the current list
+                
+                if(isFacebookAvailable && [model.socialNetworks containsObject:@"facebook"]) {
+                    
+                    [settingsController.socialOptionsController.selectedServiceOptions addObject:OPTION_SENDTO_FACEBOOK_ONLY];
+                    
+                }
+                if (isTwitterAvailable && [model.socialNetworks containsObject:@"twitter"]){
+                     [settingsController.socialOptionsController.selectedServiceOptions addObject:OPTION_SENDTO_TWITTER_ONLY];
+                }
+                  
+                if ([model.socialNetworks containsObject:@"linkedin"]){
+                     [settingsController.socialOptionsController.selectedServiceOptions addObject:OPTION_SENDTO_LINKEDIN_ONLY];
+                }
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [settingsController.socialOptionsController.tableView reloadData];
+                });
+            }
+            
+            
+            settingsController.selectSendOption = model.sendOptions;
+            settingsController.selectPreferredService = model.preferredService;
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [settingsController.tableView reloadData];
+            });
+            //TODO the social networks and reload the tables? maybe not a god idea! just change the values
+            //and after we send this message we restore the previous settings?
+            
+            NSMutableArray *results = [self.recipientsController findRecipientsFromScheduledModel: model.recipients];
+            if(results.count > 0) {
+                [self.selectedRecipientsList removeAllObjects];
+                [self.selectedRecipientsList addObjectsFromArray:results];
+            }
+            
+            if(model.assetURLS.count > 0) {
+                [self loadAssetsFromLocalIdentifiers: model.assetURLS];
+            }
+            
+            if([self showMessageAccordingToDefaults:@"restore_from_scheduled" numberOfTimesToShow:2]) {
+                Popup *popup = [[Popup alloc] initWithTitle:NSLocalizedString(@"scheduled_messages",nil)
+                                                   subTitle:NSLocalizedString(@"restore_from_scheduled",nil)
+                 cancelTitle:nil
+                successTitle:@"OK"];
+                
+                [popup setBackgroundColor:[self colorFromHex:LITE_COLOR]];
+                [popup setBorderColor:[UIColor blackColor]];
+                [popup setTitleColor:[UIColor whiteColor]];
+                [popup setSubTitleColor:[UIColor whiteColor]];
+                [popup setSuccessBtnColor:[self colorFromHex:PREMIUM_COLOR]];
+                [popup setSuccessTitleColor:[UIColor whiteColor]];
+                //[popup setBackgroundBlurType:PopupBackGroundBlurTypeLight];
+                [popup setRoundedCorners:YES];
+                [popup setTapBackgroundToDismiss:YES];
+                
+                [popup showPopup];
+            }
+            
+            
+        }
+    }
+}
+
+//only show some warning messages like the first 2 times or so, otherwise they can get annoying for advanced users
+-(BOOL) showMessageAccordingToDefaults:(NSString *) key numberOfTimesToShow:(NSUInteger) numTimes {
+   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([defaults objectForKey:key]!=nil) {
+        NSUInteger num = (NSUInteger)[defaults integerForKey:key];
+        num++;
+        [defaults setInteger:num forKey:key];
+        if(num > numTimes) {
+            return false;
+        }
+    } else {
+       [defaults setInteger:1 forKey:key];
+    }
+    return true;
+}
+
 //before IOS 10
 //TODO make generic for other type of notifications
 -(void) scheduleNotification: (NSString *) type nameOfContact: name month: (NSInteger) month day: (NSInteger) day fireDelayInSeconds: (NSTimeInterval) delay{
@@ -615,7 +724,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         self.body.backgroundColor = [delegate defaultTableColor:true]; //[delegate colorFromHex:0x1c1c1e];
     } else {
         
-        self.tabBarController.tabBar.backgroundColor =  [delegate colorFromHex:0xfb922b]; //normal lite color
+        self.tabBarController.tabBar.backgroundColor =  [delegate colorFromHex:LITE_COLOR]; //normal lite color
         self.view.backgroundColor = [UIColor whiteColor];//[UIColor whiteColor];
         self.labelAttach.textColor = [UIColor blackColor];
         self.labelSaveArchive.textColor = [UIColor blackColor];
@@ -967,14 +1076,14 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                                         completion(true);
                                     }];
     
-    [popup setBackgroundColor:[self colorFromHex:0xfb922b]];
+    [popup setBackgroundColor:[self colorFromHex:LITE_COLOR]];
     //https://github.com/miscavage/Popup
     [popup setBorderColor:[UIColor blackColor]];
     [popup setTitleColor:[UIColor whiteColor]];
     [popup setSubTitleColor:[UIColor whiteColor]];
-    [popup setSuccessBtnColor:[self colorFromHex:0x4f6781]];
+    [popup setSuccessBtnColor:[self colorFromHex:PREMIUM_COLOR]];
     [popup setSuccessTitleColor:[UIColor whiteColor]];
-    [popup setCancelBtnColor:[self colorFromHex:0x4f6781]];
+    [popup setCancelBtnColor:[self colorFromHex:PREMIUM_COLOR]];
     [popup setCancelTitleColor:[UIColor whiteColor]];
     //[popup setBackgroundBlurType:PopupBackGroundBlurTypeLight];
     [popup setRoundedCorners:YES];
@@ -1042,14 +1151,14 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                                         [self buyProductWithidentifier:PRODUCT_PREMIUM_UPGRADE];
                                     }];
     
-    [popup setBackgroundColor:[self colorFromHex:0xfb922b]];
+    [popup setBackgroundColor:[self colorFromHex:LITE_COLOR]];
     //https://github.com/miscavage/Popup
     [popup setBorderColor:[UIColor blackColor]];
     [popup setTitleColor:[UIColor whiteColor]];
     [popup setSubTitleColor:[UIColor whiteColor]];
-    [popup setSuccessBtnColor:[self colorFromHex:0x4f6781]];
+    [popup setSuccessBtnColor:[self colorFromHex:PREMIUM_COLOR]];
     [popup setSuccessTitleColor:[UIColor whiteColor]];
-    [popup setCancelBtnColor:[self colorFromHex:0x4f6781]];
+    [popup setCancelBtnColor:[self colorFromHex:PREMIUM_COLOR]];
     [popup setCancelTitleColor:[UIColor whiteColor]];
     //[popup setBackgroundBlurType:PopupBackGroundBlurTypeLight];
     [popup setRoundedCorners:YES];
@@ -1146,6 +1255,22 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         NSString *lastImport = [NSString stringWithFormat:@"%f",  nowMilis];
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         [defaults setValue:lastImport forKey:@"last_import"];
+        
+        //Check if the app just got opened from a push notification
+        if([defaults objectForKey:APP_OPENED_FROM_PUSH]!=nil) {
+            
+            NSString *notificationIdentifier = [defaults objectForKey:APP_OPENED_FROM_PUSH];
+            //get the data and prefill stuff
+            [self checkForPrefilledScheduledMessage:notificationIdentifier];
+            //we do not need it anymore, remove it
+
+            if([ScheduledModel removeModel:notificationIdentifier]) {
+                //next time that the view appears it will reload
+                [defaults setBool:true forKey:@"reload_scheduled_model"];
+            }
+          
+            [defaults removeObjectForKey:APP_OPENED_FROM_PUSH];
+        }
     }
     @catch (NSException *exception) {
         [self showAlertBox:[NSString stringWithFormat: NSLocalizedString(@"unable_load_contacts_error_%@", @"unable to read contacts from AB"),exception.description]];
@@ -2079,9 +2204,14 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         case MFMailComposeResultSent:
             msg = NSLocalizedString(@"message_mail_sent",@"Mail sent");
             emailSentOK = YES;
+            [self resetMessageFailuresCounter];
             break;
         case MFMailComposeResultFailed:
             msg = [NSString stringWithFormat:NSLocalizedString(@"message_mail_sent_failure_%@", @"Mail sent failure"),[error localizedDescription]];
+            //if failed twice in a row offer some help
+            if([self getNumberOfMessageFailures] >=3) {
+                [self popupAboutMessageFailure:@"email"];
+            }
             break;
         default:
             break;
@@ -2155,12 +2285,21 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             msg = NSLocalizedString(@"message_sms_canceled",@"Canceled");
 			break;
 		case MessageComposeResultFailed:
+        {
             msg = NSLocalizedString(@"message_sms_unable_compose",@"Unable to compose SMS");
-			break;
+			//if failed twice in a row offer some help
+            if([self getNumberOfMessageFailures] >=3) {
+                [self popupAboutMessageFailure:@"sms"];
+            }
+            break;
+        }
 		case MessageComposeResultSent:
+        {
             msg = NSLocalizedString(@"message_sms_sent",@"SMS sent");
             smsSentOK = YES;
+            [self resetMessageFailuresCounter];
 			break;
+        }
 		default:
 			break;
 	}
@@ -2453,7 +2592,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     [selectedRecipientsList removeAllObjects];
     [recipientsController.selectedContactsList removeAllObjects];
     [self updateAddRemoveRecipients];
-    [recipientsController.tableView reloadData];
+    
     
     
     if(saveMessage) {
@@ -2464,8 +2603,11 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     [self clearInputFields];
     
     //the default action on beginning is also NOT save
-    saveMessage = NO;
-    [saveMessageSwitch setOn:NO];
+    dispatch_async(dispatch_get_main_queue(), ^(){
+        [saveMessageSwitch setOn:NO];
+        [scheduleLaterSwitch setOn:NO];
+        [recipientsController.tableView reloadData];
+    });
     
     customMessagesController.selectedMessageIndex=-1;
     customMessagesController.selectedMessage = nil;
@@ -2867,6 +3009,66 @@ void addressBookChanged(ABAddressBookRef reference,
     [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
+//get the images back from the saved urls
+-(void) loadAssetsFromLocalIdentifiers: (NSMutableArray *) identifiers {
+    
+    if(self.imagesArray==nil) {
+        self.imagesArray = [[NSMutableArray alloc] init];
+    } else {
+        [self.imagesArray removeAllObjects];
+    }
+    
+    PHImageManager *manager = [PHImageManager defaultManager];
+
+    PHFetchResult *results = [PHAsset fetchAssetsWithLocalIdentifiers:identifiers options:nil];
+    
+    if(results!=nil && results.count > 0) {
+        
+        PHImageRequestOptions *requestOptions = [[PHImageRequestOptions alloc] init];
+        requestOptions.resizeMode   = PHImageRequestOptionsResizeModeExact;
+        requestOptions.networkAccessAllowed = true;
+        requestOptions.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat;
+        
+        // this one is key
+        requestOptions.synchronous = YES;
+        
+        [self.attachments removeAllObjects];
+        dispatch_async(dispatch_get_main_queue(), ^(){
+            for (PHAsset *asset in results) {
+                // Do something with the asset
+                
+                [self.imagesArray addObject:asset];
+                
+                [manager requestImageForAsset:asset
+                                   targetSize:PHImageManagerMaximumSize
+                                  contentMode:PHImageContentModeDefault
+                                      options:requestOptions
+                                resultHandler:^void(UIImage *image, NSDictionary *info) {
+                                    if(image!=nil) {
+                                       // [self.attachments addObject:image];
+                                        //PHImageFileURLKey could be nil if the key is not present, so we add dummy string instead
+                                        NSURL *url = [info objectForKey: @"PHImageFileURLKey"];
+                                        if(url==nil) {
+                                            url = [NSURL URLWithString:@"file:///var/mobile/media/dcim/100apple/pic.png"];
+                                        }
+                                        NSArray *data = [[NSArray alloc] initWithObjects:image, url.absoluteString, nil];
+                                        [self.attachments addObject:data];
+                                   
+                                    }
+                                    
+                                }];
+                
+                
+            }
+            [self.imagesCollection reloadData];
+            [self updateAttachmentsLabel];
+        });
+    }
+
+    
+    
+}
+
 -(void) updateAddRemoveRecipients {
    //[addRemoveRecipientsView setHidden:true];
    if(self.selectedRecipientsList.count > 0) {
@@ -3008,6 +3210,100 @@ void addressBookChanged(ABAddressBookRef reference,
         
         
     }
+}
+
+- (IBAction)switchScheduleMessageValueChanged:(id)sender {
+   
+    if(scheduleLaterSwitch.on) {
+        
+        //a block to restore the switch back to off
+        void (^restoreSwitch)(void) = ^{
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [scheduleLaterSwitch setOn:false];
+            });
+        };
+        
+        if ([[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
+            
+            //do some preliminary checks first
+            if(subject.text.length==0 && body.text.length==0) {
+                
+                [self showAlertBox: NSLocalizedString(@"alert_message_both_empty", @"Subject and message body cannot be empty!")];
+                restoreSwitch();
+                
+                 
+            }
+            else if(body.text.length==0) {
+                
+                [self showAlertBox: NSLocalizedString(@"alert_message_body_empty",@"The message body cannot be empty!")];
+                restoreSwitch();
+
+            }
+            else if(self.selectedRecipientsList.count == 0 && ( !sendToFacebook && !sendToTwitter && !sendToLinkedin) ) {
+                [self showAlertBox: NSLocalizedString(@"alert_message_select_least_one",@"You need to select at least one recipient!")];
+                restoreSwitch();
+            }
+            else {
+                //all good, but still warn
+                [self warnAboutScheduledmessage:^(BOOL accepted) {
+                    if(accepted) {
+                        [self ShowDatePicker];
+                    } else {
+                        //disable the switch again
+                        restoreSwitch();
+                    }
+                }];
+                
+            }
+            
+        } else {
+            //only for premium users!!!
+           [self showUpgradeToPremiumMessage];
+           restoreSwitch();
+        }
+        
+    
+    }
+}
+
+//shows a message to disable iMessage
+-(void) warnAboutScheduledmessage: (void (^)(BOOL finished))completion{
+    
+    if([self showMessageAccordingToDefaults:@"scheduled_message_warn" numberOfTimesToShow:2]) {
+        
+        Popup *popup = [[Popup alloc] initWithTitle:@"Easy Message"
+                                           subTitle:NSLocalizedString(@"scheduled_message_warn",nil)
+                                        cancelTitle:NSLocalizedString(@"cancel",nil)
+                                       successTitle:@"OK"
+                                        cancelBlock:^{
+                                            //Custom code after cancel button was pressed
+                                            completion(false);
+                                         
+                                        } successBlock:^{
+                                            //Custom code after success button was pressed
+                                            completion(true);
+                                        }];
+        
+        [popup setBackgroundColor:[self colorFromHex:LITE_COLOR]];
+        //https://github.com/miscavage/Popup
+        [popup setBorderColor:[UIColor blackColor]];
+        [popup setTitleColor:[UIColor whiteColor]];
+        [popup setSubTitleColor:[UIColor whiteColor]];
+        
+        [popup setSuccessBtnColor:[self colorFromHex:PREMIUM_COLOR]];
+        [popup setSuccessTitleColor:[UIColor whiteColor]];
+        [popup setCancelBtnColor:[self colorFromHex:PREMIUM_COLOR]];
+        [popup setCancelTitleColor:[UIColor whiteColor]];
+        //[popup setBackgroundBlurType:PopupBackGroundBlurTypeLight];
+        [popup setRoundedCorners:YES];
+        [popup setTapBackgroundToDismiss:YES];
+        [popup setDelegate:self];
+        [popup showPopup];
+    } else {
+        completion(true);
+    }
+    
+    //do not warn me again
 }
 
 
@@ -3653,4 +3949,244 @@ void addressBookChanged(ABAddressBookRef reference,
     return groupModel;
 }
 
+//show the date picker for the scheduled messages
+-(void)ShowDatePicker {
+    float height= [[UIScreen mainScreen] bounds].size.height;
+    
+    if(pickerBlockView == nil) {
+        
+        PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
+        
+        pickerBlockView = [[UIView alloc]initWithFrame:CGRectMake(10, 2*(height/3), self.view.frame.size.width-20, height/3)];
+        [pickerBlockView setBackgroundColor : [delegate colorFromHex:LITE_COLOR] ];//[self colorFromHex:0x4f6781] TODO PREMIUM COLOR 0x4f6781
+        pickerBlockView.tag = 500;
+        pickerBlockView.layer.cornerRadius = 20;
+        pickerBlockView.layer.masksToBounds = YES;
+        pickerBlockView.layer.borderWidth = 4;
+        pickerBlockView.layer.borderColor = [[UIColor blackColor] CGColor];
+        
+        UIDatePicker *sortPicker = [[UIDatePicker alloc] initWithFrame:CGRectMake(0,  pickerBlockView.frame.size.height/6 , self.view.frame.size.width-20, pickerBlockView.frame.size.height-20)];
+        sortPicker.tag = 888;
+        NSDate *now = [NSDate date];
+        sortPicker.date = now;
+        sortPicker.minimumDate = now;
+        
+        sortPicker.backgroundColor =  [delegate colorFromHex:LITE_COLOR]; //normal lite color
+        sortPicker.hidden = NO;
+        //sortPicker.delegate = self;
+        [pickerBlockView addSubview:sortPicker];
+
+        UILabel *cancel = [[UILabel alloc] initWithFrame:CGRectMake(10, 5, 80, 30)];
+        [cancel setTextColor:[UIColor whiteColor]];
+        [cancel setBackgroundColor:[UIColor clearColor]];
+        [cancel setFont:[UIFont fontWithName: @"Trebuchet MS" size: 20.0f]];
+        [cancel setText:NSLocalizedString(@"cancel", nil)];
+        [pickerBlockView addSubview:cancel];
+        UITapGestureRecognizer* cancelGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(cancelbtn:)];
+        // if labelView is not set userInteractionEnabled, you must do so
+        [cancel setUserInteractionEnabled:YES];
+        [cancel addGestureRecognizer:cancelGesture];
+
+        UILabel *done = [[UILabel alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 80, 5, 80, 30)];
+        [done setTextColor:[UIColor whiteColor]];
+        [done setBackgroundColor:[UIColor clearColor]];
+        [done setFont:[UIFont fontWithName: @"Trebuchet MS" size: 20.0f]];
+        [done setText:NSLocalizedString(@"done_button", nil)];
+        [pickerBlockView addSubview:done];
+
+        UITapGestureRecognizer* doneGesture1 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(donebtn:)];
+        // if labelView is not set userInteractionEnabled, you must do so
+        [done setUserInteractionEnabled:YES];
+        [done addGestureRecognizer:doneGesture1];
+    }
+    
+    CATransition *transition = [CATransition animation];
+    transition.duration = 1.3;
+    transition.type = kCATransitionFromBottom; //choose your animation
+    [pickerBlockView.layer addAnimation:transition forKey:nil];
+
+    [self.view addSubview:pickerBlockView];
+
+}
+#pragma date picker button handlers
+-(void) cancelbtn: (UITapGestureRecognizer*) gesture {
+    
+    CATransition *transition = [CATransition animation];
+    transition.duration = 1.0;
+    transition.type = kCATransitionFade; //choose your animation
+    [pickerBlockView.layer addAnimation:transition forKey:nil];
+    
+    [pickerBlockView removeFromSuperview];
+    
+}
+-(void)donebtn: (UITapGestureRecognizer*) gesture  {
+    CATransition *transition = [CATransition animation];
+    transition.duration = 1.0;
+    transition.type = kCATransitionFade; //choose your animation
+    [pickerBlockView.layer addAnimation:transition forKey:nil];
+    
+    BOOL sendToSocialMedia = (sendToTwitter || sendToFacebook || sendToLinkedin);
+    if( (self.selectedRecipientsList.count > 0 || sendToSocialMedia) && self.body.text!=nil && [self.body.text length] > 0) {
+        NSArray *views = [pickerBlockView subviews];
+        if(views!=nil && views.count > 0) {
+            for(UIView *view in views) {
+                if([view isKindOfClass:UIDatePicker.class]) {
+                    UIDatePicker *datePicker = (UIDatePicker *)view;
+                    
+                    [self checkIfPostToSocial];
+                    
+                    NSMutableArray *networks;
+                    if(sendToSocialMedia) {
+                        networks = [[NSMutableArray alloc] init];
+                        if(sendToLinkedin) {
+                            [networks addObject:@"linkedin"];
+                        }
+                        if(sendToFacebook) {
+                            [networks addObject:@"facebook"];
+                        }
+                        if(sendToTwitter) {
+                            [networks addObject:@"twitter"];
+                        }
+                    }
+                    //TODO the social network options are not restored yet
+                    NSMutableArray *recipients = [[NSMutableArray alloc] init];
+                    for(Contact *contact in selectedRecipientsList) {
+                        
+                        if(contact!=nil) {
+                            
+                            SimpleContactModel *cModel = [[SimpleContactModel alloc] initWithName:contact.name phone:contact.phone andEmail:contact.email];
+                            
+                            [recipients addObject:cModel];
+                            
+                        }
+                        
+                    }
+                    
+                    
+                    NSDate *date = datePicker.date;
+                    NSString *msg = self.body.text;
+                    NSString *subject = self.subject.text;
+                    NSInteger sendOptions = settingsController.selectSendOption;
+                    NSInteger preferedService = settingsController.selectPreferredService;
+                    
+                    
+                    ScheduledModel *model = [[ScheduledModel alloc] initWithSubject:subject message:msg onDate:date withRecipients:recipients andSendOptions:sendOptions andPreferredService:preferedService andIncludeNetworks:networks saveAsTemplate:self.saveMessage];
+                    
+                    if(self.imagesArray.count > 0) {
+                        NSMutableArray *urls = [[NSMutableArray alloc] init];
+                        for(PHAsset *asset in self.imagesArray) {
+                            [urls addObject:asset.localIdentifier];
+                        }
+                        [model setAssetURLS:urls];
+                    }
+                    
+                    if([model persistModel]) {
+                        [model scheduleNotification];
+                        //force reload of the scheduled view
+                        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+                        [defaults setBool:true forKey:@"reload_scheduled_model"];
+                        
+                        NSString *txt =  [NSString stringWithFormat:@"%@!",NSLocalizedString(@"done_button", nil)];
+                        [[[[iToast makeText: txt] setGravity:iToastGravityBottom] setDuration:1000] show];
+                    } else {
+                        [[[[iToast makeText:NSLocalizedString(@"generic_error", nil)]
+                        setGravity:iToastGravityBottom] setDuration:1000] show];
+                        
+                    }
+                    
+                }
+            }
+        }
+    } else {
+        [[[[iToast makeText:NSLocalizedString(@"generic_error", nil)]
+        setGravity:iToastGravityBottom] setDuration:1000] show];
+    }
+    
+    
+    
+    
+    [pickerBlockView removeFromSuperview];
+}
+
+//how many times failed in a row?
+-(NSInteger) getNumberOfMessageFailures {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSInteger count;
+    if([defaults objectForKey:FAILED_MESSAGE_COUNTER]!=nil) {
+        count = [defaults integerForKey:FAILED_MESSAGE_COUNTER];
+        count+=1;
+    } else {
+        count = 1;
+    }
+    [defaults setInteger:count forKey:FAILED_MESSAGE_COUNTER];
+    return count;
+}
+
+//reset the key if it exists
+-(void) resetMessageFailuresCounter {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    //if the key exists just remove it and start from 0
+    if([defaults objectForKey:FAILED_MESSAGE_COUNTER]!=nil) {
+        [defaults removeObjectForKey:FAILED_MESSAGE_COUNTER];
+    }
+}
+//if it fails 2 times in a row offer some help
+
+-(void) popupAboutMessageFailure: (NSString *) service {
+    
+    Popup *popup = [[Popup alloc] initWithTitle:@"Easy Message"
+                                       subTitle:NSLocalizedString(@"offer_help",nil)
+                                    cancelTitle:NSLocalizedString(@"cancel",nil)
+                                   successTitle:@"OK"
+                                    cancelBlock:^{
+                                        //Custom code after cancel button was pressed
+                                        //completion(false);
+                                        
+                                    } successBlock:^{
+                                        //Custom code after success button was pressed
+                                        //completion(true);
+                                        //if(self.isDeviceOnline) {
+                                          PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
+                                          UITabBarController *mainController = (UITabBarController*)delegate.window.rootViewController;
+                                          [mainController setSelectedViewController: [mainController.viewControllers objectAtIndex:2]];
+                                            if(settingsController!=nil) {
+                                                [settingsController scrollToLastRowOfFAQSection];
+                                            }
+                                        //}
+                                    }];
+    
+    [popup setBackgroundColor:[self colorFromHex:LITE_COLOR]];
+    [popup setBorderColor:[UIColor blackColor]];
+    [popup setTitleColor:[UIColor whiteColor]];
+    [popup setSubTitleColor:[UIColor whiteColor]];
+    [popup setSuccessBtnColor:[self colorFromHex:PREMIUM_COLOR]];
+    [popup setSuccessTitleColor:[UIColor whiteColor]];
+    [popup setCancelBtnColor:[self colorFromHex:PREMIUM_COLOR]];
+    [popup setCancelTitleColor:[UIColor whiteColor]];
+    [popup setDelegate: self];
+    [popup setRoundedCorners:YES];
+    [popup setTapBackgroundToDismiss:YES];
+    
+    [popup showPopup];
+}
+
+-(void) checkIfOnline {
+    
+    // Allocate a reachability object
+    PCReachability* reach = [PCReachability reachabilityWithHostname:@"www.google.com"];
+    
+    // Set the blocks
+    reach.reachableBlock = ^(PCReachability*reach)
+    {
+        self.isDeviceOnline = true;
+    };
+    
+    reach.unreachableBlock = ^(PCReachability*reach)
+    {
+        self.isDeviceOnline = false;
+    };
+    
+    // Start the notifier, which will cause the reachability object to retain itself!
+    [reach startNotifier];
+}
 @end

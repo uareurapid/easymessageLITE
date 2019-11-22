@@ -47,7 +47,7 @@
 -(void) showPermissionsMessage;
 -(void) reloadContacts: (NSMutableArray *) contacts;
 -(CNMutableContact*) searchContactOnNativeAddressBook: (Contact *) contact;
-
+-(NSMutableArray *) findRecipientsFromScheduledModel: (NSMutableArray *) recipientsList;
 -(BOOL) isNativeContact:(Contact *) contact;
 //visible api
 -(void)clearRecipients;
