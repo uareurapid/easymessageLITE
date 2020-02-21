@@ -168,9 +168,10 @@ NSString *const IAPHelperProductPurchasedNotification = @"IAPHelperProductPurcha
               skProduct.price.floatValue);
     }
     
-    _completionHandler(YES, skProducts);
-    _completionHandler = nil;
-    
+    if(skProducts!=nil) {
+        _completionHandler(YES, skProducts);
+        _completionHandler = nil;
+    }  
 }
 
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error {

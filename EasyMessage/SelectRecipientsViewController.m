@@ -628,7 +628,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
                 //doesnt exist yet, create the array
                 NSMutableArray *array = [[NSMutableArray alloc] initWithObjects:contact, nil];
                 [dic setObject:array forKey:initial];
-                [sortedKeys addObject:initial];
+                [self.sortedKeys addObject:initial];
             }
             else {
                 //already exists cast it
