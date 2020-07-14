@@ -14,6 +14,7 @@
 #import "PCAppDelegate.h"
 #import "PCViewController.h"
 #import "PCReachability.h"
+#import "Popup.h"
 
 @interface SettingsViewController ()
 
@@ -248,8 +249,8 @@
         }
     }
     
-    if([self hasShownAllTooltipsAlready] && self.tableView.numberOfSections == 6) {
-        //1 section is missing, make it appear again
+    if([self hasShownAllTooltipsAlready]  && [self.tableView numberOfRowsInSection:5] < 2 ) {
+        //1 row in section is missing, make it appear again
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.tableView reloadData];
         });
@@ -270,7 +271,7 @@
 #warning Potentially incomplete method implementation.
     // Return the number of sections.
     
-    return [self hasShownAllTooltipsAlready] ? 7 : 6;
+    return 7;// [self hasShownAllTooltipsAlready] ? 7 : 6;
     //add an option to show them again, putting all to false 7;
     //added one for restore purchase/buy premium + reset
 }
@@ -377,6 +378,12 @@
         //restore/purchase premium
         return 1;
     }
+    else if(section == 6) {
+        //advanced options
+        if([self hasShownAllTooltipsAlready]) {
+            return 2;
+        }
+    }
    
     return 1; //just one for the prefered item options
     
@@ -440,7 +447,7 @@
         return NSLocalizedString(@"unlock_premium", nil);
     }
     else {
-       return @"Advanced Options";
+       return NSLocalizedString(@"advanced_options", nil);
     }
     
     
@@ -592,15 +599,38 @@
         cell.accessoryType = UITableViewCellAccessoryNone;
         cell.imageView.image = [UIImage imageNamed:@"Unlock32"];
         //restore tooltips
-    } else if (section == 6 && [self hasShownAllTooltipsAlready]) {
+    } else if (section == 6) {
         
-        cell.textLabel.text =  NSLocalizedString(@"show_tooltips_again", nil);
-        cell.accessoryType = UITableViewCellAccessoryNone;
-        cell.imageView.image = [UIImage imageNamed:@"gear"];
+        if([self hasShownAllTooltipsAlready]) {
+            //2 rows
+            if(row == 0) {
+                cell.textLabel.text =  NSLocalizedString(@"show_tooltips_again", nil);
+                cell.accessoryType = UITableViewCellAccessoryNone;
+                cell.imageView.image = [UIImage imageNamed:@"gear"];
+            } else if(row == 1) {
+                cell.textLabel.text = NSLocalizedString(@"force_sms_individually", nil);
+                cell.accessoryType = [self forceIndividualSMS] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+                cell.imageView.image = [UIImage imageNamed:@"onebyone"];
+            }
+        } else {
+            //just 1 row;
+            cell.textLabel.text = NSLocalizedString(@"force_sms_individually", nil);
+            cell.accessoryType = [self forceIndividualSMS] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+            cell.imageView.image = [UIImage imageNamed:@"onebyone"];
+        }
     }
  
     
     return cell;
+}
+
+//confirm 1 by one?
+- (BOOL) forceIndividualSMS {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([defaults boolForKey:FORCE_INDIVIDUAL_SMS]){
+        return true;
+    }
+    return false;
 }
 
 //delegate for the sms controller
@@ -819,9 +849,43 @@
         if(self.purchasesController !=nil) {
             [self.navigationController pushViewController:purchasesController animated:YES];
         }
-    } else if(section == 6 && row == 0 && [self hasShownAllTooltipsAlready]) {
+    } else if(section == 6) {
         
-        [self resetAllTooltips];
+        if(row == 0) {
+            
+            if([tableView numberOfRowsInSection:section] == 2) {
+                if( [self hasShownAllTooltipsAlready]) {
+                    [self resetAllTooltips];
+                }
+                
+            } else {
+                //if just 1 row then is the other one for sure
+                BOOL result = [self forceIndividualSMS];
+                //invert the result
+                NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+                [defaults setBool:!result forKey:FORCE_INDIVIDUAL_SMS];
+                [self.tableView reloadData];
+                //possibly show the message
+                if([defaults boolForKey:FORCE_INDIVIDUAL_SMS] &&
+                   [self shouldShowWarningABoutIndividualSMS]) {
+                    
+                    [self showWarningAboutOneByOneMessage];
+                }
+            }
+          
+        } else if(row ==1) {
+            BOOL result = [self forceIndividualSMS];
+            //invert the result
+            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+            [defaults setBool:!result forKey:FORCE_INDIVIDUAL_SMS];
+            [self.tableView reloadData];
+            
+            if([defaults boolForKey:FORCE_INDIVIDUAL_SMS] &&
+               [self shouldShowWarningABoutIndividualSMS]) {
+                
+                [self showWarningAboutOneByOneMessage];
+            }
+        }
     }
     
   
@@ -877,6 +941,36 @@
         
         
     });
+}
+
+//should i show the warning or not? only once
+-(BOOL) shouldShowWarningABoutIndividualSMS {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    return ![defaults boolForKey:SHOW_FORCE_INDIVIDUAL_SMS_WARN];
+}
+//when user select send 1 by 1 for the first time
+-(void) showWarningAboutOneByOneMessage {
+    Popup *popup = [[Popup alloc] initWithTitle:NSLocalizedString(@"force_sms_individually", nil)
+                                       subTitle:NSLocalizedString(@"force_sms_individually_warning",nil)
+     cancelTitle:nil
+    successTitle:@"OK"];
+    
+    PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
+    //TODO swap these colors for the LITE version
+    [popup setBackgroundColor:[delegate colorFromHex:0xfb922b]];
+    [popup setBorderColor:[UIColor blackColor]];
+    [popup setTitleColor:[UIColor whiteColor]];
+    [popup setSubTitleColor:[UIColor whiteColor]];
+    [popup setSuccessBtnColor:[delegate colorFromHex:0x4f6781]];
+    [popup setSuccessTitleColor:[UIColor whiteColor]];
+
+    [popup setRoundedCorners:YES];
+    [popup setTapBackgroundToDismiss:YES];
+    
+    [popup showPopup];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:true forKey:SHOW_FORCE_INDIVIDUAL_SMS_WARN];
 }
 
 @end

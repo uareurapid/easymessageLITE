@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AddressBook/AddressBook.h>
+#import <Contacts/CNContact.h>
 
 @interface Contact : NSObject // <NSCoding>
 
@@ -30,6 +31,8 @@
 -(BOOL) hasAlternatePhonesAndEmails;
 
 @property ABRecordRef person;//ref to the person
+//replacer, not sure if this is a good idea
+@property (assign,nonatomic) CNContact* person_new;//ref to the person
 
 @property (assign,nonatomic) BOOL isNative;
 

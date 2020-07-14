@@ -100,5 +100,6 @@
 //scrolls to last section of table
 -(void) scrollToLastRowOfFAQSection;
 -(void) resetSocialNetworks;
+- (BOOL) forceIndividualSMS;
 
 @end

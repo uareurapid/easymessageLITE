@@ -60,6 +60,11 @@
 #define SHOW_HELP_TOOLTIP_CONTACT_DETAILS @"show_help_tooltip_contact_details"
 #define SHOW_HELP_TOOLTIP_APP_SETTINGS @"show_help_tooltip_app_settings"
 
+//if i have this selected
+#define FORCE_INDIVIDUAL_SMS @"force_individual_sms"
+//if i have already shown the warning
+#define SHOW_FORCE_INDIVIDUAL_SMS_WARN @"show_force_individual_sms_warn"
+
 @interface PCViewController : UIViewController <MFMailComposeViewControllerDelegate,MFMessageComposeViewControllerDelegate,UIImagePickerControllerDelegate,UITextViewDelegate,UITextFieldDelegate, FBSDKSharingDelegate,UICollectionViewDataSource,UICollectionViewDelegate,
 UITextFieldDelegate, NSURLConnectionDelegate,SKStoreProductViewControllerDelegate,QBImagePickerControllerDelegate, PopupDelegate, CMPopTipViewDelegate>
 @property (weak, nonatomic) IBOutlet UIScrollView *attachmentsScrollview;
@@ -105,16 +110,21 @@ UITextFieldDelegate, NSURLConnectionDelegate,SKStoreProductViewControllerDelegat
 @property (strong, nonatomic) PCPopupViewController  *popupView;
 @property (strong, nonatomic) UIView *pickerBlockView;
 
+//will hold all the recipients for the text message only (so we can send 1 by 1)
+@property (strong, nonatomic) NSMutableArray *messageRecipients;
+
 @property BOOL isDeviceOnline;
 
 -(IBAction)loadContactsList:(id)sender;
 - (IBAction)showSettings:(id)sender;
 - (IBAction)sendEmail:(id)sender;
--(IBAction)sendSMS:(id)sender;
+-(IBAction)sendSMS:(id)sender isRecursive:(BOOL) isRecursive;
 -(IBAction)presentMediaPicker:(id) sender;
 -(NSMutableArray *) getEmailAdresses;
 -(NSMutableArray *) getPhoneNumbers;
 - (NSData *) getImageInfoData: (UIImage *)img;
+
+@property (strong, nonatomic) UIAlertController *pending;
 
 void addressBookChanged(ABAddressBookRef reference,
                         CFDictionaryRef dictionary,

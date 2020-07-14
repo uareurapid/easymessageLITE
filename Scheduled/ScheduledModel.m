@@ -225,15 +225,17 @@
             [center removePendingNotificationRequestsWithIdentifiers: [[NSArray alloc] initWithObjects:notifIdentifier, nil]];
         } else {
             
-            NSArray <UILocalNotification*> *notifications = [[UIApplication sharedApplication] scheduledLocalNotifications];
-            for(UILocalNotification *notif in notifications) {
-                if(notif!=nil && notif.userInfo!=nil) {
-                    NSString *identifier = [[notif userInfo] objectForKey:@"alarmID"];
-                    if(identifier!=nil && [identifier isEqualToString:notifIdentifier]) {
-                        [[UIApplication sharedApplication] cancelLocalNotification:notif];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NSArray <UILocalNotification*> *notifications = [[UIApplication sharedApplication] scheduledLocalNotifications];
+                for(UILocalNotification *notif in notifications) {
+                    if(notif!=nil && notif.userInfo!=nil) {
+                        NSString *identifier = [[notif userInfo] objectForKey:@"alarmID"];
+                        if(identifier!=nil && [identifier isEqualToString:notifIdentifier]) {
+                            [[UIApplication sharedApplication] cancelLocalNotification:notif];
+                        }
                     }
                 }
-            }
+            });
             
         }
         

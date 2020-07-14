@@ -145,7 +145,7 @@
 "ask_to_rate" = "Se você gosta de usar o Easy Message, que tal avaliá-lo?";
 "groups" = "Grupos";
 "members" = "membros";
-"imessage_warn" = "Se quer mandar uma mesagem para um grupo via SMS, deve considerar desactivar o iMessage e as MMS no seu telefone primeiro. Isto garante que as mensagens serão enviadas individualmente!";
+"imessage_warn" = "Se quer mandar uma mesagem para um grupo via SMS, deve considerar desactivar o iMessage e as MMS no seu telefone primeiro. Isto garante que as mensagens serão enviadas individualmente! Como alternativa mais confiável também pode seleccionar 'Forçar SMS individual' no painel 'Definições'.";
 "edit" = "Editar";
 "update_contact" = "Alterar contacto";
 "no_recipients" = "Não há destinatários seleccionados";
@@ -157,7 +157,7 @@
 "add_to_favorites" = "Adicionar aos favoritos";
 "remove_from_favorites" = "Remover dos favoritos";
 "show_favorites_only" = "Mostrar apenas favoritos";
-"contact_info" = "Informação do contacto";
+"contact_info" = "Detalhes do contacto";
 "alternative_emails" = "Emails alternativos";
 "alternative_phones" = "Números alternativos";
 "tooltip_groups_management" = "Você pode usar este menu para criar novos grupos ou contatos. Você pode começar com um grupo vazio ou selecionar alguns contatos para iniciar o grupo. Selecione os destinatários que você deseja colocar no seu grupo e escolha 'Novo grupo' (para um novo grupo) ou 'Adicionar ao grupo' (para um grupo existente).\r\nPara escolher os destinatários da sua mensagem, basta selecionar as linhas correspondentes. Para ver ou editar os detalhes do contato, pressione o botão (i).";
@@ -166,9 +166,14 @@
 "message_recipients" = "Message recipients and groups";
 "tooltip_contact_details" = "Você pode usar este menu para alterar ou excluir seu contato/grupo. Para remover contatos de um grupo existente, deslize para a esquerda na linha correspondente";
 "show_tooltips_again" = "Mostrar dicas de ajuda novamente";
-"tooltip_app_settings" = "Aqui você pode personalizar a entrega da mensagem e a aparência da tela 'Destinatários'. Você pode optar por enviar apenas SMS/iMessage ou E-mail, publicar nas mídias sociais ou usar todos os serviços de uma só vez. (Dica: considere o tipo de informação de contato que você tem disponível para seu público alvo). Ao usar o SMS/iMessage, se você quiser destinatários não divulgados em vez de criar uma conversa em grupo, desative o iMessage e use o serviço simples de SMS (configurações do telefone -> Mensagens -> desativar o iMessage e o MMS Messaging).\r\nNote que alguns serviços podem exigir conexão à Internet ou incorrer em alguns encargos extras";
+"tooltip_app_settings" = "Aqui você pode personalizar a entrega da mensagem e a aparência da tela 'Destinatários'. Você pode optar por enviar apenas SMS/iMessage ou E-mail, publicar nas mídias sociais ou usar todos os serviços de uma só vez. (Dica: considere o tipo de informação de contato que você tem disponível para seu público alvo). Ao usar o SMS/iMessage, se você quiser destinatários não divulgados em vez de criar uma conversa em grupo, desative o iMessage e use o serviço simples de SMS (configurações do telefone -> Mensagens -> desativar o iMessage e o MMS Messaging). Como aternativa mais confiável selecione 'Forçar SMS individual' mais abaixo.\r\nNote que alguns serviços podem exigir conexão à Internet ou incorrer em alguns encargos extras";
 "scheduled_message_warn" = "Quando você agendar sua mensagem para mais tarde, não poderá mais editá-la; portanto, verifique se tudo está definido corretamente agora (mensagem, destinatários, configurações, anexos, etc.). Quando chegar a hora, o aplicativo lembrará você com uma notificação e restaurará o status e o conteúdo da mensagem original. Depois de pressionar o botão 'enviar', a mensagem atual será enviada imediatamente, independentemente de qualquer cópia agendada para entrega posterior";
 "scheduled_messages"="Mensagens agendadas";
 "restore_from_scheduled"="O aplicativo preencherá agora os campos de acordo com a mensagem agendada, restaurando as configurações e os destinatários do serviço a partir do momento em que você o agendou. Como isso pode afetar suas configurações atuais, convém revisá-las para suas próximas mensagens.";
 "generic_error"="Ocorreu um erro!";
 "offer_help"="Parece que você está tendo problemas para enviar a mensagem. Deseja dar uma olhada no nosso FAQ? Também temos um pequeno vídeo tutorial para ajudá-lo (é necessário ter conexão com a Internet). Se você ainda precisar de ajuda após verificar esses recursos, não hesite em entrar em contato conosco.";
+"force_sms_individually" = "Forçar SMS individual";
+"persistence_store_error" = "Ocorreu um erro fatal ao criar o datastore. Use o botão 'home' para terminar a aplicação";
+"force_sms_individually_warning" = "Ao selecionar esta opção, você garante 100% de certeza de que a mensagem de texto é entregue independentemente para cada destinatário. No entanto (devido às políticas de privacidade da Apple), a única maneira de obter esse comportamento, exige que você confirme cada entrega de mensagem separadamente, pressionando o botão Enviar. Por exemplo; se você estiver enviando para um grupo de 50 destinatários, precisará confirmar 50 vezes. Também não esqueça de manter suas mensagens curtas e concinadas!";
+"advanced_options" = "Opções Avançadas";
+"please_wait_while_load" = "Por favor aguarde, lendo os contactos";

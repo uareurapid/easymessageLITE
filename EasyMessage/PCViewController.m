@@ -62,6 +62,8 @@
 @synthesize addRemoveRecipientsView;
 @synthesize addImage, removeImage, tooltipView,pickerBlockView;
 @synthesize scheduleLaterSwitch;
+@synthesize messageRecipients;
+@synthesize pending;
 //google plus sdk
 //TODO check
 static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpdnlq.apps.googleusercontent.com";
@@ -460,8 +462,10 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 //TODO make generic for other type of notifications
 -(void) scheduleNotification: (NSString *) type nameOfContact: name month: (NSInteger) month day: (NSInteger) day fireDelayInSeconds: (NSTimeInterval) delay{
     //Get all previous notifications..
-    NSLog(@"scheduled notifications: %@", [[UIApplication sharedApplication] scheduledLocalNotifications]);
+    //NSLog(@"scheduled notifications: %@", [[UIApplication sharedApplication] scheduledLocalNotifications]);
     
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
     NSArray *notifications = [[UIApplication sharedApplication] scheduledLocalNotifications];
     
     NSString *possibleAlarmId = [NSString stringWithFormat: @"%@", [NSString stringWithFormat:@"%@%ld%ld",name,(long)day,(long)month]];
@@ -520,6 +524,8 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     }//else do other cases on other releases
     
     [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
+        
+    });
 }
 
 -(void) scheduleNotificationAfterV10: (NSString *) message {
@@ -982,7 +988,10 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                             else if(settingsController.selectSendOption == OPTION_SEND_SMS_ONLY_ID) {
                                 
                                 smsSentOK = NO;
-                                [self sendSMS:nil];
+                                self.messageRecipients = [self getPhoneNumbers];
+                                if(self.messageRecipients.count > 0) {
+                                    [self sendSMS:nil isRecursive:false];
+                                }
                             }
                             
                             
@@ -1003,7 +1012,10 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                     else if(settingsController.selectSendOption == OPTION_SEND_SMS_ONLY_ID) {
                         
                         smsSentOK = NO;
-                        [self sendSMS:nil];
+                        self.messageRecipients = [self getPhoneNumbers];
+                        if(self.messageRecipients.count > 0) {
+                            [self sendSMS:nil isRecursive:false];
+                        }
                     }
                 }
                     
@@ -1018,7 +1030,10 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                 else if(settingsController.selectSendOption == OPTION_SEND_SMS_ONLY_ID) {
                     
                     smsSentOK = NO;
-                    [self sendSMS:nil];
+                    self.messageRecipients = [self getPhoneNumbers];
+                    if(self.messageRecipients.count > 0) {
+                        [self sendSMS:nil isRecursive:false];
+                    }
                 }
             }
             
@@ -1330,168 +1345,153 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 
 -(IBAction)loadContactsList:(id)sender {
     
-    //cannot proceed without this or a get a black screen
-    if ( ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusDenied ||
-        ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusRestricted ) {
-        [self showPermissionsMessage];
-        //still load these anyway, no need permissions
-        [self loadContactsFromCoreDataOnly];
-        //load also the groups
-        NSMutableArray *groupsFromDB = [self fetchGroupRecords];
-        if(groupsFromDB!=nil && groupsFromDB.count>0) {
-            [recipientsController.contactsList addObjectsFromArray:groupsFromDB];
-        }
+    //need to allocate an instance
+    CNContactStore * contactStore = [[CNContactStore alloc] init];
+    
+    //this request for permissions is executed on background thread
+    [contactStore requestAccessForEntityType:CNEntityTypeContacts completionHandler:^(BOOL granted, NSError * _Nullable error) {
         
-        [recipientsController.groupsList removeAllObjects];
-        [recipientsController.groupsNamesArray removeAllObjects];
-        
-        [recipientsController refreshPhonebook:nil];
-        return;
-    }
-    
-    
-    CFErrorRef * error = NULL;
-    ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, error);
-    NSMutableArray __block *contacts;
-    
-    CFRetain(addressBook);
-    
-    //register a callback to track adressbook changes
-    ABAddressBookRegisterExternalChangeCallback(addressBook, addressBookChanged, (__bridge void *)(self));
-    
-    // Request authorization to Address Book
-    
-    if (ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusNotDetermined) {
-        ABAddressBookRequestAccessWithCompletion(addressBook, ^(bool granted, CFErrorRef error) {
-            // First time access has been granted, add the contact
-            if(granted==true) {
+        if(!granted) {
+            
+            dispatch_async(dispatch_get_main_queue(), ^(){
+                //make sure this is all done on main thread
                 
-                NSMutableArray *cleanList = [[NSMutableArray alloc] init];
-                NSLog(@"granted permission");
-                //load from address book
-                contacts = [self loadContacts: addressBook];
-                
-                NSInteger duplicates = 0;
-                //auxiliar list to check for duplicates (might slow down stuff)
-                for(Contact *c in contacts) {
-                    c.isNative = true;
-                    if(![cleanList containsObject:c] && c!=nil) { //not necessary but anyway.. since i´m here do it all
-                        [cleanList addObject:c];
-                    }
-                    else {
-                        duplicates++;
-                    }
-                }
-                
-                NSLog(@"readed %ld contacts from local address book, but will only add %ld",(unsigned long)contacts.count, cleanList.count);
-                
-                NSLog(@"Skipped %ld duplicated contacts",(long)duplicates);
+                [self showPermissionsMessage];
+                //clean contacts
                 [recipientsController.contactsList removeAllObjects];
-                if(cleanList!=nil && cleanList.count > 0) {
-                   [recipientsController.contactsList addObjectsFromArray:cleanList];
-                }
-                
-                [self loadContactsFromCoreDataOnly];
-                
-                //load native groups, from icloud
-                NSMutableArray *groupsFromICloud = [self loadGroups:addressBook];
-                if(groupsFromICloud!=nil && groupsFromICloud.count > 0) {
-                    [recipientsController.contactsList addObjectsFromArray:groupsFromICloud];
-                }
-                
-                //load also the groups
-                NSMutableArray *groupsFromDB = [self fetchGroupRecords];
-                
-                if(groupsFromDB!=nil && groupsFromDB.count > 0) {
-                  [recipientsController.contactsList addObjectsFromArray:groupsFromDB];
-                }
-                
+                //clean groups
                 [recipientsController.groupsList removeAllObjects];
                 [recipientsController.groupsNamesArray removeAllObjects];
                 
+                //still load these anyway, no need permissions
+                [self loadContactsFromCoreDataOnly];
+                
+                //main thread
+                //load also the groups
+                [self loadGroupsFromCoredDataOnly];
+                //refresh the phone book
                 [recipientsController refreshPhonebook:nil];
                 
-            }
+            });
             
- 
-        });
-        
-    }
-    else if (ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusAuthorized) {
-        NSLog(@"previously granted permission");
-        // The user has previously given access, add the contact
-        contacts = [self loadContacts: addressBook];
-        
-        NSMutableArray *cleanList = [[NSMutableArray alloc] init];
-        NSInteger duplicates = 0;
-        //auxiliar list to check for duplicates (might slow down stuff)
-        for(Contact *c in contacts) {
-            c.isNative = true;
-            if(![cleanList containsObject:c] && c!=nil) {
-                [cleanList addObject:c];
-            }
-            else {
-                duplicates++;
-            }
+            
         }
-        
-        [recipientsController.contactsList removeAllObjects];
-        
-        if(cleanList!=nil && cleanList.count > 0) {
-           [recipientsController.contactsList addObjectsFromArray:cleanList];
-        }
-        
-        NSLog(@"readed %ld contacts from local address book, but will only add %ld",(unsigned long)contacts.count, cleanList.count);
-        
-        NSLog(@"Skipped %ld duplicated contacts",(long)duplicates);
-        
-        [self loadContactsFromCoreDataOnly];
-        
-        //load native groups, from icloud
-        NSMutableArray *groupsFromICloud = [self loadGroups:addressBook];
-        if(groupsFromICloud!=nil && groupsFromICloud.count > 0) {
-            [recipientsController.contactsList addObjectsFromArray:groupsFromICloud];
-        }
-        
-        //load also the groups
-        NSMutableArray *groupsFromDB = [self fetchGroupRecords];
-        
-        if(groupsFromDB!=nil && groupsFromDB.count > 0) {
-          [recipientsController.contactsList addObjectsFromArray:groupsFromDB];
-        }
-        
-        [recipientsController.groupsList removeAllObjects];
-        [recipientsController.groupsNamesArray removeAllObjects];
-        
-        [recipientsController refreshPhonebook:nil];
-        
-        
-    }
-    else {
-        // The user has previously denied access
-        // Send an alert telling user to change privacy setting in settings app
-        if ( ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusDenied ||
-            ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusRestricted ) {
+        else {
+            
            
-            // Display an error.
-            [self showPermissionsMessage];
-            
-            //still load these anyway, no need permissions
-            [self loadContactsFromCoreDataOnly];
-            //load also the groups
-            NSMutableArray *groupsFromDB = [self fetchGroupRecords];
-            if(groupsFromDB!=nil && groupsFromDB.count > 0) {
-              [recipientsController.contactsList addObjectsFromArray:groupsFromDB];
-            }
-            
-            [recipientsController refreshPhonebook:nil];
+            [self showLoadingAnimation];
+         
+     
+              @try {
+                  
+                  //first we clean the lists
+                  [recipientsController.contactsList removeAllObjects];
+                  //clean contacts & groups
+                  [recipientsController.groupsList removeAllObjects];
+                  [recipientsController.groupsNamesArray removeAllObjects];
+                  
+                  //core data is read on main thread
+                  //load contacts
+                  [self loadContactsFromCoreDataOnly];
+                  //load groups
+                  [self loadGroupsFromCoredDataOnly];
+                  
+                  //load iCloud contacts
+                  dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
+                      
+                      NSLog(@"---START IMPORT---");
+                      
+                      NSMutableArray *contacts = [self loadContactsFromAddressBook: contactStore];
+                      
+                      if(contacts!=nil && contacts.count > 0) {
+                         [recipientsController.contactsList addObjectsFromArray:contacts];
+                      }
+                      
+                      //load icloud groups
+                      NSMutableArray *groupsFromICloud = [self loadGroupsFromAddressGroup:contactStore];
+                      if(groupsFromICloud!=nil && groupsFromICloud.count > 0) {
+                          [recipientsController.contactsList addObjectsFromArray:groupsFromICloud];
+                      }
+                      
+                      NSLog(@"---FINISH IMPORT---");
+                      
+                      
+                      dispatch_async(dispatch_get_main_queue(), ^(){
+                          
+                          //this must be done in main thread
+                          NSLog(@"---REFRESH PHONEBOOK LIST---");
+                          [self hideLoadingAnimation];
+                          [recipientsController refreshPhonebook:nil];
+                          
+                      });
+                       
+                  });
+              }@catch (NSException *err) {
+                  
+                  NSString *msg = [NSString stringWithFormat:@"Error loading contacts %@",err.description];
+                  NSLog(@"Error loading contacts %@", err.description);
+                  [self showAlertBox:msg];
+                  
+              }@finally {
+                  
+              }
+           
         }
+    }];
+  
+}
+
+//load groups from icloud
+-(NSMutableArray *) loadGroupsFromAddressGroup: (CNContactStore *) store {
+    //load native groups, from icloud
+
+    NSError *error;
+    NSArray *groups = [store groupsMatchingPredicate:nil error:&error];
+    
+    NSMutableArray *groupsFromICloud = [[NSMutableArray alloc] init];
+    
+    if (error) {
+        NSLog(@"error fetching groups %@", error);
+    } else {
         
+        NSLog(@"Loaded %lu groups from iCloud ", (unsigned long)groupsFromICloud.count);
+        //LOOP THROUGH THE CONTACTS
+        for (CNGroup *storeGroup in groups) {
+            
+            NSLog(@"LOADED GROUP NAMED %@", storeGroup.name);
+            //create the group object
+            Group *group = [[Group alloc] init];
+            group.email=@"";
+            group.name = storeGroup.name;
+            group.lastName = storeGroup.name;
+            group.person = nil;
+            group.person_new = nil;
+            
+            group.isNative = true;
+            group.isFavorite = false;
+            
+            
+            NSMutableArray *members = [self loadContactsFromGroup:storeGroup store:store];
+            
+            group.contactsList = members;
+            
+            [groupsFromICloud addObject:group];
+
+        }
     }
+
+    return groupsFromICloud;
  
-    CFRelease(addressBook);
-    
-    
+}
+
+-(void) loadGroupsFromCoredDataOnly {
+  //load also the groups
+  NSMutableArray *groupsFromDB = [self fetchGroupRecords];
+  
+  if(groupsFromDB!=nil && groupsFromDB.count > 0) {
+      [recipientsController.contactsList addObjectsFromArray:groupsFromDB];
+  }
+  
 }
 
 //get all the records from db
@@ -1668,6 +1668,305 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 
     return records;
     
+}
+
+-(void) showLoadingAnimation {
+    
+    NSString *message = [NSString stringWithFormat:@"%@...\n\n", NSLocalizedString(@"please_wait_while_load", nil) ];
+    pending = [UIAlertController alertControllerWithTitle:nil
+                                                                   message: message
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIActivityIndicatorView* indicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    indicator.color = [UIColor blackColor];
+    indicator.translatesAutoresizingMaskIntoConstraints=NO;
+    [pending.view addSubview:indicator];
+    NSDictionary * views = @{@"pending" : pending.view, @"indicator" : indicator};
+
+    NSArray * constraintsVertical = [NSLayoutConstraint constraintsWithVisualFormat:@"V:[indicator]-(20)-|" options:0 metrics:nil views:views];
+    NSArray * constraintsHorizontal = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[indicator]|" options:0 metrics:nil views:views];
+    NSArray * constraints = [constraintsVertical arrayByAddingObjectsFromArray:constraintsHorizontal];
+    [pending.view addConstraints:constraints];
+    [indicator setUserInteractionEnabled:NO];
+    [indicator startAnimating];
+    [self presentViewController:pending animated:YES completion:nil];
+}
+
+-(void) hideLoadingAnimation {
+    if(pending!=nil) {
+        [pending dismissViewControllerAnimated:YES completion:nil];
+    }
+  
+}
+//new approach to load teh address book
+-(NSMutableArray *) loadContactsFromAddressBook : (CNContactStore * ) store{
+    //https://gist.github.com/willthink/024f1394474e70904728
+    
+    
+    //get current date
+    NSDate * today = [NSDate date];
+    //tomorrow
+    NSDate *tomorrow = [NSDate dateWithTimeInterval:(24*60*60) sinceDate: today];
+    
+    //today date components
+    NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:today];
+    //tomorrow date components
+    NSDateComponents *componentsTomorrow = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate: tomorrow];
+
+        
+   //all contacts list
+    NSMutableArray *contacts = [[NSMutableArray alloc] init];
+        
+    //keys with fetching properties
+    NSArray *keys = @[CNContactFamilyNameKey, CNContactGivenNameKey, CNContactPhoneNumbersKey, CNContactEmailAddressesKey, CNContactImageDataKey, CNContactBirthdayKey];
+    NSString *containerId = store.defaultContainerIdentifier;
+    NSPredicate *predicate = [CNContact predicateForContactsInContainerWithIdentifier:containerId];
+    NSError *error;
+    
+    NSArray *cnContacts = [store unifiedContactsMatchingPredicate:predicate keysToFetch:keys error:&error];
+
+        if (error) {
+            NSLog(@"error fetching contacts %@", error);
+            return contacts; //empty list
+        } else {
+            
+            NSLog(@"Successfuly loaded %lu contacts" , (unsigned long)cnContacts.count);
+            //LOOP THROUGH THE CONTACTS
+            for (CNContact *storeContact in cnContacts) {
+                //our custom class
+                Contact *contact = [[Contact alloc] init];
+                if(storeContact.givenName!=nil) {
+                    contact.name = storeContact.givenName;
+                }
+                
+                if(storeContact.familyName!=nil) {
+                    contact.lastName = storeContact.familyName;
+                }
+                //check birth date and set reminder if any
+                NSDateComponents *componentsBirthDate = storeContact.birthday;
+                if(componentsBirthDate!=nil) {
+
+                    //NSDateFormatter *f = [[NSDateFormatter alloc]init];
+                    //[f setDateFormat:@"MMMM dd,yyyy"]
+                    contact.birthday = componentsBirthDate.date;
+                    
+                 
+                    //we have a birthday today
+                    if(components.day == componentsBirthDate.day && components.month == componentsBirthDate.month) {
+                        //TODO also send the email or other field... ate the end we need to prefill the message and pre-select the recipient
+                        //so we need to clearly identify it
+                        
+                        [self scheduleNotification: @"birthday" nameOfContact: contact.name month: components.month day: components.day fireDelayInSeconds:60];
+                        
+                    }
+                    //we have a birthday tomorrow
+                    else if(componentsTomorrow.day == componentsBirthDate.day && componentsTomorrow.month == componentsBirthDate.month) {
+                        
+                        //TODO also send the email or other field... ate the end we need to prefill the message and pre-select the recipient
+                        //so we need to clearly identify it
+                        
+                        [self scheduleNotification: @"birthday" nameOfContact: contact.name month: componentsTomorrow.month day: componentsTomorrow.day fireDelayInSeconds:(24*60*60)];
+                        
+                    } else {
+                        
+                        NSTimeInterval secondsBetween = [componentsBirthDate.date timeIntervalSinceDate:components.date];
+                        
+                        [self scheduleNotification: @"birthday" nameOfContact: contact.name month: componentsBirthDate.month day: componentsBirthDate.day fireDelayInSeconds: fabs(secondsBetween)];
+                    }
+                    
+                }
+                
+                //save the reference for the CNContact
+                contact.person_new = storeContact; //probably a really bad idea
+                contact.isNative = true;
+                contact.isFavorite = false;//false for native ones
+                
+                //read the email
+                NSInteger countEmails = storeContact.emailAddresses.count;
+                for (CNLabeledValue *label in storeContact.emailAddresses) {
+                    NSString *email = [label.value stringValue];
+                    if ([email length] > 0) {
+                        //we just grab the first one on the list as the preferred one
+                        if(contact.email == nil) {
+                           contact.email  = email;
+                        } else {
+                            
+                            //add the other alternatives
+                            if(contact.alternateEmails == nil) {
+                                //multiple emails
+                                contact.alternateEmails = [[NSMutableArray alloc] initWithCapacity:countEmails-1];
+                            }
+                            //always add
+                            [contact.alternateEmails addObject:email];
+                            
+                        }
+                        //break; //just read 1 email field
+                    }
+                }
+                
+                //read the phone number
+                NSInteger countPhones = storeContact.phoneNumbers.count;
+                for (CNLabeledValue *label in storeContact.phoneNumbers) {
+                    NSString *phone = [label.value stringValue];
+                    if ([phone length] > 0) {
+                        if(contact.phone == nil) {
+                           contact.phone = phone;
+                        } else {
+                            
+                            if(contact.alternatePhones == nil) {
+                                contact.alternatePhones = [[NSMutableArray alloc] initWithCapacity:countPhones-1];
+                            }
+                            [contact.alternatePhones addObject:phone];
+                        }
+                    }
+                }
+                
+                //try to get the photo if available
+                if(storeContact.imageData!=nil) {
+                      contact.photo = [UIImage imageWithData:storeContact.imageData];
+                }
+                
+                if(contact.phone!=nil || contact.email!=nil) {
+                    
+                    //check for blanks (only phone number for instance, no name
+                    if(contact.name == nil || [[contact.name stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] == 0) {
+                        contact.name = (contact.phone!= nil ? contact.phone : contact.email);
+                    }
+                }
+                //add it to the list
+                [contacts addObject:contact];
+                
+                
+            }//end for loop
+            
+           
+            
+            //DO THE HAVY WORK HERE!
+            NSMutableArray *cleanList = [[NSMutableArray alloc] init];
+
+            
+            NSInteger duplicates = 0;
+            //auxiliar list to check for duplicates (might slow down stuff)
+            for(Contact *c in contacts) {
+                c.isNative = true;
+                if(![cleanList containsObject:c] && c!=nil) {
+                    [cleanList addObject:c];
+                }
+                else {
+                    duplicates++;
+                }
+            }
+            
+            NSLog(@"readed %ld contacts from local address book, but will only add %lu",(unsigned long)contacts.count, (unsigned long)cleanList.count);
+            
+            NSLog(@"Skipped %ld duplicated contacts",(long)duplicates);
+            
+            return cleanList;
+               
+        }
+    
+   
+}
+/**
+ Load contacts inside a group iCloud
+ */
+-(NSMutableArray *) loadContactsFromGroup: (CNGroup *) storeGroup store:(CNContactStore*) store{
+    
+    NSMutableArray *members = nil;
+    //NSLog(@"GROUP IDENTIFIER %@", storeGroup.identifier);
+    
+    //CNContactStore* newStore = [[CNContactStore alloc] init];
+    NSPredicate *predicateGroupMembers = [CNContact predicateForContactsInGroupWithIdentifier:storeGroup.identifier];
+    NSArray *keysGroups = @[CNContactFamilyNameKey, CNContactGivenNameKey, CNContactPhoneNumbersKey, CNContactEmailAddressesKey, CNContactImageDataKey, CNContactBirthdayKey];
+    // @[CNContactFamilyNameKey, CNContactGivenNameKey, CNContactPhoneNumbersKey, CNContactEmailAddressesKey];
+    NSError *errorMembers;
+    
+    NSArray *cnContactsInGroup = [store unifiedContactsMatchingPredicate:predicateGroupMembers keysToFetch:keysGroups error:&errorMembers];
+    if(errorMembers!=nil) {
+     //parse the elements of the group
+        NSLog(@"ERROR parse the elements of the group %@", errorMembers.description);
+    }
+    else {
+        members = [[NSMutableArray alloc] initWithCapacity:cnContactsInGroup.count];
+        //NSLog(@"GROUP NAMED %@ has %lu members ", storeGroup.name, (unsigned long)cnContactsInGroup.count);
+        for (CNContact *storeContact in cnContactsInGroup) {
+            //our custom class
+            Contact *contact = [[Contact alloc] init];
+            if(storeContact.givenName!=nil) {
+                contact.name = storeContact.givenName;
+            }
+            
+            if(storeContact.familyName!=nil) {
+                contact.lastName = storeContact.familyName;
+            }
+            
+            
+            //save the reference for the CNContact
+            contact.person_new = storeContact; //probably a really bad idea
+            contact.isNative = true;
+            contact.isFavorite = false;//false for native ones
+            
+            //read the email
+            NSInteger countEmails = storeContact.emailAddresses.count;
+            for (CNLabeledValue *label in storeContact.emailAddresses) {
+                NSString *email = [label.value stringValue];
+                if ([email length] > 0) {
+                    //we just grab the first one on the list as the preferred one
+                    if(contact.email == nil) {
+                       contact.email  = email;
+                    } else {
+                        
+                        //add the other alternatives
+                        if(contact.alternateEmails == nil) {
+                            //multiple emails
+                            contact.alternateEmails = [[NSMutableArray alloc] initWithCapacity:countEmails-1];
+                        }
+                        //always add
+                        [contact.alternateEmails addObject:email];
+                        
+                    }
+                    //break; //just read 1 email field
+                }
+            }
+            
+            //read the phone number
+            NSInteger countPhones = storeContact.phoneNumbers.count;
+            for (CNLabeledValue *label in storeContact.phoneNumbers) {
+                NSString *phone = [label.value stringValue];
+                if ([phone length] > 0) {
+                    if(contact.phone == nil) {
+                       contact.phone = phone;
+                    } else {
+                        
+                        if(contact.alternatePhones == nil) {
+                            contact.alternatePhones = [[NSMutableArray alloc] initWithCapacity:countPhones-1];
+                        }
+                        [contact.alternatePhones addObject:phone];
+                    }
+                }
+            }
+            
+            //try to get the photo if available
+            if(storeContact.imageData!=nil) {
+                  contact.photo = [UIImage imageWithData:storeContact.imageData];
+            }
+            
+            if(contact.phone!=nil || contact.email!=nil) {
+                
+                //check for blanks (only phone number for instance, no name
+                if(contact.name == nil || [[contact.name stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] == 0) {
+                    contact.name = (contact.phone!= nil ? contact.phone : contact.email);
+                }
+            }
+            //add it to the list
+            [members addObject:contact];
+            
+            
+        }//end for loop
+    }
+    if(members == nil) {
+        members = [[NSMutableArray alloc] init];//cannot be nil? TODO check
+    }
+    return members;
 }
 
 
@@ -2119,7 +2418,10 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                 
             } else {
                 //send both is selected and i did not sent any email due to settings
-                [self sendSMS:nil];
+                self.messageRecipients = [self getPhoneNumbers];
+                if(self.messageRecipients.count > 0) {
+                    [self sendSMS:nil isRecursive:false];
+                }
             }
             
             
@@ -2174,8 +2476,11 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                 [alert show];
             }
         } else {
-                //send both is selected and i did not sent any email
-            [self sendSMS:nil];
+            //send both is selected and i did not sent any email
+            self.messageRecipients = [self getPhoneNumbers];
+            if(self.messageRecipients.count > 0) {
+               [self sendSMS:nil isRecursive:false];
+            }
         }
     }
     
@@ -2233,7 +2538,10 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     //#define OPTION_SEND_SMS_ONLY_ID         2
     
     if(settingsController.selectSendOption == OPTION_ALWAYS_SEND_BOTH_ID ) {//OPTION_ALWAYS_SEND_BOTH
-        [self sendSMS:nil];
+        self.messageRecipients = [self getPhoneNumbers];
+        if(self.messageRecipients.count > 0) {
+            [self sendSMS:nil isRecursive:false];
+        }
     }
     else {
         //not sending to social media, ask for review?
@@ -2286,24 +2594,91 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 			break;
 		case MessageComposeResultFailed:
         {
-            msg = NSLocalizedString(@"message_sms_unable_compose",@"Unable to compose SMS");
-			//if failed twice in a row offer some help
-            if([self getNumberOfMessageFailures] >=3) {
-                [self popupAboutMessageFailure:@"sms"];
+            //just try to go to the next one
+            //TODO CONTINUE
+            if( [settingsController forceIndividualSMS] && [self stillHasRecipientsLeft] ) {
+                
+                //how many are left?
+                //if more than 1 i can still remove the last one and go to next
+                if(self.messageRecipients.count > 1) {
+                    
+                    NSUInteger indexToRemove = self.messageRecipients.count - 1;
+                    [self.messageRecipients removeObjectAtIndex:indexToRemove];
+                    msg = nil;
+                    
+                    [self dismissViewControllerAnimated:YES completion:nil];
+                    
+                    [self sendSMS:nil isRecursive:true];
+                    
+                } else {
+                    //only 1 left, it was the one just sent
+                    [self.messageRecipients removeAllObjects];
+                    msg = NSLocalizedString(@"message_sms_sent",@"SMS sent");
+                    smsSentOK = YES;
+                    [self resetMessageFailuresCounter];
+                    
+                }
+                
+                break;
+                
+            } else {
+                //IT FAILED!!!
+                msg = NSLocalizedString(@"message_sms_unable_compose",@"Unable to compose SMS");
+                
+                //if failed twice in a row offer some help
+                if([self getNumberOfMessageFailures] >=3) {
+                    [self popupAboutMessageFailure:@"sms"];
+                }
+                
+                break;
             }
-            break;
         }
 		case MessageComposeResultSent:
         {
-            msg = NSLocalizedString(@"message_sms_sent",@"SMS sent");
-            smsSentOK = YES;
-            [self resetMessageFailuresCounter];
-			break;
+            if( [settingsController forceIndividualSMS] && [self stillHasRecipientsLeft] ) {
+                         
+                         //how many are left?
+                         //if more than 1 i can still remove the last one and go to next
+                         if(self.messageRecipients.count > 1) {
+                             
+                             NSUInteger indexToRemove = self.messageRecipients.count - 1;
+                             [self.messageRecipients removeObjectAtIndex:indexToRemove];
+                             msg = nil;
+                             //no completion yet
+                             [self dismissViewControllerAnimated:YES completion:nil];
+                             
+                             [self sendSMS:nil isRecursive:true];
+                             
+                         } else {
+                             
+                             
+                            //only 1 left, it was the one just sent
+                             [self.messageRecipients removeAllObjects];
+                             msg = NSLocalizedString(@"message_sms_sent",@"SMS sent");
+                             smsSentOK = YES;
+                             [self resetMessageFailuresCounter];
+            
+                         }
+                         
+                         break;
+                         
+                     } else {
+                         
+                         //all done!!!
+                         msg = NSLocalizedString(@"message_sms_sent",@"SMS sent");
+                         smsSentOK = YES;
+                         [self resetMessageFailuresCounter];
+                         
+                         break;
+                     }
         }
 		default:
 			break;
 	}
     if(msg!=nil) {
+        
+        [self dismissViewControllerAnimated:YES completion:^{[self doSocialNetworksIfSelected];}];
+               
         [[[[iToast makeText:msg]
            setGravity:iToastGravityBottom] setDuration:1000] show];
     }
@@ -2508,15 +2883,37 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     return [message rangeOfString:@"EasyMessage"].location !=NSNotFound ;
 }
 
--(IBAction)sendSMS:(id)sender {
+//so i know if i should keep repeating the call
+-(BOOL) stillHasRecipientsLeft {
+    return (self.messageRecipients!= nil && self.messageRecipients.count > 0);
+}
+//the isRecursive is TRUE if called from the message delegate (either success or fail for a recipient)
+//otherwise is always FALSE
+-(IBAction)sendSMS:(id)sender isRecursive:(BOOL) isRecursive {
     
  MFMessageComposeViewController *controller = [[MFMessageComposeViewController alloc] init];
     
  if([MFMessageComposeViewController canSendText]) {
     
+    //check the setting TODO should be done only once no??
+     BOOL sendOneByOne = [settingsController forceIndividualSMS];
+     
+    //how many left?
+    NSUInteger count = (self.messageRecipients!= nil) ? self.messageRecipients.count : 0 ;
+     
     NSMutableArray *recipients = [self getPhoneNumbers];
 
-    if(recipients.count>0) {
+    if(self.messageRecipients!=nil && self.messageRecipients.count>0) {
+        
+        NSMutableArray *recipients = [[NSMutableArray alloc] init];
+        //start backwards, LIFO
+        if(sendOneByOne) {
+            //either failing or succedding, the last one is the one to remove
+            [recipients addObject: [self.messageRecipients objectAtIndex:(count-1)] ];
+        } else {
+            //add them all and send them all at once
+            [recipients addObjectsFromArray:self.messageRecipients];
+        }
         
         controller.body = body.text;
         controller.recipients = recipients;

@@ -151,7 +151,7 @@
 "ask_to_rate" = "Jika anda menyukai Easy Message, maukah anda memberikan rating kepada aplikasi ini?";
 "groups" = "Grup";
 "members" = "anggota";
-"imessage_warn" = "Jika Anda ingin mengirim pesan grup melalui SMS, Anda harus mempertimbangkan untuk menonaktifkan iMessage dan MMS pada pengaturan ponsel Anda terlebih dahulu. Ini akan memastikan bahwa pesan dikirim secara individual.";
+"imessage_warn" = "Jika Anda ingin mengirim pesan grup melalui SMS, Anda harus mempertimbangkan untuk menonaktifkan iMessage dan MMS pada pengaturan ponsel Anda terlebih dahulu. Ini akan memastikan bahwa pesan dikirim secara individual. Sebagai alternatif yang lebih andal, Anda juga dapat memilih opsi 'Paksa SMS individu' pada tab 'Pengaturan'";
 "edit" = "Meredaksi";
 "update_contact" = "Ubah kontak";
 "no_recipients" = "Tidak ada penerima yang dipilih";
@@ -178,3 +178,8 @@
 "restore_from_scheduled"="Aplikasi sekarang akan mengisi ulang bidang sesuai dengan pesan yang dijadwalkan, mengembalikan pengaturan layanan Anda dan penerima dari saat Anda schedulled itu. Karena ini dapat memengaruhi pengaturan Anda saat ini, Anda mungkin ingin memeriksanya untuk pesan Anda berikutnya";
 "generic_error"="Terjadi kesalahan!";
 "offer_help"="Tampaknya Anda mengalami masalah saat mengirim pesan. Apakah Anda ingin melihat FAQ kami? Kami juga memiliki video tutorial kecil untuk membantu Anda (Anda harus memiliki koneksi Internet). Jika Anda masih membutuhkan bantuan setelah memeriksa sumber daya ini, jangan ragu dan hubungi kami.";
+"force_sms_individually" = "Paksa masing-masing SMS";
+"persistence_store_error" = "Ada kesalahan fatal saat membuat datastore. Silakan gunakan tombol 'home' untuk mengakhiri aplikasi";
+"force_sms_individually_warning" = "Dengan memilih opsi ini, Anda menjamin dengan 100% yakin bahwa pesan teks dikirim secara independen ke masing-masing penerima. Namun (karena kebijakan privasi Apple), satu-satunya cara untuk mencapai perilaku ini, mengharuskan Anda mengkonfirmasi setiap pengiriman pesan secara terpisah dengan menekan tombol kirim. Sebagai contoh; jika Anda mengirim ke grup yang terdiri dari 50 penerima, Anda harus mengonfirmasinya 50 kali. Juga jangan lupa untuk membuat pesan Anda singkat dan selesai!";
+"advanced_options" = "Opsi Tingkat Lanjut";
+"please_wait_while_load" = "Harap tunggu saat memuat kontak";

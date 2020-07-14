@@ -188,7 +188,9 @@
         center.delegate = self;
         [center requestAuthorizationWithOptions:(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge) completionHandler:^(BOOL granted, NSError * _Nullable error){
             if(!error){
-                [[UIApplication sharedApplication] registerForRemoteNotifications];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [[UIApplication sharedApplication] registerForRemoteNotifications];
+                });
             }
         }];
     }
@@ -198,7 +200,9 @@
         {
             // for iOS 8
             [[UIApplication sharedApplication]  registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge) categories:nil]];
-            [[UIApplication sharedApplication]  registerForRemoteNotifications];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[UIApplication sharedApplication] registerForRemoteNotifications];
+            });
         }
     }
 }
@@ -236,18 +240,18 @@
     //Get notification type
     NSString *notificationType = [notification.userInfo valueForKey:@"type"];
     //notificationType as: message, friend Request, video call, Audio call.
-    NSLog(@"notification type %@",notificationType);
+    //NSLog(@"notification type %@",notificationType);
     
     if ([notificationType isEqualToString:NOTIFICATION_TYPE_BIRTHDAY]) {
         
-        NSLog(@"prefill load message aniversary...");
+        //NSLog(@"prefill load message aniversary...");
         
         NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
         
         NSString *day = [notification.userInfo valueForKey:@"day"];
         NSString *month = [notification.userInfo valueForKey:@"month"];
         //name of the contact
-        NSString *name = [notification.userInfo valueForKey:@"name"];
+        //NSString *name = [notification.userInfo valueForKey:@"name"];
         
         [defaults setObject:NSLocalizedString(@"custom_msg_birthday",@"Happy Birthday") forKey:@"prefillMessage"];
         [defaults setObject:@"birthday" forKey:@"prefillMessageType"];
@@ -259,9 +263,9 @@
         [self.viewController checkForPrefilledMessage];
     } else if ([notificationType isEqualToString:NOTIFICATION_TYPE_SCHEDULED_MESSAGE]) {
         
-        NSLog(@"prefill scheduled message..");
+        //NSLog(@"prefill scheduled message..");
         
-        NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
+        //NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
         
         NSString *notificationIdentifier = [notification.userInfo valueForKey:@"identifier"];
         
@@ -280,6 +284,8 @@
 -(void) scheduleNotification: (NSString *) type nameOfContact: name month: (NSInteger) month day: (NSInteger) day fireDelayInSeconds: (NSTimeInterval) delay{
     //Get all previous notifications..
     //NSLog(@"scheduled notifications: %@", [[UIApplication sharedApplication] scheduledLocalNotifications]);
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
     
     NSArray *notifications = [[UIApplication sharedApplication] scheduledLocalNotifications];
     
@@ -339,6 +345,8 @@
     }//else do other cases on other releases
     
     [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
+        
+    });
 }
 
 /**
@@ -435,7 +443,13 @@
          Check the error message to determine what the actual problem was.
          */
         NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-        abort();
+        
+        //TODO instruct the user to quit the application by pressing the Home button.
+        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                         message:NSLocalizedString(@"persistence_store_error",@"persistence_store_error")
+                                                        delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        [alert show];
+        //abort();
     }
     
     return persistentStoreCoordinator;
