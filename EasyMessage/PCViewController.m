@@ -1378,8 +1378,12 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         }
         else {
             
+            //always call this on the main thread
+            dispatch_async(dispatch_get_main_queue(), ^(){
            
-            [self showLoadingAnimation];
+                [self showLoadingAnimation];
+                
+            });
          
      
               @try {
@@ -1685,10 +1689,12 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     NSArray * constraintsVertical = [NSLayoutConstraint constraintsWithVisualFormat:@"V:[indicator]-(20)-|" options:0 metrics:nil views:views];
     NSArray * constraintsHorizontal = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[indicator]|" options:0 metrics:nil views:views];
     NSArray * constraints = [constraintsVertical arrayByAddingObjectsFromArray:constraintsHorizontal];
+    
     [pending.view addConstraints:constraints];
     [indicator setUserInteractionEnabled:NO];
     [indicator startAnimating];
     [self presentViewController:pending animated:YES completion:nil];
+    
 }
 
 -(void) hideLoadingAnimation {
