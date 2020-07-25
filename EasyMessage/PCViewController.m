@@ -1789,7 +1789,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                 //read the email
                 NSInteger countEmails = storeContact.emailAddresses.count;
                 for (CNLabeledValue *label in storeContact.emailAddresses) {
-                    NSString *email = [label.value stringValue];
+                    NSString *email = [label.value isKindOfClass: NSString.class] ? label.value : [label.value stringValue];
                     if ([email length] > 0) {
                         //we just grab the first one on the list as the preferred one
                         if(contact.email == nil) {
@@ -1812,7 +1812,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                 //read the phone number
                 NSInteger countPhones = storeContact.phoneNumbers.count;
                 for (CNLabeledValue *label in storeContact.phoneNumbers) {
-                    NSString *phone = [label.value stringValue];
+                    NSString *phone = [label.value isKindOfClass: NSString.class] ? label.value : [label.value stringValue];
                     if ([phone length] > 0) {
                         if(contact.phone == nil) {
                            contact.phone = phone;
@@ -1914,7 +1914,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             //read the email
             NSInteger countEmails = storeContact.emailAddresses.count;
             for (CNLabeledValue *label in storeContact.emailAddresses) {
-                NSString *email = [label.value stringValue];
+                NSString *email = [label.value isKindOfClass: NSString.class] ? label.value : [label.value stringValue];
                 if ([email length] > 0) {
                     //we just grab the first one on the list as the preferred one
                     if(contact.email == nil) {
@@ -1937,7 +1937,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             //read the phone number
             NSInteger countPhones = storeContact.phoneNumbers.count;
             for (CNLabeledValue *label in storeContact.phoneNumbers) {
-                NSString *phone = [label.value stringValue];
+                NSString *phone = [label.value isKindOfClass: NSString.class] ? label.value : [label.value stringValue];
                 if ([phone length] > 0) {
                     if(contact.phone == nil) {
                        contact.phone = phone;
