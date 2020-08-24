@@ -321,7 +321,7 @@
     
     if([type isEqualToString:NOTIFICATION_TYPE_BIRTHDAY]) {
         
-        NSLog(@"birthday notification fire date: %@ ",[SetAlarmAt description]);
+        //NSLog(@"birthday notification fire date: %@ ",[SetAlarmAt description]);
         
         //aniversary_of
         NSString *message = [NSString stringWithFormat: NSLocalizedString(@"aniversary_of", @"aniversary_of"), name];

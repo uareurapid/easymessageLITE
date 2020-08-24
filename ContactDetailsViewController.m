@@ -43,6 +43,7 @@
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    self.tableView.allowsSelection = false;
 }
 
 //handle tooltips on view appear and disapear
@@ -94,6 +95,9 @@
         self.navigationItem.rightBarButtonItem = optionsButton;
         self.navigationItem.backBarButtonItem.tintColor = UIColor.whiteColor;
     }
+    
+    [self searchForFavoritePhone];
+    [self searchForFavoriteEmail];
     return self;
 }
 
@@ -112,6 +116,9 @@
         self.navigationItem.backBarButtonItem.tintColor = UIColor.whiteColor;
         
     }
+    [self searchForFavoritePhone];
+    [self searchForFavoriteEmail];
+    
     return self;
 }
 
@@ -716,40 +723,89 @@
                 //either phone or email
                 if(contact.email!=nil) {
                     cell.textLabel.text = [NSString stringWithFormat:@"Email: %@", contact.email];
+                    
+                    if(contact.alternateEmails!=nil && contact.alternateEmails.count > 0) {
+                       cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"fav30"]];
+                    }
+                    
                 }
                 else if(contact.phone!=nil) {
                     cell.textLabel.text = [NSString stringWithFormat:@"%@: %@", NSLocalizedString(@"phone_label",@"Phone"),contact.phone ];
+                    
+                    if(contact.alternatePhones!=nil && contact.alternatePhones.count > 0) {
+                       cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"fav30"]];
+                    }
                 }
+                
+                
             
             }
             else {
                 if(contact.phone!=nil) {
                     cell.textLabel.text = [NSString stringWithFormat:@"%@: %@", NSLocalizedString(@"phone_label",@"Phone"),contact.phone ];
+                    //only show fav icon if have alternates
+                    if(contact.alternatePhones!=nil && contact.alternatePhones.count > 0) {
+                       cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"fav30"]];
+                    }
+                    
+                   
                 }
                 else if(contact.email!=nil) {
                     cell.textLabel.text =  [NSString stringWithFormat:@"Email: %@", contact.email];
+                    
+                    if(contact.alternateEmails!=nil && contact.alternateEmails.count > 0) {
+                       cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"fav30"]];
+                    }
                 }
+                
             }
             
         } else if(section == 1) {
             
             NSInteger altPhones = [contact hasAlternatePhones] ? contact.alternatePhones.count : 0;
             NSInteger altEmails = [contact hasAlternateEmails] ? contact.alternateEmails.count : 0;
+            
+            //if have both alternates phones and emails section 1 is for phones
             if(altPhones > 0 && altEmails > 0) {
                 //show alternate phones here
                 if(row < contact.alternatePhones.count ) {
                     cell.textLabel.text = [contact.alternatePhones objectAtIndex:row];
+                    
+                    cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"unfav30"]];
+                    cell.accessoryView.userInteractionEnabled = true;
+                    UITapGestureRecognizer *touch = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(favPhoneTouched:)];
+                    
+                    
+                    [cell.accessoryView addGestureRecognizer:touch];
+                    [cell.accessoryView setTag: (100 + row)];
                 }
                 
                 
             } else if(altPhones > 0) {
                 if(row < contact.alternatePhones.count ) {
                     cell.textLabel.text = [contact.alternatePhones objectAtIndex:row];
+                    
+                    cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"unfav30"]];
+                    cell.accessoryView.userInteractionEnabled = true;
+                    UITapGestureRecognizer *touch = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(favPhoneTouched:) ];
+                    
+                    
+                    [cell.accessoryView addGestureRecognizer:touch];
+                    [cell.accessoryView setTag: (100 + row)];
+                    
                 }
             } else {
                 //altEmails > 0
                 if(row < contact.alternateEmails.count ) {
                     cell.textLabel.text = [contact.alternateEmails objectAtIndex:row];
+                    
+                    cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"unfav30"]];
+                    cell.accessoryView.userInteractionEnabled = true;
+                    UITapGestureRecognizer *touch = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(favEmailTouched:) ];
+                    
+            
+                    [cell.accessoryView addGestureRecognizer:touch];
+                    [cell.accessoryView setTag:(100 + row)];
                 }
             }
             
@@ -757,6 +813,13 @@
             //section 2 is jus emails
             if(row < contact.alternateEmails.count ) {
                 cell.textLabel.text = [contact.alternateEmails objectAtIndex:row];
+                
+                cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"unfav30"]];
+                cell.accessoryView.userInteractionEnabled = true;
+                UITapGestureRecognizer *touch = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(favEmailTouched:) ];
+            
+                [cell.accessoryView addGestureRecognizer:touch];
+                [cell.accessoryView setTag:(200 + row)];
             }
         }
         
@@ -766,6 +829,201 @@
     }
     
     return cell;
+}
+
+-(IBAction) favPhoneTouched:(UIGestureRecognizer *)recognizer{
+  
+    NSInteger tag = recognizer.view.tag;
+    NSInteger section = 1;
+    NSInteger row = 0;
+    if(tag >= 200) {
+        section = 2;
+        row = tag - 200;
+    } else {
+        row = tag - 100;
+    }
+    
+    UIAlertController *alertCtrl = [UIAlertController alertControllerWithTitle: NSLocalizedString(@"set_as_prefered_phone", nil)];
+           message:nil
+    preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *phoneTouched = [UIAlertAction actionWithTitle:@"OK"
+            style:UIAlertActionStyleDefault
+              handler:^(UIAlertAction *action)
+                {
+        
+                        NSString *phone = self.contact.phone;
+                        if(row < self.contact.alternatePhones.count) {
+                            
+                            NSString *key = [NSString stringWithFormat:@"prefered_phone_%@", contact.descriptionKey ];
+                            
+                            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+                            
+                            
+                            
+                            NSString *alternate = [self.contact.alternatePhones  objectAtIndex:row];
+                            self.contact.phone = alternate;
+                            [self.contact.alternatePhones removeObjectAtIndex:row];
+                            [self.contact.alternatePhones addObject:phone];
+                            
+                            [defaults setValue:alternate forKey:key];
+                        
+                            
+                            [alertCtrl dismissViewControllerAnimated:YES completion:nil];
+                            
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                [self.tableView reloadData];
+                            });
+                        }
+                }];
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+        style:UIAlertActionStyleDefault
+          handler:^(UIAlertAction *action)
+            {
+                [alertCtrl dismissViewControllerAnimated:YES completion:nil];
+            }];
+    
+    [alertCtrl addAction:phoneTouched];
+    [alertCtrl addAction:cancel];
+    [self presentViewController:alertCtrl animated:YES completion:nil];
+}
+
+-(IBAction) favEmailTouched:(UIGestureRecognizer *)recognizer{
+    NSInteger tag = recognizer.view.tag;
+    NSInteger section = 1;
+    NSInteger row = 0;
+    if(tag >= 200) {
+        section = 2;
+        row = tag - 200;
+    } else {
+        row = tag - 100;
+    }
+    
+    
+    UIAlertController *alertCtrl = [UIAlertController alertControllerWithTitle: NSLocalizedString(@"set_as_prefered_email", nil)];
+           message:nil
+    preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *emailTouched = [UIAlertAction actionWithTitle:NSLocalizedString(@"save", nil)];
+            style:UIAlertActionStyleDefault
+              handler:^(UIAlertAction *action)
+                {
+
+                    NSString *email = self.contact.email;
+                    if(row < self.contact.alternateEmails.count) {
+                        
+                        NSString *key = [NSString stringWithFormat:@"prefered_email_%@", contact.descriptionKey ];
+                        
+                        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+                        
+                        
+                        
+                        NSString *alternate = [self.contact.alternateEmails  objectAtIndex:row];
+                        self.contact.email = alternate;
+                        [self.contact.alternateEmails removeObjectAtIndex:row];
+                        [self.contact.alternateEmails addObject:email];
+                        
+                        [defaults setValue:alternate forKey:key];
+                        
+                        [alertCtrl dismissViewControllerAnimated:YES completion:nil];
+                        
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            [self.tableView reloadData];
+                        });
+                    }
+                }];
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:NSLocalizedString(@"cancel", nil)];
+        style:UIAlertActionStyleDefault
+          handler:^(UIAlertAction *action)
+            {
+                [alertCtrl dismissViewControllerAnimated:YES completion:nil];
+            }];
+    
+    [alertCtrl addAction:emailTouched];
+    [alertCtrl addAction:cancel];
+    [self presentViewController:alertCtrl animated:YES completion:nil];
+}
+
+-(void) searchForFavoritePhone {
+    if(self.contact!=nil && self.contact.alternatePhones!=nil && self.contact.alternatePhones.count > 0) {
+        
+     
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        NSString *key = [NSString stringWithFormat:@"prefered_phone_%@", contact.descriptionKey ];
+
+        //we have a key?
+        if([defaults valueForKey:key]!=nil) {
+            NSString *favourite = [defaults valueForKey:key];
+            
+            if(self.contact.phone!=nil && ![self.contact.phone isEqualToString:favourite]) {
+                
+                NSString *defaultPhone = self.contact.phone;
+               //the one currently set as default phone is not the favorite one
+                
+                NSUInteger index = -1;
+                NSInteger idx = 0;
+                NSString *alternate = nil;
+                //find where the alternate is located in the array of alternates, for the swap
+                for(idx = 0; idx < self.contact.alternatePhones.count; idx++) {
+                    alternate  =  [self.contact.alternatePhones objectAtIndex:idx];
+                    
+                    //found it
+                    if(alternate!=nil && [alternate isEqualToString:favourite]) {
+                      //swap them now
+                        index = idx;
+                        self.contact.phone = favourite;
+                        [self.contact.alternatePhones removeObjectAtIndex:index];
+                        [self.contact.alternatePhones addObject:defaultPhone];
+                        return;
+                    }
+                }
+                
+               
+            }
+        }
+        
+    }
+}
+
+-(void) searchForFavoriteEmail {
+    if(self.contact!=nil && self.contact.alternateEmails!=nil && self.contact.alternateEmails.count > 0) {
+        
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        NSString *key = [NSString stringWithFormat:@"prefered_email_%@", contact.descriptionKey];
+       
+        //we have a key?
+        if([defaults valueForKey:key]!=nil) {
+            NSString *favourite = [defaults valueForKey:key];
+         
+            if(self.contact.email!=nil && ![self.contact.email isEqualToString:favourite]) {
+                
+                NSString *defaultEmail = self.contact.email;
+               //the one currently set as default email is not the favorite one
+                
+                NSUInteger index = -1;
+                NSInteger idx = 0;
+                NSString *alternate = nil;
+                //find where the alternate is located in the array of alternates, for the swap
+                for(idx = 0; idx < self.contact.alternateEmails.count; idx++) {
+                    alternate  =  [self.contact.alternateEmails objectAtIndex:idx];
+
+                    //found it
+                    if(alternate!=nil && [alternate isEqualToString:favourite]) {
+                      //swap them now
+                        index = idx;
+                        self.contact.email = favourite;
+                        [self.contact.alternateEmails removeObjectAtIndex:index];
+                        [self.contact.alternateEmails addObject:defaultEmail];
+                        return;
+                    }
+                }
+
+            }
+        }
+        
+    }
 }
 
 -(IBAction) deleteContactClicked:(id)sender {

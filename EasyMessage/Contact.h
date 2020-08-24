@@ -36,6 +36,11 @@
 
 @property (assign,nonatomic) BOOL isNative;
 
+-(NSString *) descriptionKey;
+
+-(NSString *) getFavouritePhone;
+-(NSString *) getFavouriteEmail;
+
 -(BOOL) isNativeContact;
 
 @end

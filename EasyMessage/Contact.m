@@ -124,6 +124,38 @@
     return [NSString stringWithFormat:@"%@ %@ %@ %@", name, lastname, phone, email];
     
 }
+
+-(NSString *) descriptionKey {
+    
+    NSString *name = self.name;
+    NSString *lastname = self.lastName != nil ? self.lastName : @"";
+    
+    return [NSString stringWithFormat:@"%@%@", name, lastname];
+    
+}
+
+
+-(NSString *) getFavouritePhone {
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *key = [NSString stringWithFormat:@"prefered_phone_%@", self.descriptionKey ];
+    //we have a key?
+    if([defaults valueForKey:key]!=nil) {
+        return [defaults valueForKey:key];
+    }
+    return self.phone;
+}
+
+-(NSString *) getFavouriteEmail {
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *key = [NSString stringWithFormat:@"prefered_email_%@", self.descriptionKey ];
+    //we have a key?
+    if([defaults valueForKey:key]!=nil) {
+        return [defaults valueForKey:key];
+    }
+    return self.email;
+}
 /*
 -(Contact*) copyWithZone {
     Contact *newOne = [[Contact alloc] init];

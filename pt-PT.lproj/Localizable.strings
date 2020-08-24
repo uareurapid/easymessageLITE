@@ -177,3 +177,5 @@
 "force_sms_individually_warning" = "Ao selecionar esta opção, você garante 100% de certeza de que a mensagem de texto é entregue independentemente para cada destinatário. No entanto (devido às políticas de privacidade da Apple), a única maneira de obter esse comportamento, exige que você confirme cada entrega de mensagem separadamente, pressionando o botão Enviar. Por exemplo; se você estiver enviando para um grupo de 50 destinatários, precisará confirmar 50 vezes. Também não esqueça de manter suas mensagens curtas e concinadas!";
 "advanced_options" = "Opções Avançadas";
 "please_wait_while_load" = "Por favor aguarde, lendo os contactos";
+"set_as_prefered_phone" = "Definir como número preferido?";
+"set_as_prefered_email" = "Definir como email preferido?";

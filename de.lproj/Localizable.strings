@@ -179,3 +179,5 @@
 "force_sms_individually_warning" = "Durch Auswahl dieser Option garantieren Sie mit 100% iger Sicherheit, dass die Textnachricht unabhängig an jeden Empfänger gesendet wird. (Aufgrund der Apple-Datenschutzrichtlinien) ist es jedoch die einzige Möglichkeit, dieses Verhalten zu erreichen, dass Sie jede Nachrichtenübermittlung separat bestätigen, indem Sie auf die Schaltfläche 'Senden' klicken. Als Beispiel; Wenn Sie an eine Gruppe von 50 Empfängern senden, müssen Sie dies 50 Mal bestätigen. Vergessen Sie auch nicht, Ihre Nachrichten kurz und prägnant zu halten!";
 "advanced_options" = "Erweiterte Optionen";
 "please_wait_while_load" = "Bitte warten Sie, während Sie Kontakte laden";
+"set_as_prefered_phone" = "Als bevorzugtes Telefon einstellen?";
+"set_as_prefered_email" = "Als bevorzugte E-Mail festlegen?";

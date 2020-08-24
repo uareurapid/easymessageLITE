@@ -183,3 +183,5 @@
 "force_sms_individually_warning" = "Dengan memilih opsi ini, Anda menjamin dengan 100% yakin bahwa pesan teks dikirim secara independen ke masing-masing penerima. Namun (karena kebijakan privasi Apple), satu-satunya cara untuk mencapai perilaku ini, mengharuskan Anda mengkonfirmasi setiap pengiriman pesan secara terpisah dengan menekan tombol kirim. Sebagai contoh; jika Anda mengirim ke grup yang terdiri dari 50 penerima, Anda harus mengonfirmasinya 50 kali. Juga jangan lupa untuk membuat pesan Anda singkat dan selesai!";
 "advanced_options" = "Opsi Tingkat Lanjut";
 "please_wait_while_load" = "Harap tunggu saat memuat kontak";
+"set_as_prefered_phone" = "Setel sebagai telepon pilihan?";
+"set_as_prefered_email" = "Setel sebagai email pilihan?";

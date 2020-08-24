@@ -172,3 +172,5 @@
 "force_sms_individually_warning" = "通过选择此选项，您可以100％保证将短信独立发送给每个收件人。但是（由于Apple隐私政策），实现此行为的唯一方法是要求您分别通过按发送按钮来确认每个消息传递。举个例子;如果要发送给一组50个收件人，则必须确认50次。另外，别忘了让您的信息简短明了！";
 "advanced_options" = "高级选项";
 "please_wait_while_load" = "正在加载联系人，请稍候";
+"set_as_prefered_phone" = "设为首选手机？";
+"set_as_prefered_email" = "设为首选电子邮件？";

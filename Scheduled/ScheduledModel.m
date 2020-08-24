@@ -199,7 +199,7 @@
         
         localNotification.fireDate = self.when;
         
-        NSLog(@"birthday notification fire date: %@ ",[localNotification.fireDate description]);
+        //NSLog(@"birthday notification fire date: %@ ",[localNotification.fireDate description]);
             
         //aniversary_of
         localNotification.alertTitle = @"Schedule message!";

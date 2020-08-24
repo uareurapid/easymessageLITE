@@ -24,6 +24,7 @@
 #import "AFURLResponseSerialization.h"
 #import "AFHTTPRequestOperation.h"
 #import "JSONResponseSerializerWithData.h"
+#import "NBPhoneNumberUtil.h"
 
 #define SYSTEM_VERSION_EQUAL_TO(v)                  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
 #define SYSTEM_VERSION_GREATER_THAN(v)              ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedDescending)
@@ -500,7 +501,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
     if([type isEqualToString:@"birthday"]) {
         
-        NSLog(@"birthday notification fire date: %@ ",[SetAlarmAt description]);
+        //NSLog(@"birthday notification fire date: %@ ",[SetAlarmAt description]);
         
         //aniversary_of
         NSString *message = [NSString stringWithFormat: NSLocalizedString(@"aniversary_of", @"aniversary_of"), name];
@@ -1814,7 +1815,8 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                 for (CNLabeledValue *label in storeContact.phoneNumbers) {
                     NSString *phone = [label.value isKindOfClass: NSString.class] ? label.value : [label.value stringValue];
                     if ([phone length] > 0) {
-                        if(contact.phone == nil) {
+                        if(contact.phone == nil && [self isMobilePhone:phone]) {
+                            
                            contact.phone = phone;
                         } else {
                             
@@ -1824,6 +1826,12 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                             [contact.alternatePhones addObject:phone];
                         }
                     }
+                }
+                //at the end check if i have one mobile at least
+                if(contact.phone == nil && contact.alternatePhones!= nil && contact.alternatePhones.count > 0) {
+                    //just grab the first
+                    contact.phone = [contact.alternatePhones objectAtIndex:0];
+                    [contact.alternatePhones removeObjectAtIndex:0];
                 }
                 
                 //try to get the photo if available
@@ -1871,6 +1879,25 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         }
     
    
+}
+/**
+ This is not accurate by any means
+ */
+-(BOOL) isMobilePhone:(NSString *) phoneToCheck {
+    
+
+    NBPhoneNumberUtil *phoneUtil = [[NBPhoneNumberUtil alloc] init];
+    NSError *anError = nil;
+    BOOL mobile = false;
+    NBPhoneNumber *theNumber = [phoneUtil parse:phoneToCheck defaultRegion:nil error:&anError];
+    if(anError == nil) {
+        NBEPhoneNumberType type = [phoneUtil getNumberType:theNumber];
+        if(type == NBEPhoneNumberTypeMOBILE || type == NBEPhoneNumberTypeVOIP) {
+            mobile = true;
+        }
+    }
+
+    return mobile;
 }
 /**
  Load contacts inside a group iCloud
@@ -2907,7 +2934,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     //how many left?
     NSUInteger count = (self.messageRecipients!= nil) ? self.messageRecipients.count : 0 ;
      
-    NSMutableArray *recipients = [self getPhoneNumbers];
+    //NSMutableArray *recipients = [self getPhoneNumbers];
 
     if(self.messageRecipients!=nil && self.messageRecipients.count>0) {
         
@@ -3110,7 +3137,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             }  
          }
         else {
-            NSString *emailAddress = c.email;// [self extractEmailAddress:c];
+            NSString *emailAddress = [c getFavouriteEmail];// [self extractEmailAddress:c];
             NSLog(@"email address is: %@ for contact %@ ",emailAddress, c.description);
             if(emailAddress!=nil && ![emails containsObject:emailAddress]) {
                 [emails addObject:emailAddress];
@@ -3188,7 +3215,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         }
         else {
             //NSLog(@"CONTACT IS %@", c.description);
-            NSString *phoneNumber = c.phone;//[self extractPhoneNumber:c];
+            NSString *phoneNumber = [c getFavouritePhone];//[self extractPhoneNumber:c];
             if(phoneNumber!=nil && ![phones containsObject:phoneNumber]) {
                 //NSLog(@"adding phone number %@",phoneNumber);
                 [phones addObject:phoneNumber];
