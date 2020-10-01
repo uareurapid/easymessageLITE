@@ -128,10 +128,10 @@
 "select_group" = "그룹 선택";
 "unlock_premium" = "프리미엄 기능 잠금 해제";
 "premium_feature_only" = "이 기능은 프리미엄 버전에서만 사용할 수 있습니다.\r\n지금 업그레이드 하시겠습니까?";
-"lite_only_10_recipients" = "LITE 버전에는 수신자가 10 명으로 제한됩니다.";
-"lite_only_5_groups" = "LITE 버전에는 5 개의 그룹 제한이 있습니다.";
-"lite_only_5_contacts_per_group" = "LITE 버전에는 그룹당 5 개의 연락처 수 제한이 있습니다.";
-"lite_only_5_contacts_template_messages" = "LITE 버전에는 템플릿 메시지가 5 개로 제한됩니다.";
+"lite_only_10_recipients" = "LITE 버전에는 수신자가 5 명으로 제한됩니다.";
+"lite_only_5_groups" = "LITE 버전에는 2 개의 그룹 제한이 있습니다.";
+"lite_only_5_contacts_per_group" = "LITE 버전에는 그룹당 3 개의 연락처 수 제한이 있습니다.";
+"lite_only_5_contacts_template_messages" = "LITE 버전에는 템플릿 메시지가 2 개로 제한됩니다.";
 "lite_only_2_attachments" = "(*) 5 프리미엄 버전";
 "lite_reached_max_attachments" = "이미지 1 개를 제거하거나 프리미엄 버전으로 업그레이드하십시오.";
 "social_networks_copy_paste" = "일부 소셜 네트워크에서는 미리 채워진 메시지가있는 게시물을 허용하지 않습니다. 이 경우 메시지는 자동으로 클립 보드에 복사되며 직접 붙여 넣어야합니다.";

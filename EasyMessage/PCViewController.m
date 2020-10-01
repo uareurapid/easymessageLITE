@@ -333,24 +333,37 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 -(void) checkForPrefilledMessage{
     NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
     if([defaults valueForKey:@"prefillMessage"] != nil) {
-        self.body.text = [defaults valueForKey:@"prefillMessage"];
-        [defaults removeObjectForKey:@"prefillMessage"];
         
         //is a prefill message of type birthday
         if([[defaults valueForKey:@"prefillMessageType"] isEqualToString:@"birthday"] ) {
+            
+            NSDate *date = [[NSDate alloc] init];
+            NSCalendar* calendarToday = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+            NSDateComponents *componentsToday = [calendarToday components: NSCalendarUnitMonth | NSCalendarUnitDay fromDate:date];
+            
             //day & month of the birthday (same as today date maybe?)
             NSUInteger day = [[defaults valueForKey:@"day"] integerValue];
             NSUInteger month = [[defaults valueForKey:@"month"] integerValue];
             
+            //if is a birthday match only show Happy Anniversary if that is the matching day
+            if(day == componentsToday.day && month == componentsToday.month) {
+                self.body.text = [defaults valueForKey:@"prefillMessage"];
+                
+                //TODO improve this, i should not need to fetch the contacts again, but for 1st implementation is OK!
+                [self.recipientsController searchForBirthdayIn:day month:month];
+            }
+            //in any case remove these keys
             [defaults removeObjectForKey:@"day"];
             [defaults removeObjectForKey:@"month"];
+            [defaults removeObjectForKey:@"prefillMessageType"];
             
-             [defaults removeObjectForKey:@"prefillMessageType"];
             
-            //TODO improve this, i should not need to fetch the contacts again, but for 1st implementation is OK!
-            [self.recipientsController searchForBirthdayIn:day month:month];
-            
+        } else {
+            //Ok to set the body anyway
+            self.body.text = [defaults valueForKey:@"prefillMessage"];
         }
+        
+        [defaults removeObjectForKey:@"prefillMessage"];
         
         [defaults synchronize];
     }
@@ -2135,6 +2148,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 }
 
 //Load the contacts list from the address book
+/**
 -(NSMutableArray *)loadContacts : (ABAddressBookRef) addressBook {
     
     NSLog(@"START IMPORT");
@@ -2331,7 +2345,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     return contacts;
     
     
-}
+}*/
 
 //get the preferred email address to use
 -(NSString *) getPreferredEmail: (ABMultiValueRef) properties forLabel:(CFStringRef) labelConst count: (NSInteger) size {

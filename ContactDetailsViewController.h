@@ -28,6 +28,8 @@ NS_ASSUME_NONNULL_BEGIN
 -(BOOL) isNativeContact;
 -(void) showAddContactController;
 -(void) closeNativeContactController:(id) sender;
+-(void) searchForFavoritePhone;
+-(void) searchForFavoriteEmail;
 
 @end
 

@@ -843,7 +843,7 @@
         row = tag - 100;
     }
     
-    UIAlertController *alertCtrl = [UIAlertController alertControllerWithTitle: NSLocalizedString(@"set_as_prefered_phone", nil)];
+    UIAlertController *alertCtrl = [UIAlertController alertControllerWithTitle: NSLocalizedString(@"set_as_prefered_phone", nil)
            message:nil
     preferredStyle:UIAlertControllerStyleAlert];
     
@@ -901,11 +901,11 @@
     }
     
     
-    UIAlertController *alertCtrl = [UIAlertController alertControllerWithTitle: NSLocalizedString(@"set_as_prefered_email", nil)];
+    UIAlertController *alertCtrl = [UIAlertController alertControllerWithTitle: NSLocalizedString(@"set_as_prefered_email", nil)
            message:nil
     preferredStyle:UIAlertControllerStyleAlert];
     
-    UIAlertAction *emailTouched = [UIAlertAction actionWithTitle:NSLocalizedString(@"save", nil)];
+    UIAlertAction *emailTouched = [UIAlertAction actionWithTitle:NSLocalizedString(@"save", nil)
             style:UIAlertActionStyleDefault
               handler:^(UIAlertAction *action)
                 {
@@ -934,7 +934,7 @@
                     }
                 }];
     
-    UIAlertAction *cancel = [UIAlertAction actionWithTitle:NSLocalizedString(@"cancel", nil)];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:NSLocalizedString(@"cancel", nil)
         style:UIAlertActionStyleDefault
           handler:^(UIAlertAction *action)
             {

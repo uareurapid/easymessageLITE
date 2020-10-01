@@ -393,6 +393,19 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     }
     return nil;
 }
+
+-(NSUInteger) getNumberOfNonNativeGroups {
+    NSUInteger num = 0;
+    if(self.groupsList!=nil && self.groupsList.count > 0) {
+        for(Group *g in groupsList) {
+            if(!g.isNative) {
+                num++;
+            }
+        }
+    }
+ 
+    return num;
+}
 #pragma mark Content Filtering
 -(void)filterContentForSearchText:(NSString*)searchText scope:(NSString*)scope {
     
@@ -717,12 +730,13 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
             
             [groupsList removeObject:group];
             
-            for(NSString *name in groupsNamesArray) {
-                if(name!=nil && groupName!=nil && [name isEqualToString:groupName]) {
-                    [groupsNamesArray removeObject:name];
+            if(groupsNamesArray!=nil) {
+                for(NSString *name in groupsNamesArray) {
+                    if(name!=nil && groupName!=nil && [name isEqualToString:groupName]) {
+                        [groupsNamesArray removeObject:name];
+                    }
                 }
             }
-            
             
             [[[[iToast makeText:NSLocalizedString(@"deleted", @"deleted")]
                setGravity:iToastGravityBottom] setDuration:2000] show];
@@ -1093,15 +1107,22 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     else {
         [self.selectedContactsList removeAllObjects];
     }
+    
+    //TODO need to match the contact birthday with the notification date, but also with today´s date
+    
+    NSDate *date = [[NSDate alloc] init];
+    NSCalendar* calendarToday = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSDateComponents *componentsToday = [calendarToday components: NSCalendarUnitMonth | NSCalendarUnitDay fromDate:date];
+    
+    
     for(Contact *contact in self.contactsList) {
         if(contact.birthday !=nil) {
             NSDate *data = contact.birthday;
             NSDateComponents *componentsContact = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate: data];
             
-            NSLog(@"USER: %@ --> comparing day %ld with calendar day %ld and month %ld with contact month %ld",contact.name,day, componentsContact.day,month,componentsContact.month);
-            if(day == componentsContact.day && month == componentsContact.month) {
+            if( (day == componentsContact.day && day == componentsToday.day) && (month == componentsContact.month && month == componentsToday.month) ) {
                 //this is one of the targets
-                NSLog(@"adding %@ to the list",contact.name);
+                //NSLog(@"adding %@ to the list",contact.name);
                 [self.selectedContactsList addObject:contact];
             }
         }
@@ -1632,7 +1653,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
     
    if(![selectedContactsList containsObject:contact]) {
        
-       if(self.selectedContactsList.count >= 10 &&  ![[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
+       if(self.selectedContactsList.count >= MAX_RECIPIENTS_WITHOUT_PREMIUM &&  ![[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
            [self showAlertBox:NSLocalizedString(@"lite_only_10_recipients", nil)];
        }
        else {
@@ -2121,7 +2142,7 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 -(BOOL) performContactToGroupAssignment: (NSManagedObjectContext *) managedObjectContext contactModel: (ContactDataModel *)contactModel groupModel: (GroupDataModel *) groupModel groupName:(NSString *) groupName contact: (Contact *) contact {
     
     
-    if(groupModel.contacts.count >= 5 &&  ![[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
+    if(groupModel.contacts.count >= MAX_GROUP_MEMBERS_WITHOUT_PREMIUM &&  ![[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
         [self showAlertBox:NSLocalizedString(@"lite_only_5_contacts_per_group", nil)];
         return false;
     }
@@ -2204,11 +2225,23 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
 
 //show the input new group dialog
 -(void) showCreateGroupAlert {
-    UIAlertView * alert;
-    //adding a group allowed
-    alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"new_group",@"new_group") message:NSLocalizedString(@"enter_group_name",@"enter_group_name") delegate:self cancelButtonTitle:NSLocalizedString(@"cancel",@"cancel") otherButtonTitles:NSLocalizedString(@"save",@"save"),nil];
-    alert.alertViewStyle = UIAlertViewStylePlainTextInput;
-    [alert show];
+    
+    
+    if( ([self getNumberOfNonNativeGroups] >= MAX_GROUPS_WITHOUT_PREMIUM) && ![[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
+        
+        [self showAlertBox:NSLocalizedString(@"lite_only_5_groups", nil)];
+        
+    } else {
+            //show view to put the name of the group
+        UIAlertView * alert;
+        //adding a group allowed
+        alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"new_group",@"new_group") message:NSLocalizedString(@"enter_group_name",@"enter_group_name") delegate:self cancelButtonTitle:NSLocalizedString(@"cancel",@"cancel") otherButtonTitles:NSLocalizedString(@"save",@"save"),nil];
+        alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+        [alert show];
+    }
+    
+    
+    
 }
 
 - (void)optionsClicked:(id)sender event:(UIEvent *)event{

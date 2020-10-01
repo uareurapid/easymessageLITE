@@ -135,10 +135,10 @@
 "message_copied_clipboard" = "Pesan telah disalin ke clipboard";
 "unlock_premium" = "Buka fitur premium";
 "premium_feature_only" = "Fitur ini hanya tersedia pada versi premium.\r\nTingkatkan sekarang?";
-"lite_only_10_recipients" = "Dengan versi LITE ada batas 10 penerima";
-"lite_only_5_groups" = "Dengan versi LITE ada batas 5 grup";
-"lite_only_5_contacts_per_group" = "Dengan versi LITE ada batas 5 kontak per grup";
-"lite_only_5_contacts_template_messages" = "Dengan versi LITE ada batas 5 pesan template";
+"lite_only_10_recipients" = "Dengan versi LITE ada batas 5 penerima";
+"lite_only_5_groups" = "Dengan versi LITE ada batas 2 grup";
+"lite_only_5_contacts_per_group" = "Dengan versi LITE ada batas 3 kontak per grup";
+"lite_only_5_contacts_template_messages" = "Dengan versi LITE ada batas 2 pesan template";
 "lite_only_2_attachments" = "(*) 5 dengan versi Premium";
 "lite_reached_max_attachments" = "Hapus 1 gambar atau tingkatkan ke versi Premium";
 "social_networks_copy_paste" = "Beberapa jejaring sosial tidak memperbolehkan posting dengan pesan yang sudah diisi sebelumnya. \r\nDalam kasus ini, pesan akan secara otomatis disalin ke clipboard dan Anda harus menempelnya sendiri";

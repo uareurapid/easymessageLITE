@@ -324,7 +324,8 @@
 
 -(void) createNewMessage {
     
-    if(self.messagesList.count > 15 &&  ![[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
+    NSUInteger maxMSG = 10+MAX_TEMPLATES_WITHOUT_PREMIUM;
+    if(self.messagesList.count > maxMSG &&  ![[EasyMessageIAPHelper sharedInstance] productPurchased:PRODUCT_PREMIUM_UPGRADE]) {
         [self showAlertBox:NSLocalizedString(@"lite_only_5_contacts_template_messages", nil)];
     }
     else {

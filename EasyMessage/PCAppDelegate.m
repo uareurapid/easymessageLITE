@@ -248,19 +248,43 @@
         
         NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
         
-        NSString *day = [notification.userInfo valueForKey:@"day"];
-        NSString *month = [notification.userInfo valueForKey:@"month"];
+        NSString *notifDay = [notification.userInfo valueForKey:@"day"];
+        NSString *notifMonth = [notification.userInfo valueForKey:@"month"];
         //name of the contact
-        //NSString *name = [notification.userInfo valueForKey:@"name"];
         
-        [defaults setObject:NSLocalizedString(@"custom_msg_birthday",@"Happy Birthday") forKey:@"prefillMessage"];
-        [defaults setObject:@"birthday" forKey:@"prefillMessageType"];
-        [defaults setObject:month forKey:@"month"];
-        [defaults setObject:day forKey:@"day"];
+        NSDate *date = [[NSDate alloc] init];
+        NSCalendar* calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+        NSDateComponents *components = [calendar components: NSCalendarUnitMonth | NSCalendarUnitDay fromDate:date];
+
+        NSInteger currentMonth = [components month];
+        NSInteger currentDay = [components day];
         
-        [defaults synchronize];
+        if( (currentMonth > [notifMonth integerValue]) || (currentMonth == [notifMonth integerValue] && currentDay > [notifDay integerValue]) ) {
+            //NSLog(@"SKIP Notif month %ld Notif day %ld, currmonth %ld, currDay %ld",
+            //      [notifMonth integerValue],
+            //      [notifDay integerValue],
+            //      currentMonth,
+            //      currentDay);
+            //SKIP this one month 9 day 30, currmonth 8, currDay 24
+            
+            [[UIApplication sharedApplication] cancelLocalNotification:notification];
+        } else {
+            //NSLog(@"DO NOT SKIP this one Notif month %ld Notif day %ld, currmonth %ld, currDay %ld",
+            //[notifMonth integerValue],
+            //[notifDay integerValue],
+            //currentMonth,
+            //currentDay);
+            
+            [defaults setObject:NSLocalizedString(@"custom_msg_birthday",@"Happy Birthday") forKey:@"prefillMessage"];
+            [defaults setObject:@"birthday" forKey:@"prefillMessageType"];
+            [defaults setObject:notifMonth forKey:@"month"];
+            [defaults setObject:notifDay forKey:@"day"];
+            
+            [defaults synchronize];
+            
+            [self.viewController checkForPrefilledMessage];
+        }
         
-        [self.viewController checkForPrefilledMessage];
     } else if ([notificationType isEqualToString:NOTIFICATION_TYPE_SCHEDULED_MESSAGE]) {
         
         //NSLog(@"prefill scheduled message..");
