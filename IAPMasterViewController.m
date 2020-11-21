@@ -281,6 +281,8 @@
         }
     }];
     
+    [self askForReview];
+    
 }
 
 //@deprecated
@@ -335,8 +337,8 @@
                                                   otherButtonTitles:@"OK", nil];
         [alert show];
     }
-    //do not ask again, simulate that we used it for 3 messages already
-    [[NSUserDefaults standardUserDefaults] setInteger:3 forKey:KEY_ASK_FOR_REVIEW];
+    //do not ask again, simulate that we used it for 11 messages already (it usually shows at 10 messages)
+    [[NSUserDefaults standardUserDefaults] setInteger:11 forKey:KEY_ASK_FOR_REVIEW];
     
 }
 

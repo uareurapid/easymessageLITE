@@ -130,9 +130,9 @@
 "unlock_premium" = "Unlock premium features";
 "premium_feature_only" = "This feature is only available on the premium version.\r\nUpgrade now?";
 "lite_only_10_recipients" = "With the LITE version there is a limit of 5 recipients";
-"lite_only_5_groups" = "With the LITE version there is a limit of 2 groups";
-"lite_only_5_contacts_per_group" = "With the LITE version there is a limit of 3 contacts per group";
-"lite_only_5_contacts_template_messages" = "With the LITE version there is a limit of 2 template messages";
+"lite_only_5_groups" = "With the LITE version there is a limit of 2 groups. You can unlock the full version from the 'Settings' screen";
+"lite_only_5_contacts_per_group" = "With the LITE version there is a limit of 3 contacts per group. You can unlock the full version from the 'Settings' screen";
+"lite_only_5_contacts_template_messages" = "With the LITE version there is a limit of 2 template messages. You can unlock the full version from the 'Settings' screen";
 "lite_only_2_attachments" = "(*) 5 with the Premium version";
 "lite_reached_max_attachments" = "Please remove 1 attachment or upgrade to the Premium version";
 "social_networks_copy_paste" = "Some social networks do not allow posts with pre-filled messages. \r\nIn these cases the message will be automatically copied to the clipboard and you have to paste it yourself";

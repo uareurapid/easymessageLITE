@@ -132,10 +132,10 @@
 "send_feedback" = "Senden Sie uns Ihr Feedback";
 "select_group" = "Wähle die Gruppe";
 "premium_feature_only" = "Diese Funktion ist nur in der Premium-Version verfügbar.\r\nJetzt upgraden?";
-"lite_only_10_recipients" = "In der LITE-Version sind maximal 5 Empfänger zulässig";
-"lite_only_5_groups" = "In der LITE-Version sind maximal 2 Gruppen zulässig";
-"lite_only_5_contacts_per_group" = "In der LITE-Version sind maximal 3 Kontakte pro Gruppe zulässig";
-"lite_only_5_contacts_template_messages" = "In der LITE-Version sind maximal 2 Vorlagenmeldungen zulässig";
+"lite_only_10_recipients" = "In der LITE-Version sind maximal 5 Empfänger zulässig. Sie können die Vollversion über den Bildschirm 'Einstellungen' entsperren";
+"lite_only_5_groups" = "In der LITE-Version sind maximal 2 Gruppen zulässig. Sie können die Vollversion über den Bildschirm 'Einstellungen' entsperren";
+"lite_only_5_contacts_per_group" = "In der LITE-Version sind maximal 3 Kontakte pro Gruppe zulässig. Sie können die Vollversion über den Bildschirm 'Einstellungen' entsperren";
+"lite_only_5_contacts_template_messages" = "In der LITE-Version sind maximal 2 Vorlagenmeldungen zulässig. Sie können die Vollversion über den Bildschirm 'Einstellungen' entsperren";
 "lite_only_2_attachments" = "(*) 5 mit der Premium-Version";
 "lite_reached_max_attachments" = "Bitte entfernen Sie 1 Anhang oder führen Sie ein Upgrade auf die Premium-Version durch";
 "social_networks_copy_paste" = "Einige soziale Netzwerke erlauben keine Posts mit vorgefüllten Nachrichten.\r\nIn diesen Fällen wird die Nachricht automatisch in die Zwischenablage kopiert und Sie müssen sie selbst einfügen";

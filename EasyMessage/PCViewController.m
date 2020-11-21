@@ -1130,7 +1130,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     numMessages+=1;
     
     //NSLog(@"NUM MESSAGES IS: %ld", (long)numMessages);
-    if(numMessages > 2) {
+    if(numMessages == 10) {
         
         if (@available(iOS 10.3, *)) {
          [SKStoreReviewController requestReview];
