@@ -3903,15 +3903,7 @@ void addressBookChanged(ABAddressBookRef reference,
         NSLog(@"failed to fetch current user %@", error);
     }];
 }
-
-- (LIALinkedInHttpClient *)client {
-    LIALinkedInApplication *application = [LIALinkedInApplication applicationWithRedirectURL:@"https://crackedegggames.wixsite.com/easymessage"
-                                                                                    clientId:@"[TODO]"
-                                                                                clientSecret:@"[TODO]"
-                                                                                       state:@"DCEEFWF45453sdffef424"
-                                                                               grantedAccess:@[@"w_member_social"]]; //@"r_liteprofile", //@"w_messages" w_member_social
-    return [LIALinkedInHttpClient clientForApplication:application presentingViewController:nil];
-}
+//here---- TODO
 
 - (NSString *)accessToken {
     NSString *token = [[NSUserDefaults standardUserDefaults] objectForKey:LINKEDIN_TOKEN_KEY];
