@@ -3906,8 +3906,8 @@ void addressBookChanged(ABAddressBookRef reference,
 
 - (LIALinkedInHttpClient *)client {
     LIALinkedInApplication *application = [LIALinkedInApplication applicationWithRedirectURL:@"https://crackedegggames.wixsite.com/easymessage"
-                                                                                    clientId:@"77ls9x94h1ssg2"
-                                                                                clientSecret:@"WPL_AP1.s9APJ8wORlHqtZoc.c9OKag=="
+                                                                                    clientId:@"[your client id]"
+                                                                                clientSecret:@"[your client secret]"
                                                                                        state:@"DCEEFWF45453sdffef424"
                                                                                grantedAccess:@[@"w_member_social"]]; //@"r_liteprofile", //@"w_messages" w_member_social
     return [LIALinkedInHttpClient clientForApplication:application presentingViewController:nil];
