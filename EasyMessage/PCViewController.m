@@ -3906,8 +3906,8 @@ void addressBookChanged(ABAddressBookRef reference,
 
 - (LIALinkedInHttpClient *)client {
     LIALinkedInApplication *application = [LIALinkedInApplication applicationWithRedirectURL:@"https://crackedegggames.wixsite.com/easymessage"
-                                                                                    clientId:@"[your client id]"
-                                                                                clientSecret:@"[your client secret]"
+                                                                                    clientId:@"[TODO]"
+                                                                                clientSecret:@"[TODO]"
                                                                                        state:@"DCEEFWF45453sdffef424"
                                                                                grantedAccess:@[@"w_member_social"]]; //@"r_liteprofile", //@"w_messages" w_member_social
     return [LIALinkedInHttpClient clientForApplication:application presentingViewController:nil];
@@ -3950,19 +3950,19 @@ void addressBookChanged(ABAddressBookRef reference,
  
  API Key:
  
- 77l4jha5fww7gl
+ -------
  
  Secret Key:
  
- tJYyGefrcnz7FAyg
+ ------
  
  OAuth User Token:
  
- 6896ca8e-6e39-4109-8fe9-64691dcdb5c8
+ --------
  
  OAuth User Secret:
  
- 49df1d5b-c2ae-49f9-8179-20678dc36f69
+ -------
  
  
 -(void) doLinkedin {
