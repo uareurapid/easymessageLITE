@@ -6,6 +6,7 @@
 //  Copyright © 2019 Paulo Cristo. All rights reserved.
 //
 
+#import "PCAppDelegate.h"
 #import "ScheduledViewController.h"
 
 @interface ScheduledViewController ()
@@ -55,6 +56,9 @@
 }
 
 -(void) viewWillAppear:(BOOL)animated {
+    
+    PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
+    self.navigationController.navigationBar.backgroundColor =  [delegate colorFromHex:0xfb922b];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if([defaults boolForKey:@"reload_scheduled_model"]) {

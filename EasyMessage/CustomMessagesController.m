@@ -82,6 +82,9 @@
         [defaults removeObjectForKey:@"force_msg_reload"];
     }
     
+    PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
+    self.navigationController.navigationBar.backgroundColor =  [delegate colorFromHex:0xfb922b];
+    
     if(self.forceReload) {
         [self addRecordsFromDatabase];
     }

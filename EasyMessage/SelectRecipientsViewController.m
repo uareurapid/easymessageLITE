@@ -2867,9 +2867,13 @@ const NSString *MY_ALPHABET = @"ABCDEFGIJKLMNOPQRSTUVWXYZ";
        self.tableView.backgroundColor = [UIColor blackColor];
    } else {
        PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
-       self.tabBarController.tabBar.backgroundColor =  [delegate colorFromHex:0xfb922b]; //normal lite color
+       //self.tabBarController.tabBar.backgroundColor =  [delegate colorFromHex:0xfb922b]; //normal lite color
        self.tableView.backgroundColor = [delegate defaultTableColor: false];
+       //self.navigationController.navigationBar.tintColor = [delegate colorFromHex:0xfb922b];
+       self.navigationController.navigationBar.backgroundColor = [delegate colorFromHex:0xfb922b];
+       
    }
+    
     
     [defaults setBool:darkModeEnabled forKey:@"darkModeEnabled"];
     

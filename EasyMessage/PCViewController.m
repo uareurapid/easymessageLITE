@@ -596,8 +596,6 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         clearButton.tintColor = UIColor.whiteColor;
         self.navigationItem.rightBarButtonItem = clearButton;
         
-   
-        
         //attach buttom
         UIBarButtonItem *shareButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"share", @"share") style:UIBarButtonItemStyleDone target:self action:@selector(shareClicked:)];
         
@@ -733,7 +731,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
     
     if([self isDarkModeEnabled]) {
-        self.tabBarController.tabBar.backgroundColor = [UIColor blackColor]; //[self colorFromHexString:@"#1c1c1e"];//1c1c1e
+        self.tabBarController.tabBar.tintColor = [UIColor blackColor]; //[self colorFromHexString:@"#1c1c1e"];//1c1c1e
         self.view.backgroundColor =  [delegate defaultTableColor:true];
         self.labelAttach.textColor = [UIColor whiteColor];
         self.labelSaveArchive.textColor = [UIColor whiteColor];
@@ -744,7 +742,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         self.body.backgroundColor = [delegate defaultTableColor:true]; //[delegate colorFromHex:0x1c1c1e];
     } else {
         
-        self.tabBarController.tabBar.backgroundColor =  [delegate colorFromHex:LITE_COLOR]; //normal lite color
+        self.tabBarController.tabBar.tintColor =  [delegate colorFromHex:LITE_COLOR]; //normal lite color
         self.view.backgroundColor = [UIColor whiteColor];//[UIColor whiteColor];
         self.labelAttach.textColor = [UIColor blackColor];
         self.labelSaveArchive.textColor = [UIColor blackColor];
@@ -758,6 +756,9 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     [self showHideSocialOnlyLabel];
     [self updateAttachmentsLabel];
     [self updatePremiumLabels];
+    
+    self.navigationController.navigationBar.backgroundColor =  [self colorFromHex:LITE_COLOR];
+    //self.tabBarController.navigationController.navigationBar.backgroundColor =  [self colorFromHex:LITE_COLOR];
     
     //subject is disabled for SMS only or social posts
     [self checkIfPostToSocial];
@@ -3904,11 +3905,11 @@ void addressBookChanged(ABAddressBookRef reference,
 }
 
 - (LIALinkedInHttpClient *)client {
-    LIALinkedInApplication *application = [LIALinkedInApplication applicationWithRedirectURL:@"http://www.pcdreams-software.com/"
-                                                                                    clientId:@"77un3d1vtdhswr"
-                                                                                clientSecret:@"HiZlQkFkdvbxVfMh"
+    LIALinkedInApplication *application = [LIALinkedInApplication applicationWithRedirectURL:@"https://crackedegggames.wixsite.com/easymessage"
+                                                                                    clientId:@"77ls9x94h1ssg2"
+                                                                                clientSecret:@"WPL_AP1.s9APJ8wORlHqtZoc.c9OKag=="
                                                                                        state:@"DCEEFWF45453sdffef424"
-                                                                               grantedAccess:@[@"r_liteprofile",@"w_member_social"]]; //@"w_messages" w_member_social
+                                                                               grantedAccess:@[@"w_member_social"]]; //@"r_liteprofile", //@"w_messages" w_member_social
     return [LIALinkedInHttpClient clientForApplication:application presentingViewController:nil];
 }
 
@@ -4592,6 +4593,7 @@ void addressBookChanged(ABAddressBookRef reference,
                                         //if(self.isDeviceOnline) {
                                           PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
                                           UITabBarController *mainController = (UITabBarController*)delegate.window.rootViewController;
+                                          //[[mainController tabBar] setBarTintColor:[self colorFromHex:LITE_COLOR]];
                                           [mainController setSelectedViewController: [mainController.viewControllers objectAtIndex:2]];
                                             if(settingsController!=nil) {
                                                 [settingsController scrollToLastRowOfFAQSection];

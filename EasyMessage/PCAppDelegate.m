@@ -100,6 +100,7 @@
     [tabController setViewControllers: [NSArray arrayWithObjects:easyMessageController,navControllerRecipients,navControllerSettings,customMessagesControllerNav, scheduledControllerSettings, nil] ];
    
     //[tabController setSelectedIndex:0];
+    //[[tabController tabBar] setBarTintColor:[self colorFromHex:LITE_COLOR]];
     
     [EasyMessageIAPHelper sharedInstance];
     

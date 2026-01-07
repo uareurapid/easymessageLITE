@@ -249,6 +249,9 @@
         }
     }
     
+    PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
+    self.navigationController.navigationBar.backgroundColor =  [delegate colorFromHex:0xfb922b];
+    
     if([self hasShownAllTooltipsAlready]  && [self.tableView numberOfRowsInSection:5] < 2 ) {
         //1 row in section is missing, make it appear again
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -897,7 +900,7 @@
     // Email Content
     NSString *messageBody = @"";
     // To address
-    NSMutableArray *toRecipents = [[NSMutableArray alloc] initWithObjects:@"info@pcdreams-software.com", nil];
+    NSMutableArray *toRecipents = [[NSMutableArray alloc] initWithObjects:@"pcdreamssoftware@gmail.com", nil];
     
     
     if(toRecipents.count>0) {
