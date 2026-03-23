@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <Social/Social.h>
 #import <MessageUI/MessageUI.h>
 #import "CMPopTipView.h"
 #import "FAQViewController.h"
@@ -16,20 +15,11 @@
 #define OPTION_ALWAYS_SEND_BOTH   @"Always send both"
 #define OPTION_SEND_EMAIL_ONLY    @"Send email only"
 #define OPTION_SEND_SMS_ONLY      @"Send SMS only"
-#define OPTION_INCLUDE_SOCIAL_SERVICES @"Include social services"
 
 #define OPTION_ALWAYS_SEND_BOTH_ID      0
 #define OPTION_SEND_EMAIL_ONLY_ID       1
 #define OPTION_SEND_SMS_ONLY_ID         2
-#define OPTION_INCLUDE_SOCIAL_SERVICES_ID       3
 
-#define OPTION_SENDTO_FACEBOOK_ONLY    @"Send to Facebook only"
-#define OPTION_SENDTO_TWITTER_ONLY      @"Send to Twitter only"
-#define OPTION_SENDTO_LINKEDIN_ONLY      @"Send to Linkedin only"
-
-#define OPTION_SENDTO_FACEBOOK_ONLY_ID     0
-#define OPTION_SENDTO_TWITTER_ONLY_ID      1
-#define OPTION_SENDTO_LINKEDINR_ONLY_ID    2
 
 #define OPTION_PREF_SERVICE_ALL    @"Use both services"
 #define OPTION_PREF_SERVICE_EMAIL  @"Email service"
@@ -73,7 +63,6 @@
 
 @property(strong,nonatomic)NSMutableArray *sendOptions;
 @property(strong,nonatomic)NSMutableArray *preferedServiceOptions;
-@property(strong,nonatomic)NSMutableArray *socialServicesOptions;
 
 @property (assign,nonatomic) NSInteger selectOrderByOption;
 @property (assign,nonatomic) NSInteger selectSendOption;
@@ -86,11 +75,6 @@
 
 @property BOOL showToast;
 
-@property BOOL isFacebookAvailable;
-@property BOOL isTwitterAvailable;
-@property BOOL isLinkedinAvailable;
-
-@property (strong,nonatomic) SocialNetworksViewController *socialOptionsController;
 @property (strong,nonatomic) IAPMasterViewController *purchasesController;
 @property (strong,nonatomic) FilterOptionsViewController *filterOptionsController;
 @property (strong,nonatomic) CMPopTipView *tooltipView;

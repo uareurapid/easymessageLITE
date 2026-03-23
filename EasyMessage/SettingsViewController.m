@@ -8,7 +8,6 @@
 
 #import "SettingsViewController.h"
 #import "iToast.h"
-#import "SocialNetworksViewController.h"
 #import <StoreKit/StoreKit.h>
 #import "FilterOptionsViewController.h"
 #import "PCAppDelegate.h"
@@ -22,12 +21,12 @@
 
 @implementation SettingsViewController
 
-@synthesize sendOptions,preferedServiceOptions,socialServicesOptions;
+@synthesize sendOptions,preferedServiceOptions;
 @synthesize selectPreferredService,selectSendOption,selectOrderByOption;
-@synthesize socialOptionsController, purchasesController, filterOptionsController;
+@synthesize purchasesController, filterOptionsController;
 @synthesize showToast;
 @synthesize initiallySelectedPreferredService,initiallySelectedSendOption, initiallySelectedOrderByOption;
-@synthesize isFacebookAvailable,isTwitterAvailable,isLinkedinAvailable,isShowingTooltip,tooltipView;
+@synthesize isShowingTooltip,tooltipView;
 @synthesize isDeviceOnline;
 
 //ABOUT IOS MESSAGES:
@@ -43,13 +42,6 @@
     return self;
 }
 
--(void)resetSocialNetworks {
-    if(socialOptionsController!=nil) {
-        [socialOptionsController.selectedServiceOptions removeAllObjects];
-        [socialOptionsController.tableView reloadData];
-    }
-    
-}
 
 - (void)viewDidLoad
 {
@@ -60,11 +52,8 @@
     sendOptions = [[NSMutableArray alloc] initWithObjects:OPTION_ALWAYS_SEND_BOTH, OPTION_SEND_EMAIL_ONLY, OPTION_SEND_SMS_ONLY,nil];
     preferedServiceOptions = [[NSMutableArray alloc] initWithObjects:OPTION_PREF_SERVICE_EMAIL,OPTION_PREF_SERVICE_SMS,OPTION_PREF_SERVICE_ALL, nil];
     
-    socialServicesOptions = [[NSMutableArray alloc] init];
-    
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     
-    [self checkSocialServicesAvailability];
     
     //deafult values on startup
     //by default (check the seetings for change)
@@ -108,24 +97,6 @@
         }
     }
     
-    NSMutableArray *services = [[NSMutableArray alloc] init];
-    if(sendOptions.count>3) {
-        if(isFacebookAvailable) {
-            [services addObject:OPTION_SENDTO_FACEBOOK_ONLY];
-        }
-        if(isTwitterAvailable ) {
-            [services addObject:OPTION_SENDTO_TWITTER_ONLY];
-        }
-        if(isLinkedinAvailable) {
-           [services addObject:OPTION_SENDTO_LINKEDIN_ONLY];
-        }
-        
-    }
-    
-    
-    socialOptionsController = [[SocialNetworksViewController alloc] initWithNibName:@"SocialNetworksViewController"
-                                                                              bundle:nil previousController:self services:services];
-
     filterOptionsController = [[FilterOptionsViewController alloc] initWithNibName:@"FilterOptionsViewController" bundle:nil];
     
     showToast = YES;
@@ -168,26 +139,7 @@
     [reach startNotifier];
 }
 
-//check if the facebook and twitter services are available/configured
-//and add/remove them accordingly
--(void) checkSocialServicesAvailability {
-    
-    isLinkedinAvailable = true;
-    isFacebookAvailable=true;
-    isTwitterAvailable=true;
-    
-    if(isTwitterAvailable || isFacebookAvailable || isLinkedinAvailable) {
-        if(![sendOptions containsObject:OPTION_INCLUDE_SOCIAL_SERVICES]) {
-        //add it
-           [sendOptions addObject:OPTION_INCLUDE_SOCIAL_SERVICES]; 
-        }
-        
-    }
-    else if(!isTwitterAvailable &&!isLinkedinAvailable && !isFacebookAvailable && [sendOptions containsObject:OPTION_INCLUDE_SOCIAL_SERVICES]) {
-        //remove it
-        [sendOptions removeObject:OPTION_INCLUDE_SOCIAL_SERVICES];
-    }
-}
+
 
 -(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil  {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -243,11 +195,6 @@
     //add a notification listener to detect account changes
     //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkSocialServicesAvailability) name:ACAccountStoreDidChangeNotification object:nil];
     
-    if(socialOptionsController!=nil) {
-        if(socialOptionsController.selectedServiceOptions.count > 0) {
-            //toast we will use social services
-        }
-    }
     
     PCAppDelegate *delegate = (PCAppDelegate *)[ [UIApplication sharedApplication] delegate];
     self.navigationController.navigationBar.backgroundColor =  [delegate colorFromHex:0xfb922b];
@@ -817,7 +764,6 @@
         }
         else {
             showToast = NO;
-            [self.navigationController pushViewController:socialOptionsController animated:YES];
         }
     }
     else if(section==1) {

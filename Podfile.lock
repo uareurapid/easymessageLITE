@@ -1,0 +1,32 @@
+PODS:
+  - Appirater (2.3.1)
+  - Batch (1.20.0)
+  - JSONModel (1.8.0)
+  - libPhoneNumber-iOS (0.9.15)
+  - QBImagePickerController (3.4.0)
+
+DEPENDENCIES:
+  - Appirater
+  - Batch (~> 1.13)
+  - JSONModel
+  - libPhoneNumber-iOS (~> 0.8)
+  - QBImagePickerController
+
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - Appirater
+    - Batch
+    - JSONModel
+    - libPhoneNumber-iOS
+    - QBImagePickerController
+
+SPEC CHECKSUMS:
+  Appirater: 44a4651f7912a17dc906b655f0c215d5bb768b84
+  Batch: a9946fcb8c9132c86e7c3e1245532e41d32ade5b
+  JSONModel: 02ab723958366a3fd27da57ea2af2113658762e9
+  libPhoneNumber-iOS: 0a32a9525cf8744fe02c5206eb30d571e38f7d75
+  QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
+
+PODFILE CHECKSUM: 14699886c78017dcfd85313b95fc02f069e46869
+
+COCOAPODS: 1.16.2

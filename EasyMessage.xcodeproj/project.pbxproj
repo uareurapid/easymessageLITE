@@ -34,11 +34,6 @@
 		18E2B581228B23C600B9EAF7 /* edit40.png in Resources */ = {isa = PBXBuildFile; fileRef = 18E2B580228B23C600B9EAF7 /* edit40.png */; };
 		720020E421F1326500698245 /* Icon-76.png in Resources */ = {isa = PBXBuildFile; fileRef = 720020E321F1326500698245 /* Icon-76.png */; };
 		720862FF17DD249C0024B662 /* 80-shopping-cart.png in Resources */ = {isa = PBXBuildFile; fileRef = 720862FE17DD249C0024B662 /* 80-shopping-cart.png */; };
-		7209458D1FD4B8AE00AD7EDF /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7209458A1FD4B8AC00AD7EDF /* FBSDKCoreKit.framework */; };
-		7209458E1FD4B8AE00AD7EDF /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7209458B1FD4B8AD00AD7EDF /* FBSDKLoginKit.framework */; };
-		7209458F1FD4B8AE00AD7EDF /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7209458C1FD4B8AE00AD7EDF /* FBSDKShareKit.framework */; };
-		720945911FD4BCAF00AD7EDF /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 720945901FD4BCAF00AD7EDF /* Bolts.framework */; };
-		72137A8F17A7161300C90511 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72137A8E17A7161300C90511 /* Social.framework */; };
 		721512F21BEE84AA00F003D4 /* EasyMessage-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 721512F11BEE84AA00F003D4 /* EasyMessage-Info.plist */; };
 		7218B735223846BB00477F96 /* eyes.png in Resources */ = {isa = PBXBuildFile; fileRef = 7218B734223846BB00477F96 /* eyes.png */; };
 		7218B73A2238484E00477F96 /* FilterOptionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7218B7382238484E00477F96 /* FilterOptionsViewController.m */; };
@@ -169,29 +164,14 @@
 		72D25D0221C85BC30004EB21 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72D25D0121C85BC30004EB21 /* Photos.framework */; };
 		72D25D0421C85BCD0004EB21 /* PhotosUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72D25D0321C85BCD0004EB21 /* PhotosUI.framework */; };
 		72D6CA3C222EE6E200376EE3 /* user.png in Resources */ = {isa = PBXBuildFile; fileRef = 72D6CA3B222EE6E200376EE3 /* user.png */; };
-		72D84D311BF1108A00D6B77C /* LIALinkedInApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 72D84D2A1BF1108A00D6B77C /* LIALinkedInApplication.m */; };
-		72D84D321BF1108A00D6B77C /* LIALinkedInAuthorizationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 72D84D2C1BF1108A00D6B77C /* LIALinkedInAuthorizationViewController.m */; };
-		72D84D331BF1108A00D6B77C /* LIALinkedInHttpClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 72D84D2E1BF1108A00D6B77C /* LIALinkedInHttpClient.m */; };
-		72D84D341BF1108A00D6B77C /* NSString+LIAEncode.m in Sources */ = {isa = PBXBuildFile; fileRef = 72D84D301BF1108A00D6B77C /* NSString+LIAEncode.m */; };
-		72D84D371BF117A700D6B77C /* GoogleOpenSource.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72D84D351BF117A700D6B77C /* GoogleOpenSource.framework */; };
-		72D84D381BF117A700D6B77C /* GooglePlus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72D84D361BF117A700D6B77C /* GooglePlus.framework */; };
 		72D84D3A1BF117E100D6B77C /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72D84D391BF117E100D6B77C /* AssetsLibrary.framework */; };
 		72D84D3C1BF117F900D6B77C /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72D84D3B1BF117F900D6B77C /* CoreMotion.framework */; };
 		72D84D3E1BF129E700D6B77C /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72D84D3D1BF129E700D6B77C /* CoreText.framework */; };
 		72DB52162035054900EDC844 /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72DB52152035054900EDC844 /* NotificationCenter.framework */; };
-		72E2253B1FD5F9DF0076C813 /* TwitterKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72E225391FD5F9DD0076C813 /* TwitterKit.framework */; };
-		72E2253C1FD5F9DF0076C813 /* TwitterCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72E2253A1FD5F9DE0076C813 /* TwitterCore.framework */; };
-		72E225421FD5FFAE0076C813 /* TwitterKitResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 72E225401FD5FFAD0076C813 /* TwitterKitResources.bundle */; };
-		72E225431FD5FFAE0076C813 /* TwitterShareExtensionUIResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 72E225411FD5FFAE0076C813 /* TwitterShareExtensionUIResources.bundle */; };
 		72E2759B221DCAE100DD13F0 /* Batch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72E2759A221DCAE100DD13F0 /* Batch.framework */; };
-		72F6BB902225C66A00929A14 /* facebook.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F6BB8D2225C66900929A14 /* facebook.png */; };
-		72F6BB912225C66A00929A14 /* twitter.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F6BB8E2225C66900929A14 /* twitter.png */; };
-		72F6BB922225C66A00929A14 /* linkedin.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F6BB8F2225C66A00929A14 /* linkedin.png */; };
 		72F787FB17DCC37500424519 /* 24-gift.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F787FA17DCC37500424519 /* 24-gift.png */; };
 		72F787FD17DCC38D00424519 /* 35-shopping.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F787FC17DCC38D00424519 /* 35-shopping.png */; };
 		72F99F8121C860F900FAE7D8 /* libQBImagePickerController.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F99F8021C860F900FAE7D8 /* libQBImagePickerController.a */; };
-		72FB67C5177B39E700D5E364 /* SocialNetworksViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 72FB67C3177B39E700D5E364 /* SocialNetworksViewController.m */; };
-		72FB67C6177B39E700D5E364 /* SocialNetworksViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 72FB67C4177B39E700D5E364 /* SocialNetworksViewController.xib */; };
 		9D0DD4B826A9F3AD4E1212EC /* libPods-EasyMessage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D5E9CC017E5903E74EB7D93 /* libPods-EasyMessage.a */; };
 /* End PBXBuildFile section */
 
@@ -248,13 +228,10 @@
 		18DEBCAB23707BD8008E1E03 /* ScheduledModelDetailsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ScheduledModelDetailsViewController.xib; sourceTree = "<group>"; };
 		18E2B580228B23C600B9EAF7 /* edit40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = edit40.png; sourceTree = "<group>"; };
 		2D5E9CC017E5903E74EB7D93 /* libPods-EasyMessage.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-EasyMessage.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		686C695D6F51F67D4A04B40F /* Pods-EasyMessage.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EasyMessage.debug.xcconfig"; path = "Pods/Target Support Files/Pods-EasyMessage/Pods-EasyMessage.debug.xcconfig"; sourceTree = "<group>"; };
 		720020E321F1326500698245 /* Icon-76.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-76.png"; sourceTree = "<group>"; };
 		720862FE17DD249C0024B662 /* 80-shopping-cart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "80-shopping-cart.png"; path = "EasyMessage/80-shopping-cart.png"; sourceTree = "<group>"; };
-		7209458A1FD4B8AC00AD7EDF /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKCoreKit.framework; sourceTree = "<group>"; };
-		7209458B1FD4B8AD00AD7EDF /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKLoginKit.framework; sourceTree = "<group>"; };
-		7209458C1FD4B8AE00AD7EDF /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKShareKit.framework; sourceTree = "<group>"; };
 		720945901FD4BCAF00AD7EDF /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Bolts.framework; sourceTree = "<group>"; };
-		72137A8E17A7161300C90511 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		721512F11BEE84AA00F003D4 /* EasyMessage-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "EasyMessage-Info.plist"; path = "EasyMessage/EasyMessage-Info.plist"; sourceTree = "<group>"; };
 		7218B734223846BB00477F96 /* eyes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = eyes.png; sourceTree = "<group>"; };
 		7218B7372238484E00477F96 /* FilterOptionsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FilterOptionsViewController.h; sourceTree = "<group>"; };
@@ -397,7 +374,6 @@
 		72AC6C6B18E476820074DBCF /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		72AC6C6D18E4768F0074DBCF /* PassKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PassKit.framework; path = System/Library/Frameworks/PassKit.framework; sourceTree = SDKROOT; };
 		72AC6C6F18E476960074DBCF /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		72AC6C7118E476A90074DBCF /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
 		72AC6C7518E47F760074DBCF /* EventKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKit.framework; path = System/Library/Frameworks/EventKit.framework; sourceTree = SDKROOT; };
 		72AC6C7618E47F760074DBCF /* EventKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKitUI.framework; path = System/Library/Frameworks/EventKitUI.framework; sourceTree = SDKROOT; };
 		72B38F4A17A80F11004A0CD7 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
@@ -442,38 +418,17 @@
 		72D25D0121C85BC30004EB21 /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		72D25D0321C85BCD0004EB21 /* PhotosUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PhotosUI.framework; path = System/Library/Frameworks/PhotosUI.framework; sourceTree = SDKROOT; };
 		72D6CA3B222EE6E200376EE3 /* user.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = user.png; sourceTree = "<group>"; };
-		72D84D291BF1108A00D6B77C /* LIALinkedInApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LIALinkedInApplication.h; sourceTree = "<group>"; };
-		72D84D2A1BF1108A00D6B77C /* LIALinkedInApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LIALinkedInApplication.m; sourceTree = "<group>"; };
-		72D84D2B1BF1108A00D6B77C /* LIALinkedInAuthorizationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LIALinkedInAuthorizationViewController.h; sourceTree = "<group>"; };
-		72D84D2C1BF1108A00D6B77C /* LIALinkedInAuthorizationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LIALinkedInAuthorizationViewController.m; sourceTree = "<group>"; };
-		72D84D2D1BF1108A00D6B77C /* LIALinkedInHttpClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LIALinkedInHttpClient.h; sourceTree = "<group>"; };
-		72D84D2E1BF1108A00D6B77C /* LIALinkedInHttpClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LIALinkedInHttpClient.m; sourceTree = "<group>"; };
-		72D84D2F1BF1108A00D6B77C /* NSString+LIAEncode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+LIAEncode.h"; sourceTree = "<group>"; };
-		72D84D301BF1108A00D6B77C /* NSString+LIAEncode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+LIAEncode.m"; sourceTree = "<group>"; };
-		72D84D351BF117A700D6B77C /* GoogleOpenSource.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleOpenSource.framework; sourceTree = "<group>"; };
-		72D84D361BF117A700D6B77C /* GooglePlus.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GooglePlus.framework; sourceTree = "<group>"; };
 		72D84D391BF117E100D6B77C /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		72D84D3B1BF117F900D6B77C /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		72D84D3D1BF129E700D6B77C /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		72DB52152035054900EDC844 /* NotificationCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NotificationCenter.framework; path = System/Library/Frameworks/NotificationCenter.framework; sourceTree = SDKROOT; };
-		72E225391FD5F9DD0076C813 /* TwitterKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TwitterKit.framework; sourceTree = "<group>"; };
-		72E2253A1FD5F9DE0076C813 /* TwitterCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TwitterCore.framework; sourceTree = "<group>"; };
-		72E225401FD5FFAD0076C813 /* TwitterKitResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = TwitterKitResources.bundle; sourceTree = "<group>"; };
-		72E225411FD5FFAE0076C813 /* TwitterShareExtensionUIResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = TwitterShareExtensionUIResources.bundle; sourceTree = "<group>"; };
 		72E2759A221DCAE100DD13F0 /* Batch.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Batch.framework; path = Pods/Batch/Batch.embeddedframework/Batch.framework; sourceTree = "<group>"; };
-		72F6BB8D2225C66900929A14 /* facebook.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = facebook.png; sourceTree = "<group>"; };
-		72F6BB8E2225C66900929A14 /* twitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = twitter.png; sourceTree = "<group>"; };
-		72F6BB8F2225C66A00929A14 /* linkedin.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = linkedin.png; sourceTree = "<group>"; };
 		72F6BB932225C77600929A14 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		72F6BB942225C77600929A14 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/Localizable.strings; sourceTree = "<group>"; };
 		72F787FA17DCC37500424519 /* 24-gift.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "24-gift.png"; sourceTree = "<group>"; };
 		72F787FC17DCC38D00424519 /* 35-shopping.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "35-shopping.png"; sourceTree = "<group>"; };
 		72F99F8021C860F900FAE7D8 /* libQBImagePickerController.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libQBImagePickerController.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		72FB67C2177B39E700D5E364 /* SocialNetworksViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SocialNetworksViewController.h; path = EasyMessage/SocialNetworksViewController.h; sourceTree = "<group>"; };
-		72FB67C3177B39E700D5E364 /* SocialNetworksViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SocialNetworksViewController.m; path = EasyMessage/SocialNetworksViewController.m; sourceTree = "<group>"; };
-		72FB67C4177B39E700D5E364 /* SocialNetworksViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SocialNetworksViewController.xib; path = EasyMessage/SocialNetworksViewController.xib; sourceTree = "<group>"; };
-		A32A9DFACD1EBA2CD37B9C60 /* Pods-EasyMessage.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EasyMessage.release.xcconfig"; path = "Pods/Target Support Files/Pods-EasyMessage/Pods-EasyMessage.release.xcconfig"; sourceTree = "<group>"; };
-		F931A15002DA0E2EA70AB6D2 /* Pods-EasyMessage.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EasyMessage.debug.xcconfig"; path = "Pods/Target Support Files/Pods-EasyMessage/Pods-EasyMessage.debug.xcconfig"; sourceTree = "<group>"; };
+		951EDDDFEB967B444C12B5F3 /* Pods-EasyMessage.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EasyMessage.release.xcconfig"; path = "Pods/Target Support Files/Pods-EasyMessage/Pods-EasyMessage.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -498,33 +453,24 @@
 				72C46F7418E5E60F0084440A /* EventKitUI.framework in Frameworks */,
 				72AC6C7418E47F6F0074DBCF /* CFNetwork.framework in Frameworks */,
 				72BCE56E18E2137600514A96 /* Security.framework in Frameworks */,
-				72D84D381BF117A700D6B77C /* GooglePlus.framework in Frameworks */,
 				72AC6C7018E476960074DBCF /* QuartzCore.framework in Frameworks */,
 				72AC6C6E18E4768F0074DBCF /* PassKit.framework in Frameworks */,
 				72AC6C6C18E476820074DBCF /* MobileCoreServices.framework in Frameworks */,
 				72AC6C6A18E4766D0074DBCF /* CoreTelephony.framework in Frameworks */,
-				72E2253B1FD5F9DF0076C813 /* TwitterKit.framework in Frameworks */,
 				72AC6C6818E4765E0074DBCF /* CoreLocation.framework in Frameworks */,
-				72D84D371BF117A700D6B77C /* GoogleOpenSource.framework in Frameworks */,
 				18CFFF732370992C000AAC9B /* libJSONModel.a in Frameworks */,
 				72AC6C6618E476390074DBCF /* AVFoundation.framework in Frameworks */,
 				72AC6C6418E4762C0074DBCF /* AudioToolbox.framework in Frameworks */,
 				72BCE57118E213D300514A96 /* SystemConfiguration.framework in Frameworks */,
 				7298EC0C17DE4D35002C30AE /* CoreData.framework in Frameworks */,
 				727906DD17DB61F20076F0FE /* StoreKit.framework in Frameworks */,
-				72137A8F17A7161300C90511 /* Social.framework in Frameworks */,
 				728F913F1775C8E200254D36 /* CoreMedia.framework in Frameworks */,
 				728F913E1775C8D300254D36 /* MediaPlayer.framework in Frameworks */,
 				7224153C1771148800989C3B /* UIKit.framework in Frameworks */,
-				7209458F1FD4B8AE00AD7EDF /* FBSDKShareKit.framework in Frameworks */,
 				72611B071772143A0043E508 /* MessageUI.framework in Frameworks */,
-				7209458D1FD4B8AE00AD7EDF /* FBSDKCoreKit.framework in Frameworks */,
 				72241560177114DC00989C3B /* AddressBook.framework in Frameworks */,
 				72241561177114DC00989C3B /* AddressBookUI.framework in Frameworks */,
-				72E2253C1FD5F9DF0076C813 /* TwitterCore.framework in Frameworks */,
 				7224153E1771148800989C3B /* Foundation.framework in Frameworks */,
-				720945911FD4BCAF00AD7EDF /* Bolts.framework in Frameworks */,
-				7209458E1FD4B8AE00AD7EDF /* FBSDKLoginKit.framework in Frameworks */,
 				722415401771148800989C3B /* CoreGraphics.framework in Frameworks */,
 				9D0DD4B826A9F3AD4E1212EC /* libPods-EasyMessage.a in Frameworks */,
 			);
@@ -628,7 +574,6 @@
 				727906E117DB62540076F0FE /* InAppPurchase */,
 				727906E417DB62DF0076F0FE /* Settings */,
 				727906E217DB626F0076F0FE /* Recipients */,
-				727906E317DB62A80076F0FE /* SocialNetworks */,
 				722415411771148800989C3B /* EasyMessage */,
 				721AB0651F0C2EC3006C25A6 /* icons */,
 				727906E517DB63360076F0FE /* Messages */,
@@ -649,9 +594,6 @@
 				18634179227893C800167AAE /* group.png */,
 				72B843BC17A87D9500067A73 /* Default.png */,
 				720020E321F1326500698245 /* Icon-76.png */,
-				72F6BB8D2225C66900929A14 /* facebook.png */,
-				72F6BB8F2225C66A00929A14 /* linkedin.png */,
-				72F6BB8E2225C66900929A14 /* twitter.png */,
 				72B843BA17A8776F00067A73 /* emblem_package.png */,
 				72B843B817A8764E00067A73 /* Packed-48.png */,
 				729AAC4617DA854800CABCB0 /* 33-cabinet.png */,
@@ -688,20 +630,12 @@
 				722E29462035C63A00431CF3 /* UserNotifications.framework */,
 				72DB52152035054900EDC844 /* NotificationCenter.framework */,
 				724CB9C31FE5EA9600998CAB /* libAppirater.a */,
-				72E225401FD5FFAD0076C813 /* TwitterKitResources.bundle */,
-				72E225411FD5FFAE0076C813 /* TwitterShareExtensionUIResources.bundle */,
-				72E2253A1FD5F9DE0076C813 /* TwitterCore.framework */,
-				72E225391FD5F9DD0076C813 /* TwitterKit.framework */,
 				720945901FD4BCAF00AD7EDF /* Bolts.framework */,
-				7209458A1FD4B8AC00AD7EDF /* FBSDKCoreKit.framework */,
-				7209458B1FD4B8AD00AD7EDF /* FBSDKLoginKit.framework */,
-				7209458C1FD4B8AE00AD7EDF /* FBSDKShareKit.framework */,
 				72D84D3D1BF129E700D6B77C /* CoreText.framework */,
 				72D84D3B1BF117F900D6B77C /* CoreMotion.framework */,
 				72D84D391BF117E100D6B77C /* AssetsLibrary.framework */,
 				72AC6C7518E47F760074DBCF /* EventKit.framework */,
 				72AC6C7618E47F760074DBCF /* EventKitUI.framework */,
-				72AC6C7118E476A90074DBCF /* Twitter.framework */,
 				72AC6C6F18E476960074DBCF /* QuartzCore.framework */,
 				72AC6C6D18E4768F0074DBCF /* PassKit.framework */,
 				72AC6C6B18E476820074DBCF /* MobileCoreServices.framework */,
@@ -715,7 +649,6 @@
 				7298EC0B17DE4D35002C30AE /* CoreData.framework */,
 				727906DC17DB61F20076F0FE /* StoreKit.framework */,
 				72B38F4A17A80F11004A0CD7 /* Accounts.framework */,
-				72137A8E17A7161300C90511 /* Social.framework */,
 				728F913D1775C8D300254D36 /* MediaPlayer.framework */,
 				728F913B1775C78700254D36 /* CoreMedia.framework */,
 				72611B061772143A0043E508 /* MessageUI.framework */,
@@ -845,19 +778,6 @@
 			name = Recipients;
 			sourceTree = "<group>";
 		};
-		727906E317DB62A80076F0FE /* SocialNetworks */ = {
-			isa = PBXGroup;
-			children = (
-				72D84D351BF117A700D6B77C /* GoogleOpenSource.framework */,
-				72D84D361BF117A700D6B77C /* GooglePlus.framework */,
-				72BCE54118E20BE400514A96 /* LinkedIn */,
-				72FB67C2177B39E700D5E364 /* SocialNetworksViewController.h */,
-				72FB67C3177B39E700D5E364 /* SocialNetworksViewController.m */,
-				72FB67C4177B39E700D5E364 /* SocialNetworksViewController.xib */,
-			);
-			name = SocialNetworks;
-			sourceTree = "<group>";
-		};
 		727906E417DB62DF0076F0FE /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -895,21 +815,6 @@
 			name = External;
 			sourceTree = "<group>";
 		};
-		72BCE54118E20BE400514A96 /* LinkedIn */ = {
-			isa = PBXGroup;
-			children = (
-				72D84D291BF1108A00D6B77C /* LIALinkedInApplication.h */,
-				72D84D2A1BF1108A00D6B77C /* LIALinkedInApplication.m */,
-				72D84D2B1BF1108A00D6B77C /* LIALinkedInAuthorizationViewController.h */,
-				72D84D2C1BF1108A00D6B77C /* LIALinkedInAuthorizationViewController.m */,
-				72D84D2D1BF1108A00D6B77C /* LIALinkedInHttpClient.h */,
-				72D84D2E1BF1108A00D6B77C /* LIALinkedInHttpClient.m */,
-				72D84D2F1BF1108A00D6B77C /* NSString+LIAEncode.h */,
-				72D84D301BF1108A00D6B77C /* NSString+LIAEncode.m */,
-			);
-			name = LinkedIn;
-			sourceTree = "<group>";
-		};
 		72BCE54E18E20E9B00514A96 /* AFNetworking */ = {
 			isa = PBXGroup;
 			children = (
@@ -939,8 +844,8 @@
 		BAC325F956F0250B059765FC /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				F931A15002DA0E2EA70AB6D2 /* Pods-EasyMessage.debug.xcconfig */,
-				A32A9DFACD1EBA2CD37B9C60 /* Pods-EasyMessage.release.xcconfig */,
+				686C695D6F51F67D4A04B40F /* Pods-EasyMessage.debug.xcconfig */,
+				951EDDDFEB967B444C12B5F3 /* Pods-EasyMessage.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -1028,24 +933,19 @@
 			files = (
 				1859674D233540A80014CA7F /* fav30.png in Resources */,
 				18DEBCB123707BD8008E1E03 /* ScheduledModelDetailsViewController.xib in Resources */,
-				72F6BB912225C66A00929A14 /* twitter.png in Resources */,
 				72D25CEF21C79A660004EB21 /* sortb.png in Resources */,
 				722415461771148800989C3B /* InfoPlist.strings in Resources */,
 				721AB0911F0C2F6F006C25A6 /* Images.xcassets in Resources */,
 				7224154E1771148800989C3B /* Default.png in Resources */,
 				7284D9761FE47F25000350D6 /* delete.png in Resources */,
-				72F6BB902225C66A00929A14 /* facebook.png in Resources */,
 				7284D9801FE48675000350D6 /* remove_selection.png in Resources */,
 				722415521771148800989C3B /* Default-568h@2x.png in Resources */,
-				72E225431FD5FFAE0076C813 /* TwitterShareExtensionUIResources.bundle in Resources */,
 				72611AFD1771E88B0043E508 /* SettingsViewController.xib in Resources */,
 				724D9ED21F040A2A00E37659 /* PCViewController.xib in Resources */,
 				72611B05177213660043E508 /* EsyMessageViewController.xib in Resources */,
 				72611B0C177216940043E508 /* SelectRecipientsViewController.xib in Resources */,
-				72FB67C6177B39E700D5E364 /* SocialNetworksViewController.xib in Resources */,
 				7284D9821FE486FB000350D6 /* add_group.png in Resources */,
 				72D25CF021C79A660004EB21 /* sorta.png in Resources */,
-				72F6BB922225C66A00929A14 /* linkedin.png in Resources */,
 				72A2C27A177B99F2006FF12F /* email.png in Resources */,
 				7235CC3E1F0460C30039E8A3 /* AddContactViewController.xib in Resources */,
 				720020E421F1326500698245 /* Icon-76.png in Resources */,
@@ -1110,7 +1010,6 @@
 				729BEC5221C67DC300947062 /* ContactDetailsViewController.xib in Resources */,
 				7284D9781FE47FBC000350D6 /* clear.png in Resources */,
 				7298EC0A17DE1937002C30AE /* Unlock32.png in Resources */,
-				72E225421FD5FFAE0076C813 /* TwitterKitResources.bundle in Resources */,
 				1859674C233540A80014CA7F /* unfav30.png in Resources */,
 				72674E7517E26722001275AB /* GroupDetailsViewController.xib in Resources */,
 				7285348018E3415D00826581 /* Untitled.png in Resources */,
@@ -1144,7 +1043,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-EasyMessage/Pods-EasyMessage-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-EasyMessage/Pods-EasyMessage-resources.sh",
 				"${PODS_CONFIGURATION_BUILD_DIR}/Appirater/Appirater.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/QBImagePickerController/QBImagePicker.bundle",
 			);
@@ -1155,7 +1054,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-EasyMessage/Pods-EasyMessage-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-EasyMessage/Pods-EasyMessage-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1171,11 +1070,9 @@
 				722415481771148800989C3B /* main.m in Sources */,
 				7224154C1771148800989C3B /* PCAppDelegate.m in Sources */,
 				722415551771148800989C3B /* PCViewController.m in Sources */,
-				72D84D331BF1108A00D6B77C /* LIALinkedInHttpClient.m in Sources */,
 				7258506822D20F950026E334 /* Message.m in Sources */,
 				72BCE56918E20E9B00514A96 /* AFURLResponseSerialization.m in Sources */,
 				72611AFC1771E88B0043E508 /* SettingsViewController.m in Sources */,
-				72D84D321BF1108A00D6B77C /* LIALinkedInAuthorizationViewController.m in Sources */,
 				72611B0017720F740043E508 /* Contact.m in Sources */,
 				18DEBCAF23707BD8008E1E03 /* ScheduledModel.m in Sources */,
 				72611B04177213660043E508 /* EsyMessageViewController.m in Sources */,
@@ -1188,10 +1085,8 @@
 				72AA60F51BF80124006183D3 /* AddContactViewController.m in Sources */,
 				7269D4441774D6B500AE1662 /* UIPlaceHolderTextView.m in Sources */,
 				728F279A1776362D00A61BC8 /* iToast.m in Sources */,
-				72FB67C5177B39E700D5E364 /* SocialNetworksViewController.m in Sources */,
 				726235F217D9358600DC0CED /* Group.m in Sources */,
 				1874DF0522B0E6BB006E82BB /* CustomMessagesDetailController.m in Sources */,
-				72D84D341BF1108A00D6B77C /* NSString+LIAEncode.m in Sources */,
 				7285347C18E3247000826581 /* JSONResponseSerializerWithData.m in Sources */,
 				72BCE56A18E20E9B00514A96 /* AFURLSessionManager.m in Sources */,
 				729AAC4417DA839800CABCB0 /* CustomMessagesController.m in Sources */,
@@ -1210,7 +1105,6 @@
 				727906EC17DB677F0076F0FE /* IAPMasterViewController.m in Sources */,
 				727A765417DFDF090032EFF8 /* CoreDataModel.xcdatamodeld in Sources */,
 				727A765717DFE1100032EFF8 /* GroupDataModel.m in Sources */,
-				72D84D311BF1108A00D6B77C /* LIALinkedInApplication.m in Sources */,
 				18DEBCB023707BD8008E1E03 /* SimpleContactModel.m in Sources */,
 				727A765A17DFE1100032EFF8 /* ContactDataModel.m in Sources */,
 				7264F87F17E115F0000D656C /* CoreDataUtils.m in Sources */,
@@ -1327,7 +1221,7 @@
 		};
 		7224155C1771148800989C3B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F931A15002DA0E2EA70AB6D2 /* Pods-EasyMessage.debug.xcconfig */;
+			baseConfigurationReference = 686C695D6F51F67D4A04B40F /* Pods-EasyMessage.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -1365,7 +1259,7 @@
 		};
 		7224155D1771148800989C3B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A32A9DFACD1EBA2CD37B9C60 /* Pods-EasyMessage.release.xcconfig */;
+			baseConfigurationReference = 951EDDDFEB967B444C12B5F3 /* Pods-EasyMessage.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;

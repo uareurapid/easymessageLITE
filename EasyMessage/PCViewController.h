@@ -16,14 +16,8 @@
 #import <iAd/iAd.h>
 #import <AddressBook/AddressBook.h>
 #import "AFHTTPRequestOperation.h"
-#import "LIALinkedInHttpClient.h"
-#import "LIALinkedInApplication.h"
 #import "PCPopupViewController.h"
 #import <StoreKit/StoreKit.h>
-#import <FBSDKCoreKit/FBSDKCoreKit.h>
-#import <FBSDKLoginKit/FBSDKLoginKit.h>
-#import <FBSDKShareKit/FBSDKShareKit.h>
-#import <TwitterKit/TwitterKit.h>
 #import <QBImagePickerController/QBImagePickerController.h>
 #import "AttachCellCollectionViewCell.h"
 #import "Popup.h"
@@ -68,7 +62,7 @@
 //if i have already shown the warning
 #define SHOW_FORCE_INDIVIDUAL_SMS_WARN @"show_force_individual_sms_warn"
 
-@interface PCViewController : UIViewController <MFMailComposeViewControllerDelegate,MFMessageComposeViewControllerDelegate,UIImagePickerControllerDelegate,UITextViewDelegate,UITextFieldDelegate, FBSDKSharingDelegate,UICollectionViewDataSource,UICollectionViewDelegate,
+@interface PCViewController : UIViewController <MFMailComposeViewControllerDelegate,MFMessageComposeViewControllerDelegate,UIImagePickerControllerDelegate,UITextViewDelegate,UITextFieldDelegate,UICollectionViewDataSource,UICollectionViewDelegate,
 UITextFieldDelegate, NSURLConnectionDelegate,SKStoreProductViewControllerDelegate,QBImagePickerControllerDelegate, PopupDelegate, CMPopTipViewDelegate>
 @property (weak, nonatomic) IBOutlet UIScrollView *attachmentsScrollview;
 @property (weak, nonatomic) IBOutlet UICollectionView *imagesCollection;
@@ -107,8 +101,6 @@ UITextFieldDelegate, NSURLConnectionDelegate,SKStoreProductViewControllerDelegat
 @property NSMutableData *responseData;
 
 @property NSMutableArray *imagesArray;
-
-@property (strong, nonatomic) LIALinkedInHttpClient *_client;
 
 @property (strong, nonatomic) PCPopupViewController  *popupView;
 @property (strong, nonatomic) UIView *pickerBlockView;

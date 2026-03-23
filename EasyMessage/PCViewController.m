@@ -10,13 +10,11 @@
 #import "Contact.h"
 #import "Group.h"
 #import "SelectRecipientsViewController.h"
-#import "SocialNetworksViewController.h"
 #import "IAPMasterViewController.h"
 #import "CoreDataUtils.h"
 #import "ContactDataModel.h"
 #import "MessageDataModel.h"
 #import "CustomMessagesController.h"
-#import "LIALinkedInHttpClient.h"
 #import "ScheduledModel.h"
 #import "SimpleContactModel.h"
 #import "PCReachability.h"
@@ -43,7 +41,6 @@
 @synthesize selectedRecipientsList,scrollView,recipientsController;
 @synthesize smsSentOK,emailSentOK,sendButton;
 @synthesize labelMessage,labelSubject,labelOnlySocial;
-@synthesize sendToFacebook,sendToTwitter,sendToLinkedin,facebookSentOK,twitterSentOK;
 @synthesize changeTimer,saveMessageSwitch,saveMessage,inAppPurchaseTableController;
 @synthesize labelSaveArchive,lockImage;
 @synthesize customMessagesController;
@@ -97,11 +94,6 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     
     smsSentOK = NO;
     emailSentOK = NO;
-    facebookSentOK = NO;
-    twitterSentOK = NO;
-    sendToTwitter = NO;
-    sendToFacebook = NO;
-    sendToLinkedin = NO;
     saveMessage = NO;
     recipientsLabel.text =  NSLocalizedString(@"no_recipients",@"no_recipients");
 
@@ -153,9 +145,6 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     //shows / hides the banner, every 30 seconds interval
     //[NSTimer scheduledTimerWithTimeInterval: 30.0 target: self
     //                                                  selector: @selector(callBannerCheck:) userInfo: nil repeats: YES];
-   
-    //linkedin client here
-    self._client = [self client];
     
     //to add attachments
     [self setupAttachViewTouch ];
@@ -386,32 +375,6 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                 [self.saveMessageSwitch setOn:self.saveMessage];
                 [self.scheduleLaterSwitch setOn:false];
             });
-            
-            if(model.socialNetworks!=nil && model.socialNetworks.count > 0) {
-             
-                BOOL isFacebookAvailable = settingsController.socialOptionsController.isFacebookAvailable;
-                BOOL isTwitterAvailable = settingsController.socialOptionsController.isTwitterAvailable;
-
-                [settingsController.socialOptionsController.selectedServiceOptions removeAllObjects]; //we clear the current list
-                
-                if(isFacebookAvailable && [model.socialNetworks containsObject:@"facebook"]) {
-                    
-                    [settingsController.socialOptionsController.selectedServiceOptions addObject:OPTION_SENDTO_FACEBOOK_ONLY];
-                    
-                }
-                if (isTwitterAvailable && [model.socialNetworks containsObject:@"twitter"]){
-                     [settingsController.socialOptionsController.selectedServiceOptions addObject:OPTION_SENDTO_TWITTER_ONLY];
-                }
-                  
-                if ([model.socialNetworks containsObject:@"linkedin"]){
-                     [settingsController.socialOptionsController.selectedServiceOptions addObject:OPTION_SENDTO_LINKEDIN_ONLY];
-                }
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [settingsController.socialOptionsController.tableView reloadData];
-                });
-            }
-            
             
             settingsController.selectSendOption = model.sendOptions;
             settingsController.selectPreferredService = model.preferredService;
@@ -753,7 +716,6 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         self.body.backgroundColor = [UIColor whiteColor];//[UIColor whiteColor];
     }
     
-    [self showHideSocialOnlyLabel];
     [self updateAttachmentsLabel];
     [self updatePremiumLabels];
     
@@ -761,22 +723,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     //self.tabBarController.navigationController.navigationBar.backgroundColor =  [self colorFromHex:LITE_COLOR];
     
     //subject is disabled for SMS only or social posts
-    [self checkIfPostToSocial];
-    if( (sendToFacebook || sendToTwitter || sendToLinkedin) && (selectedRecipientsList.count==0) ) {
-        
-        //[self.navigationItem.leftBarButtonItem setEnabled:true];
-        //if(selectedRecipientsList.count==0) {
-        if(settingsController.selectSendOption != OPTION_ALWAYS_SEND_BOTH_ID) {
-            [subject setEnabled:false];
-            [subjectView setHidden:true];
-        } else {
-            //always send both is selected
-            [subject setEnabled:true];
-            [subjectView setHidden:false];
-        }
-        
-    }
-    else if(settingsController.selectSendOption == OPTION_SEND_SMS_ONLY_ID) {
+    if(settingsController.selectSendOption == OPTION_SEND_SMS_ONLY_ID) {
         
           [subject setEnabled:false];
           [subjectView setHidden:true];
@@ -805,30 +752,6 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 {
     [self clearInputFields];
 }
-
-
-
--(void) showHideSocialOnlyLabel {
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        //always hide if this is showing, cause it is on the same place
-        if(!subjectView.hidden) {
-            [labelOnlySocial setHidden:true];
-        } else {
-            
-            if(selectedRecipientsList.count==0 && settingsController.socialOptionsController.selectedServiceOptions.count>0) {
-                labelOnlySocial.hidden = NO;
-            }
-            else {
-                labelOnlySocial.hidden = YES;
-            }
-        }
-
-    });
-    
-}
-
 
 - (void)didReceiveMemoryWarning
 {
@@ -904,37 +827,9 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 
 
 
-
-/**
- * Checks if post to social is active
- */
-- (void) checkIfPostToSocial {
-    BOOL isFacebookAvailable = settingsController.socialOptionsController.isFacebookAvailable;
-    BOOL isTwitterAvailable = settingsController.socialOptionsController.isTwitterAvailable;
-    BOOL isFacebookSelected = NO;
-    BOOL isTwitterSelected = NO;
-
-    
-    if(isFacebookAvailable) {
-        isFacebookSelected = [settingsController.socialOptionsController.selectedServiceOptions containsObject: OPTION_SENDTO_FACEBOOK_ONLY];
-        
-        //if ([FBSDKAccessToken currentAccessToken]) {
-            // User is logged in, do work such as go to next view controller.
-        //}
-    }
-    if(isTwitterAvailable) {
-        isTwitterSelected = [settingsController.socialOptionsController.selectedServiceOptions containsObject: OPTION_SENDTO_TWITTER_ONLY];
-    }
-    
-    sendToFacebook = isFacebookSelected;
-    sendToTwitter = isTwitterSelected;
-    sendToLinkedin = [settingsController.socialOptionsController.selectedServiceOptions containsObject: OPTION_SENDTO_LINKEDIN_ONLY];
-}
-
 - (IBAction)sendMessage:(id)sender {
     
     
-    [self checkIfPostToSocial];
     
     if(subject.text.length==0 && body.text.length==0) {
         
@@ -948,13 +843,8 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     }
     else if(selectedRecipientsList.count==0 ) {
         
-        if(!sendToFacebook && !sendToTwitter && !sendToLinkedin) {
-           [self showAlertBox: NSLocalizedString(@"alert_message_select_least_one",@"You need to select at least one recipient!")]; 
-        }
-        else {
-            [self sendToSocialNetworks:body.text];
-        
-        }
+      
+           [self showAlertBox: NSLocalizedString(@"alert_message_select_least_one",@"You need to select at least one recipient!")];
         //if we do not have recipients, neither are using social networks show message
         
     }
@@ -1230,52 +1120,6 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 }
 
 
-//send to social networks
--(void)sendToSocialNetworks: (NSString*) message {
-    
-    UIPasteboard *pb = [UIPasteboard generalPasteboard];
-    [pb setString:message];
-    
-    [[[[iToast makeText:NSLocalizedString(@"message_copied_clipboard", @"")]
-       setGravity:iToastGravityBottom] setDuration:1000] show];
-    
-        if(sendToFacebook) {
-            //NOTE: if twitter is also selected, it will show up/send on facebook result
-            [self sendToFacebook:message];
-        }
-        else if(sendToTwitter) {
-            //on dismiss we check if send to linkedin is selected
-            [self sendToTwitter:message];
-        }
-        else if(!sendToFacebook && !sendToTwitter && sendToLinkedin) {
-            //send to linkedin only
-            //before send check if we need authorization
-            [self authorizeAndSendToLinkedin: message];
-            
-        }
-    
-  
-}
-//auth and send
--(void) authorizeAndSendToLinkedin: (NSString *) message {
-    NSString * token = [self accessToken];
-    if(token!=nil && [self validToken]) {
-        
-        if([self linkedinID]!=nil) {
-           [self sendToLinkedin:message withToken:token];
-        } else {
-            //send afterwards
-            [self requestMeWithToken:token andMessage: message];
-            //[self sendToLinkedin:message withToken:token];
-        }
-        
-        
-    }
-    else {
-        //either is nill or invalid
-        [self connectWithLinkedIn:message];
-    }
-}
 //create the address book reference and register the callback
 -(void)setupAddressBook {
     
@@ -2456,15 +2300,9 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             [alert show];
             
             //i do have recipients for the email but i cannot send it due to settings
-            if(settingsController.selectSendOption != OPTION_ALWAYS_SEND_BOTH_ID) {
+            if(settingsController.selectSendOption == OPTION_ALWAYS_SEND_BOTH_ID) {
                 
-                if(sendToFacebook || sendToTwitter || sendToLinkedin) {
-                    
-                    [self sendToSocialNetworks: body.text];
-                }
-                //TODO message saying that will port to social media only??
-                
-            } else {
+            
                 //send both is selected and i did not sent any email due to settings
                 self.messageRecipients = [self getPhoneNumbers];
                 if(self.messageRecipients.count > 0) {
@@ -2509,12 +2347,8 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
             //it means it´s selected only email... and we don´t have email adresses and we´re not sending SMS next either
             
             //but if we have social networks, we don´t care and will post to those only
-            if(sendToFacebook || sendToTwitter || sendToLinkedin) {
-                
-                [self sendToSocialNetworks: body.text];
-            }
-            else {
-                
+           
+
                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"easymessage_send_email_title",@"EasyMessage: Send email")
                                                                 message:NSLocalizedString(@"recipients_least_one_recipient", @"select valid recipient")
                                                                delegate:self
@@ -2522,7 +2356,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                                                       otherButtonTitles:nil];
                 
                 [alert show];
-            }
+            
         } else {
             //send both is selected and i did not sent any email
             self.messageRecipients = [self getPhoneNumbers];
@@ -2593,31 +2427,10 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
     }
     else {
         //not sending to social media, ask for review?
-        if(!sendToTwitter && !sendToFacebook && !sendToLinkedin) {
-            [self checkIfAskForReview];
-            [self clearFieldsAndRecipients];
-        }
-        else {
-            [self doSocialNetworksIfSelected];
-        }
-
+       
+        [self checkIfAskForReview];
+        [self clearFieldsAndRecipients];
     }
-}
-
-//this is called only from sms or email
--(void) doSocialNetworksIfSelected{
-    
-    if(sendToFacebook || sendToTwitter || sendToLinkedin) {
-        [self sendToSocialNetworks: body.text];
-  
-    }
-    else {
-        
-       //should ask for review?
-       [self checkIfAskForReview];
-       [self clearFieldsAndRecipients];
-    }
-    
 }
 
 -(void)updateAttachmentsLabel {
@@ -2725,206 +2538,16 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
 	}
     if(msg!=nil) {
         
-        [self dismissViewControllerAnimated:YES completion:^{[self doSocialNetworksIfSelected];}];
+        [self dismissViewControllerAnimated:YES completion:nil];
                
         [[[[iToast makeText:msg]
            setGravity:iToastGravityBottom] setDuration:1000] show];
     }
     
-	[self dismissViewControllerAnimated:YES completion:^{[self doSocialNetworksIfSelected];}];
+	[self dismissViewControllerAnimated:YES completion:nil];
 }
 
-//will send the message to facebook
-- (void)sendToFacebook:(NSString *)message {
-    //TODO show a toast saying that we copied the content to clipboard
-    FBSDKShareLinkContent *content = [[FBSDKShareLinkContent alloc] init];
-    content.contentURL = [NSURL URLWithString:@"https://itunes.apple.com/app/id1448046358?mt=8"];
-    content.quote = message;
-    
-    UIPasteboard *pb = [UIPasteboard generalPasteboard];
-    [pb setString:message];
-    
-    [[[[iToast makeText:@"message copied to clipboard"]
-       setGravity:iToastGravityBottom] setDuration:1000] show];
-    
-    //if(image!=nil && imageName!=nil) {
-    //}
-    [FBSDKShareDialog showFromViewController:self
-                                 withContent:content
-                                    delegate:self];
-}
 
-//reset the booleans after sending the message
--(void) resetSocialNetworks: (BOOL) clear {
-    
-    if(clear) {
-        sendToFacebook = NO;
-        sendToTwitter = NO;
-        sendToLinkedin = NO;
-        [settingsController resetSocialNetworks];
-        
-        if(body.text.length > 0) {
-            //we still haven´t cleared
-            [self clearFieldsAndRecipients];
-        }
-        
-    }
-
-    
-    
-    //NSLog(@"resetting....");
-}
-
-//send the message also to twitter (facebook is always first if available)
-- (void)sendToTwitter:(NSString *)message {
-    
-    // Objective-C
-    
-    // Check if current session has users logged in
-    if ([[Twitter sharedInstance].sessionStore hasLoggedInUsers]) {
-        [self doTwitterShare:message];
-    } else {
-        [[Twitter sharedInstance] logInWithCompletion:^(TWTRSession *session, NSError *error) {
-            if (session) {
-                [self doTwitterShare:message];
-            } else {
-                UIAlertAction *ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"No Twitter Accounts Available" message:@"You must log in before presenting a composer." preferredStyle:UIAlertControllerStyleAlert];
-                [alert addAction:ok];
-                [self presentViewController:alert animated:YES completion:nil];
-            }
-        }];
-    }
-}
-
--(void) doTwitterShare:(NSString *) message {
-    TWTRComposer *composer = [[TWTRComposer alloc] init];
-    
-    [composer setText:message];
-    [composer setImage:[UIImage imageNamed:@"icon-76"]];
-    [composer setURL: [NSURL URLWithString: @"https://itunes.apple.com/app/id1448046358?mt=8"]];
-    
-    // Called from a UIViewController
-    [composer showFromViewController:self completion:^(TWTRComposerResult result) {
-        
-        if(self.presentedViewController!=nil) {
-            [self.presentedViewController dismissViewControllerAnimated:NO completion:nil];
-        }
-        NSString *msg;
-        BOOL clear = YES;
-        
-        if (result == TWTRComposerResultCancelled) {
-            NSLog(@"Tweet composition cancelled");
-            msg = NSLocalizedString(@"twitter_post_canceled", @"twitter_post_canceled");
-            clear = NO;
-        }
-        else {
-            NSLog(@"Sending Tweet!");
-            msg = NSLocalizedString(@"twitter_post_ok", @"twitter_post_ok");
-        }
-        
-        if(msg!=nil) {
-            [[[[iToast makeText:msg]
-               setGravity:iToastGravityBottom] setDuration:1000] show];
-        }
-        
-        //check if send to linkedin
-        if(sendToLinkedin) {
-            
-            //before send check if we need authorization
-            [self authorizeAndSendToLinkedin:message];
-            
-        }
-        else {
-            [self resetSocialNetworks:clear];
-        }
-    }];
-}
-
-//post to linkedin
--(void) sendToLinkedin: (NSString* ) message withToken: (NSString*) token {
-    
-        
-    //https://developer.linkedin.com/docs/share-on-linkedin
-        
-    NSMutableString *str = [[NSMutableString alloc] init];
-        
-    [str appendString:@"https://api.linkedin.com/v2/shares?oauth2_access_token="];
-    [str appendString: token];
-    NSString *postURL = [NSString stringWithString:str];
-        
-    //get the status message
-    NSString *title = (subject.text!=nil && subject.text.length>0) ? subject.text : message;
-
-    /***
-     {
-     "content": {
-         "contentEntities": [
-         {
-            "entityLocation": "https://www.example.com/content.html",
-            "thumbnails": [
-                {
-                    "resolvedUrl": "https://www.example.com/image.jpg"
-                }
-            ]
-         }
-         ],
-         "title": "Test Share with Content"
-     },
-         "distribution": {
-         "linkedInDistributionTarget": {}
-         },
-         "owner": "urn:li:person:324_kGGaLE",
-         "subject": "Test Share Subject",
-         "text": {
-         "text": "Test Share!"
-         }
-     }
-     https://artisansweb.net/share-post-on-linkedin-using-linkedin-api-and-php/
-     **/
-    
-    @try {
-        
-    NSDictionary *resolvedUrl = [NSDictionary dictionaryWithObjectsAndKeys: @"https://is1-ssl.mzstatic.com/image/thumb/Purple/v4/ff/f7/ce/fff7ce0f-933f-6448-46d1-5945fef9783e/Icon-76@2x.png.png/75x9999bb.png",@"resolvedUrl", nil];
-    
-    NSArray *thumbnailslArray = [[ NSArray alloc] initWithObjects:resolvedUrl, nil];
-    
-    NSDictionary *thumbnails =  [NSDictionary dictionaryWithObjectsAndKeys:@"https://itunes.apple.com/app/id1448046358?mt=8", @"entityLocation", thumbnailslArray, @"thumbnails", nil];
-    
-    NSArray *contentEntitiesArray = [[ NSArray alloc] initWithObjects:thumbnails, nil];
-    
-   
-    NSDictionary *textContainer =  [NSDictionary dictionaryWithObjectsAndKeys:message, @"text", nil];
-    
-    NSDictionary *content =  [NSDictionary dictionaryWithObjectsAndKeys:contentEntitiesArray, @"contentEntities", title, @"title", nil];
-    
-    NSDictionary *postData  = [NSDictionary dictionaryWithObjectsAndKeys:content,@"content",[self linkedinID], @"owner", textContainer,@"text", nil];
-    
-    NSError *error;
-    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:postData options:NSJSONWritingPrettyPrinted error:&error];
-    
-    NSString* JSONBody = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-
-    // Create the request.
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:postURL] cachePolicy:NSURLCacheStorageNotAllowed timeoutInterval:20.0];
-    // Specify that it will be a POST request
-    [request setHTTPMethod: @"POST"];
-    //with json body
-    [request setValue:@"application/json; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-        
-    NSData *requestBodyData = [JSONBody dataUsingEncoding:NSUTF8StringEncoding];
-    [request setHTTPBody:requestBodyData];
-
-        
-    // Create url connection and fire request
-    [[NSURLConnection alloc] initWithRequest:request delegate:self];
-        
-    }
-    @catch(NSException *err) {
-        NSLog(@"Error: %@", err.description);
-    }
-    
-}
 
 //if the message mentions EasyMessage then is a regular share
 -(BOOL) isEasyMessageShare: (NSString *) message {
@@ -2996,10 +2619,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
         //means we have no available phones
         //since we´re not sending SMS, social networks will not be on that dismiss, so we need to check if send it now
       
-        if(sendToTwitter || sendToFacebook || sendToLinkedin) {
-            [self sendToSocialNetworks: body.text];
-        }
-        else {
+       
             
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle: NSLocalizedString(@"easymessage_send_sms_title", @"EasyMessage: Send SMS")
                                                             message: NSLocalizedString(@"recipients_least_one_recipient",@"recipient not valid")
@@ -3007,7 +2627,7 @@ static NSString * const kClientId = @"122031362005-ibifir1r1aijhke7r3fe404usutpd
                                                   cancelButtonTitle:@"OK"
                                                   otherButtonTitles:nil];
             [alert show];
-        }
+        
         
     }
     
@@ -3684,7 +3304,7 @@ void addressBookChanged(ABAddressBookRef reference,
                 restoreSwitch();
 
             }
-            else if(self.selectedRecipientsList.count == 0 && ( !sendToFacebook && !sendToTwitter && !sendToLinkedin) ) {
+            else if(self.selectedRecipientsList.count == 0  ){
                 [self showAlertBox: NSLocalizedString(@"alert_message_select_least_one",@"You need to select at least one recipient!")];
                 restoreSwitch();
             }
@@ -3784,46 +3404,6 @@ void addressBookChanged(ABAddressBookRef reference,
     return isPNG;
 }
 
--(IBAction)shareClicked:(id)sender {
-    //to get any selected ones
-    [self checkIfPostToSocial];
-    
-    imageName = @"icon-76";
-    image = [UIImage imageNamed:@"icon-76"];
-    [self updateAttachButton];
-    
-    NSString *shareMessage = @"Checkout EasyMessage: SMS,Email & Social in one!";
-    
-    UIPasteboard *pb = [UIPasteboard generalPasteboard];
-    [pb setString:shareMessage];
-    
-    [[[[iToast makeText:NSLocalizedString(@"message_copied_clipboard", @"")]
-       setGravity:iToastGravityBottom] setDuration:1000] show];
-    
-    if(!sendToLinkedin && !sendToTwitter && !sendToFacebook) {
-        
-        
-        //send at least to twitter
-        if([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter]) {
-            
-           [self sendToTwitter:shareMessage];
-        }
-        else if([SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook]) {
-
-            [self sendToFacebook:shareMessage];
-        }
-        else {
-          [self authorizeAndSendToLinkedin:shareMessage];
-        }
-        
-        
-    }
-    else {
-        [self sendToSocialNetworks:@"Checkout EasyMessage: SMS,Email & Social in one!"];
-    }
-    
-}
-
 -(IBAction)showPopupView:(id)sender {
     
     
@@ -3855,89 +3435,6 @@ void addressBookChanged(ABAddressBookRef reference,
     }
 }
 
-
-//to connect with linkedin when no token is available
-- (void)connectWithLinkedIn:(NSString *) message {
-    [self.client getAuthorizationCode:^(NSString *code) {
-        [self.client getAccessToken:code success:^(NSDictionary *accessTokenData) {
-            NSString *accessToken = [accessTokenData objectForKey:@"access_token"];
-            
-            if([self linkedinID]!=nil) {
-                [self sendToLinkedin:message withToken:accessToken];
-            } else {
-                //will send after
-                [self requestMeWithToken:accessToken andMessage: message];
-            }
-            
-        }   failure:^(NSError *error) {
-            
-            
-            NSLog(@"Quering accessToken failed %@", error);
-        }];
-    }                      cancel:^{
-        NSLog(@"Authorization was cancelled by user");
-    }                     failure:^(NSError *error) {
-        NSLog(@"Authorization failed %@", error);
-    }];
-}
-
-//get personal info from linkedin
-- (void)requestMeWithToken:(NSString *)accessToken andMessage: (NSString *) message {
-
-    [self.client GET:[NSString stringWithFormat:@"https://api.linkedin.com/v2/me?oauth2_access_token=%@", accessToken] parameters:nil success:^(AFHTTPRequestOperation *operation, NSDictionary *result) {
-        //{"localizedLastName":"Cristo","lastName":{"localized":{"en_US":"Cristo"},"preferredLocale":{"country":"US","language":"en"}},"firstName":{"localized":{"en_US":"Paulo"},"preferredLocale":{"country":"US","language":"en"}},"profilePicture":{"displayImage":"urn:li:digitalmediaAsset:C4E03AQH6BPC1_3Oqqw"},"id":"OQw3s_FY10","localizedFirstName":"Paulo"}
-        
-        NSString *identifier = [result objectForKey:@"id"];
-        if(identifier!=nil) {
-            
-            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-            [defaults setObject:[NSString stringWithFormat:@"urn:li:person:%@", identifier] forKey:LINKEDIN_ME_KEY];
-            //"owner": "urn:li:person:324_kGGaLE",
-            
-            [self sendToLinkedin:message withToken:accessToken];
-        }
-        
-        
-        NSLog(@"current user %@", result);
-    }        failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"failed to fetch current user %@", error);
-    }];
-}
-
-// TODO, REMOVE TODO
-- (LIALinkedInHttpClient *)client {
-    LIALinkedInApplication *application = [LIALinkedInApplication applicationWithRedirectURL:@"https://crackedegggames.wixsite.com/easymessage"
-                                                                                    clientId:@"[TODO]"
-                                                                                clientSecret:@"[TODO]"
-                                                                                       state:@"DCEEFWF45453sdffef424"
-                                                                               grantedAccess:@[@"w_member_social"]]; //@"r_liteprofile", //@"w_messages" w_member_social
-    return [LIALinkedInHttpClient clientForApplication:application presentingViewController:nil];
-}
-
-- (NSString *)accessToken {
-    NSString *token = [[NSUserDefaults standardUserDefaults] objectForKey:LINKEDIN_TOKEN_KEY];
-    return token;
-    
-}
-
-- (NSString *)linkedinID {
-    NSString *meId = [[NSUserDefaults standardUserDefaults] objectForKey:LINKEDIN_ME_KEY];
-    return meId;
-}
-
-
-
-//check if the token is valid
-- (BOOL)validToken {
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    
-    if ([[NSDate date] timeIntervalSince1970] >= ([userDefaults doubleForKey:LINKEDIN_CREATION_KEY] + [userDefaults doubleForKey:LINKEDIN_EXPIRATION_KEY])) {
-        return NO;
-    }
-    else {
-        return YES;
-    }
-}
 
 /**
  
@@ -4120,9 +3617,7 @@ void addressBookChanged(ABAddressBookRef reference,
   
     [[[[iToast makeText:msg]
            setGravity:iToastGravityBottom] setDuration:1000] show];
-    
-    [self resetSocialNetworks:true];
-    
+
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
@@ -4306,61 +3801,6 @@ void addressBookChanged(ABAddressBookRef reference,
 - (void)bannerViewActionDidFinish:(ADBannerView *)banner {
 }*/
 
-#pragma FacebookShareDelegate
-- (void) sharer: (id<FBSDKSharing>)sharer didCompleteWithResults: (NSDictionary *)results {
-    NSString* message = self.body.text;
-    NSString *msg = NSLocalizedString(@"facebook_post_ok", @"facebook_post_ok");
-    
-    if(msg!=nil) {
-        [[[[iToast makeText:msg]
-           setGravity:iToastGravityBottom] setDuration:1000] show];
-    }
-    if(self.presentedViewController!=nil) {
-        [self.presentedViewController dismissViewControllerAnimated:NO completion:nil];
-    }
-    if(sendToTwitter) {
-        [self sendToTwitter:message]; //will reset inside
-    }
-    else if(sendToLinkedin) {
-        //before send check if we need authorization
-        [self authorizeAndSendToLinkedin:message];
-    }
-    else {
-        //reset now
-        [self resetSocialNetworks:YES];
-    }
-}
-
-- (void) sharer:  (id<FBSDKSharing>)sharer didFailWithError: (NSError *)error {
-    [self handleFacebookFailure];
-}
-
-- (void) sharerDidCancel:(id<FBSDKSharing>)sharer {
-    [self handleFacebookFailure];
-}
-
--(void) handleFacebookFailure {
-    NSString* message = self.body.text;
-    NSString *msg = NSLocalizedString(@"facebook_post_canceled", @"facebook_post_canceled");
-    if(msg!=nil) {
-        [[[[iToast makeText:msg]
-           setGravity:iToastGravityBottom] setDuration:1000] show];
-    }
-    if(self.presentedViewController!=nil) {
-        [self.presentedViewController dismissViewControllerAnimated:NO completion:nil];
-    }
-    if(sendToTwitter) {
-        [self sendToTwitter:message]; //will reset inside
-    }
-    else if(sendToLinkedin) {
-        //before send check if we need authorization
-        [self authorizeAndSendToLinkedin:message];
-    }
-    else {
-        //reset now
-        [self resetSocialNetworks:NO];
-    }
-}
 
 -(BOOL) isDarkModeEnabled {
     if (@available(iOS 12.0, *)) {
@@ -4470,30 +3910,16 @@ void addressBookChanged(ABAddressBookRef reference,
     transition.duration = 1.0;
     transition.type = kCATransitionFade; //choose your animation
     [pickerBlockView.layer addAnimation:transition forKey:nil];
-    
-    BOOL sendToSocialMedia = (sendToTwitter || sendToFacebook || sendToLinkedin);
-    if( (self.selectedRecipientsList.count > 0 || sendToSocialMedia) && self.body.text!=nil && [self.body.text length] > 0) {
+
+    if( (self.selectedRecipientsList.count > 0 ) && self.body.text!=nil && [self.body.text length] > 0) {
         NSArray *views = [pickerBlockView subviews];
         if(views!=nil && views.count > 0) {
             for(UIView *view in views) {
                 if([view isKindOfClass:UIDatePicker.class]) {
                     UIDatePicker *datePicker = (UIDatePicker *)view;
-                    
-                    [self checkIfPostToSocial];
-                    
+      
                     NSMutableArray *networks;
-                    if(sendToSocialMedia) {
-                        networks = [[NSMutableArray alloc] init];
-                        if(sendToLinkedin) {
-                            [networks addObject:@"linkedin"];
-                        }
-                        if(sendToFacebook) {
-                            [networks addObject:@"facebook"];
-                        }
-                        if(sendToTwitter) {
-                            [networks addObject:@"twitter"];
-                        }
-                    }
+     
                     //TODO the social network options are not restored yet
                     NSMutableArray *recipients = [[NSMutableArray alloc] init];
                     for(Contact *contact in selectedRecipientsList) {

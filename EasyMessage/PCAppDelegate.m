@@ -16,8 +16,7 @@
 #import "EasyMessageIAPHelper.h"
 #import "IAPMasterViewController.h"
 //  AppDelegate.m
-#import <FBSDKCoreKit/FBSDKCoreKit.h>
-#import <TwitterKit/TwitterKit.h>
+
 #import <Appirater.h>
 
 #import <Batch/Batch.h>
@@ -107,10 +106,6 @@
     self.window.rootViewController = tabController;//navController;
     [self.window makeKeyAndVisible];
     
-    [[FBSDKApplicationDelegate sharedInstance] application:application
-                             didFinishLaunchingWithOptions:launchOptions];
-    // Add any custom logic here.
-    [[Twitter sharedInstance] startWithConsumerKey:@"aDp4mgi28vaaLhpRztoX53c16" consumerSecret:@"JrVYSaJPbAZsfELXtladWxpIunu3aLYxfBBrjcoTJrY8OQkG0R"];
     
     [Appirater setAppId:@"1448046358"];
     [Appirater setDaysUntilPrompt:2];
@@ -223,13 +218,7 @@
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
     
-    BOOL handled = [[FBSDKApplicationDelegate sharedInstance] application:application
-                                                                  openURL:url
-                                                        sourceApplication:sourceApplication
-                                                               annotation:annotation
-                    ];
-    // Add any custom logic here.
-    return handled;
+    return true;
 }
 
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
@@ -513,7 +502,7 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    [FBSDKAppEvents activateApp];
+
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
 }
 
@@ -524,16 +513,7 @@
 // Objective C
 #pragma TwitterDelegate + FacebookDelegate
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<NSString *,id> *)options {
-    //twitter
-    BOOL handled = [[Twitter sharedInstance] application:app openURL:url options:options];
-    //facebook
-    BOOL handledFB = [[FBSDKApplicationDelegate sharedInstance] application:app
-                                                                    openURL:url
-                                                          sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
-                                                                 annotation:options[UIApplicationOpenURLOptionsAnnotationKey]];
-    
-    // Add any custom logic here.
-    return handled || handledFB;
+    return true;
 }
 
 - (UIColor *)colorFromHex:(unsigned long)hex
